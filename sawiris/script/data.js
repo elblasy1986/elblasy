@@ -1,7 +1,7 @@
 
 function getData(){
     let items = [{
-    item: "كيس كاتشب هاينز",
+    item: "كيس كاتشب",
     price: 1,
     boughtItems:0,
     img: "../images/01.jpg"
@@ -19,13 +19,13 @@ function getData(){
     img: "../images/03.jpg"
 },
 {
-    item: "لتر بيبسي",
+    item: "لتر صودا",
     price: 11,
     boughtItems:0,
     img: "../images/04.jpg"
 },
 {
-    item: "طبق كشري",
+    item: "طبق كشرى",
     price: 15,
     boughtItems:0,
     img: "../images/05.jpg"
@@ -43,13 +43,13 @@ function getData(){
     img: "../images/07.jpg"
 },
 {
-    item: "ساندوتش شاورما سوري",
+    item: "ساندوتش شاورما سورى",
     price: 36,
     boughtItems:0,
     img: "../images/08.jpg"
 },
 {
-    item: "ساندوتش بيج ماك كومبو",
+    item: "ساندوتش برجر كومبو",
     price: 59,
     boughtItems:0,
     img: "../images/09.jpg"
@@ -79,19 +79,19 @@ function getData(){
     img: "../images/13.jpg"
 },
 {
-    item: "وجبة دينر بوكس كومبو",
+    item: "وجبة فراخ بروست كومبو",
     price: 103,
     boughtItems:0,
     img: "../images/14.jpg"
 },
 {
-    item: "كرسي بلاستيك",
+    item: "كرسى بلاستيك",
     price: 135,
     boughtItems:0,
     img: "../images/15.jpg"
 },
 {
-    item: "علبة حفاضات بامبرز",
+    item: "علبة حفاضات",
     price: 198,
     boughtItems:0,
     img: "../images/16.jpg"
@@ -103,19 +103,19 @@ function getData(){
     img: "../images/17.jpg"
 },
 {
-    item: "تذكرة لحفلة عمرو دياب",
+    item: "تذكرة حفلة لعمرو دياب",
     price: 1750,
     boughtItems:0,
     img: "../images/18.jpg"
 },
 {
-    item: "اشتراك نتفليكس لمدة سنة",
+    item: "اشتراك واتش ات لمدة سنة",
     price: 1980,
     boughtItems:0,
     img: "../images/19.jpg"
 },
 {
-    item: "طقم حلل تيفال",
+    item: "طقم حلل",
     price: 2200,
     boughtItems:0,
     img: "../images/20.jpg"
@@ -127,13 +127,13 @@ function getData(){
     img: "../images/21.jpg"
 },
 {
-    item: "ليلة في فندق فاخر",
+    item: "ليلة فى فندق فاخر",
     price: 5400,
     boughtItems:0,
     img: "../images/22.jpg"
 },
 {
-    item: "سماعات آير بودز برو",
+    item: "سماعات آير بودز",
     price: 6600,
     boughtItems:0,
     img: "../images/23.jpg"
@@ -145,25 +145,25 @@ function getData(){
     img: "../images/24.jpg"
 },
 {
-    item: "زجاجة برفان ديور",
+    item: "زجاجة برفان أصلية",
     price: 11000,
     boughtItems:0,
     img: "../images/25.jpg"
 },
 {
-    item: "بلايستيشن فايف",
+    item: "بلايستيشن ٥",
     price: 16900,
     boughtItems:0,
     img: "../images/26.jpg"
 },
 {
-    item: "موتوسيكل حلاوة صيني",
+    item: "موتوسيكل حلاوة صينى",
     price: 18000,
     boughtItems:0,
     img: "../images/27.jpg"
 },
 {
-    item: "عجلة فونكس",
+    item: "عجلة فونيكس",
     price: 18500,
     boughtItems:0,
     img: "../images/28.jpg"
@@ -175,13 +175,13 @@ function getData(){
     img: "../images/29.jpg"
 },
 {
-    item: "سامسونج إس ٢٢ ألترا ١ تيرا",
+    item: "سامسونج جالاكسى إس٢٤",
     price: 24000,
     boughtItems:0,
     img: "../images/30.jpg"
 },
 {
-    item: "بدلة فاخرة",
+    item: "بدلة",
     price: 24200,
     boughtItems:0,
     img: "../images/31.jpg"
@@ -193,7 +193,7 @@ function getData(){
     img: "../images/32.jpg"
 },
 {
-    item: "فستان فاخر",
+    item: "فستان",
     price: 29700,
     boughtItems:0,
     img: "../images/33.jpg"
@@ -205,25 +205,25 @@ function getData(){
     img: "../images/34.jpg"
 },
 {
-    item: "آيفون ١٤ برو ماكس",
+    item: "آيفون ١٥ برو",
     price: 41800,
     boughtItems:0,
     img: "../images/35.jpg"
 },
 {
-    item: "شاشة ٦٥ بوصة",
+    item: "تليفيزيون ٦٥ بوصة",
     price: 48000,
     boughtItems:0,
     img: "../images/36.jpg"
 },
 {
-    item: "ماك بوك برو ١٤ بوصة إم وان",
+    item: "ماك بوك برو",
     price: 52500,
     boughtItems:0,
     img: "../images/37.jpg"
 },
 {
-    item: "سبيكة ذهب",
+    item: "سبيكة ذهب ٥٠ جرام",
     price: 52800,
     boughtItems:0,
     img: "../images/38.jpg"
@@ -259,7 +259,7 @@ function getData(){
     img: "../images/43.jpg"
 },
 {
-    item: "نيسان صني",
+    item: "نيسان صنى",
     price: 297000,
     boughtItems:0,
     img: "../images/44.jpg"
@@ -271,7 +271,7 @@ function getData(){
     img: "../images/45.jpg"
 },
 {
-    item: "جيت سكي ياماها",
+    item: "جيت سكى ياماها",
     price: 370000,
     boughtItems:0,
     img: "../images/46.jpg"
@@ -292,14 +292,14 @@ function getData(){
 },
 
 {
-    item: "بي إم دبليو إكس ٦",
+    item: "بى إم دبليو إكس ٦",
     price: 2500000,
     boughtItems:0,
     img: "../images/49.jpg"
 },
 
 {
-    item: "فيلا في التجمع",
+    item: "فيلا فى التجمع",
     price: 4300000,
     boughtItems:0,
     img: "../images/50.jpg"
@@ -311,19 +311,19 @@ function getData(){
     img: "../images/51.jpg"
 },
 {
-    item: "فيلا في الساحل",
+    item: "فيلا فى الساحل",
     price: 8000000,
     boughtItems:0,
     img: "../images/52.jpg"
 },
 {
-    item: "إنتاج فيلم سينمائي",
+    item: "إنتاج فيلم سينمائى",
     price: 20000000,
     boughtItems:0,
     img: "../images/53.jpg"
 },
 {
-    item: "رحلة أسبوع في كل دولة",
+    item: "رحلة أسبوع فى كل دولة",
     price: 25000000,
     boughtItems:0,
     img: "../images/54.jpg"
@@ -341,7 +341,7 @@ function getData(){
     img: "../images/56.jpg"
 },
 { 
-    item: "هليكوبتر أباتشي",
+    item: "هليكوبتر أباتشى",
     price: 620000000,
     boughtItems:0,
     img: "../images/57.jpg"
