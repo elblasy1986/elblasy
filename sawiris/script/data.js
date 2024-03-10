@@ -2,103 +2,109 @@
 function getData(){
     let items = [{
     item: "كيس كاتشب",
-    price: 1,
+    price: 2,
     boughtItems:0,
     img: "../images/01.jpg"
 },
 {
     item: "ساندوتش فول",
-    price: 4,
+    price: 8,
     boughtItems:0,
     img: "../images/02.jpg"
 },
 {
     item: "شوب قصب",
-    price: 5,
+    price: 10,
     boughtItems:0,
     img: "../images/03.jpg"
 },
 {
     item: "لتر صودا",
-    price: 11,
+    price: 19,
     boughtItems:0,
     img: "../images/04.jpg"
 },
 {
     item: "طبق كشرى",
-    price: 15,
+    price: 28,
     boughtItems:0,
     img: "../images/05.jpg"
 },
 {
     item: "لتر لبن",
-    price: 21,
+    price: 48,
     boughtItems:0,
     img: "../images/06.jpg"
 },
 {
     item: "علبة تونة",
-    price: 29,
+    price: 68,
     boughtItems:0,
     img: "../images/07.jpg"
 },
 {
     item: "ساندوتش شاورما سورى",
-    price: 36,
+    price: 75,
     boughtItems:0,
     img: "../images/08.jpg"
 },
 {
     item: "ساندوتش برجر كومبو",
-    price: 59,
+    price: 115,
     boughtItems:0,
     img: "../images/09.jpg"
 },
 {
     item: "قصة أو كتاب",
-    price: 60,
+    price: 125,
     boughtItems:0,
     img: "../images/10.jpg"
 },
 {
+    item: "تذكرة سينما",
+    price: 135,
+    boughtItems:0,
+    img: "../images/13.jpg"
+},
+{
     item: "شبشب",
-    price: 75,
+    price: 144,
     boughtItems:0,
     img: "../images/11.jpg"
 },
 {
     item: "كرتونة بيض",
-    price: 80,
+    price: 173,
     boughtItems:0,
     img: "../images/12.jpg"
 },
 {
-    item: "تذكرة سينما",
-    price: 85,
+    item: "اشتراك واتش ات لمدة سنة",
+    price: 200,
     boughtItems:0,
-    img: "../images/13.jpg"
+    img: "../images/19.jpg"
 },
 {
     item: "وجبة فراخ بروست كومبو",
-    price: 103,
+    price: 221,
     boughtItems:0,
     img: "../images/14.jpg"
 },
 {
     item: "كرسى بلاستيك",
-    price: 135,
+    price: 270,
     boughtItems:0,
     img: "../images/15.jpg"
 },
 {
     item: "علبة حفاضات",
-    price: 198,
+    price: 335,
     boughtItems:0,
     img: "../images/16.jpg"
 },
 {
     item: "تفويلة بنزين ٩٥",
-    price: 645,
+    price: 750,
     boughtItems:0,
     img: "../images/17.jpg"
 },
@@ -109,70 +115,58 @@ function getData(){
     img: "../images/18.jpg"
 },
 {
-    item: "اشتراك واتش ات لمدة سنة",
-    price: 1980,
-    boughtItems:0,
-    img: "../images/19.jpg"
-},
-{
     item: "طقم حلل",
-    price: 2200,
+    price: 4200,
     boughtItems:0,
     img: "../images/20.jpg"
 },
 {
     item: "اشتراك بن سبورت لمدة سنة",
-    price: 2760,
+    price: 7650,
     boughtItems:0,
     img: "../images/21.jpg"
 },
 {
     item: "ليلة فى فندق فاخر",
-    price: 5400,
+    price: 10800,
     boughtItems:0,
     img: "../images/22.jpg"
 },
 {
-    item: "سماعات آير بودز",
-    price: 6600,
-    boughtItems:0,
-    img: "../images/23.jpg"
-},
-{
     item: "اشتراك جولدز جيم لمدة سنة",
-    price: 10000,
+    price: 13000,
     boughtItems:0,
     img: "../images/24.jpg"
 },
 {
+    item: "سماعات آير بودز",
+    price: 15900,
+    boughtItems:0,
+    img: "../images/23.jpg"
+},
+{
     item: "زجاجة برفان أصلية",
-    price: 11000,
+    price: 19950,
     boughtItems:0,
     img: "../images/25.jpg"
 },
 {
-    item: "بلايستيشن ٥",
-    price: 16900,
-    boughtItems:0,
-    img: "../images/26.jpg"
-},
-{
-    item: "موتوسيكل حلاوة صينى",
-    price: 18000,
-    boughtItems:0,
-    img: "../images/27.jpg"
-},
-{
-    item: "عجلة فونيكس",
-    price: 18500,
+    item: "عجلة ترينكس",
+    price: 32000,
     boughtItems:0,
     img: "../images/28.jpg"
 },
 {
-    item: "فدان أرض زراعية",
-    price: 19200,
+    item: "موتوسيكل حلاوة صينى",
+    price: 39000,
     boughtItems:0,
-    img: "../images/29.jpg"
+    img: "../images/27.jpg"
+},
+{
+    item: "بلايستيشن ٥",
+    price: 40500,
+    boughtItems:0,
+    img: "../images/26.jpg"
 },
 {
     item: "سامسونج جالاكسى إس٢٤",
@@ -257,6 +251,12 @@ function getData(){
     price:180000 ,
     boughtItems:0,
     img: "../images/43.jpg"
+},
+{
+    item: "فدان أرض زراعية",
+    price: 250000,
+    boughtItems:0,
+    img: "../images/29.jpg"
 },
 {
     item: "نيسان صنى",
