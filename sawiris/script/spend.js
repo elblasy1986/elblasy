@@ -1,5 +1,5 @@
 let data = getData();
-const wealth = 78650490162;
+const wealth = 186925976000;
 
 document.querySelector('.money-bar').textContent = getWealth().toLocaleString("en-US");
 const grid = document.querySelector('.items');
