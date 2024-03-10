@@ -1,0 +1,350 @@
+html {
+    font-size: 16px;
+    word-spacing: 1px;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+    color: #000;
+    font-family: "Cairo", Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background: #929ba5;
+    margin: 0;
+    padding: 0;
+}
+
+.site-container {
+    margin: auto;
+    max-width: 1200px;
+    width: 80%;
+}
+
+.header-wrapper {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    height: 94px;
+    background-color: #fff;
+    margin-bottom: 25px;
+    align-items: center;    
+}
+
+.header-inner {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 0 0 14px;
+    width: 100%;
+    max-width: 1000px;
+    justify-content: center;
+    display: block;
+}
+
+.header-site-link {
+    max-width: 100%;
+    align-content: center;
+    justify-content: center;
+    display: block;
+    max-height: 90px;
+}
+
+.header-link {
+    margin: 0;
+    max-width: 100%;
+    display: block;
+    align-content: center;
+    max-height: 90px;
+}
+
+.container {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #333;
+}
+
+.title {
+    font-size: 32px;
+    background: #fff;
+    padding: 30px 20px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.3em;
+}
+
+.header-img {
+    display: block;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 125px;
+    height: 125px;
+    margin: 10px auto 25px;
+    border-radius: 125px;
+}
+
+.money-bar {
+    color: #000;
+    background: linear-gradient(#ffcc00, #ffb000);
+    padding: 20px;
+    margin: 10px 0;
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    top: 0;
+    position: sticky;
+    z-index: 9999;
+}
+
+@media only screen and (max-width: 900px) {
+    .items {
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 10px 10px;
+        direction: rtl;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .items {
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 10px 10px;
+        direction: rtl;
+    }
+}
+
+@media all and (min-width: 900px) {
+
+    .items {
+        margin: 0;
+        display: grid;
+        grid-gap: 10px 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        direction: rtl;
+    }
+}
+
+.item-wrapper {
+    max-width: 100%;
+    background-color: #fff;
+    text-align: center;
+    font-size: 18px;
+    padding: 20px 15px;
+    width: 100%;
+}
+
+
+.item-img {
+    display: block;
+    margin: 15px auto;
+    height: 120px;
+    max-width: 100%;
+    -o-object-fit: contain;
+    object-fit: contain;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.item-name {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.item-cost {
+    font-size: 20px;
+    color: #c90000;
+}
+
+.item-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px 10px;
+    margin-top: 25px;
+}
+
+.item-sell {
+font-size: 16px;
+text-align: center;
+cursor: pointer;
+padding: 10px 12px;
+border-radius: 3px;
+color: #fff;
+border: none;
+font-weight: 700;
+user-select: none;
+touch-action: manipulation;
+font-family: "Cairo";
+    background: #f1f2f6 !important;
+    border: none;
+    color: #333;
+    cursor: auto;
+    touch-action: manipulation;
+}
+
+.item-input {
+    padding: 9px 12px;
+    border-radius: 3px;
+    border: 1px solid #b2bec3;
+    color: #333;
+    width: 100%;
+    appearance: none;
+    font-size: 16px;
+    text-align: center;
+    font-family: "Cairo";
+}
+
+.sell-btn {
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 3px;
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    user-select: none;
+    touch-action: manipulation;
+    font-family: "Cairo";
+    background: linear-gradient(#c90000, #a30000)
+}
+
+.item-buy {
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 3px;
+    color: #000;
+    border: none;
+    font-weight: 700;
+    user-select: none;
+    touch-action: manipulation;
+    font-family: "Cairo";
+    background: linear-gradient(#ffcc00, #ffb000);
+}
+
+.receipt-wrapper {
+    background-color: #fff;
+    text-align: center;
+    max-width: 100%;
+    font-size: 18px;
+    padding: 15px 15px 30px;
+    margin-top: 10px;
+}
+
+.receipt-items {
+    max-width: 290px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: grid;
+    grid-gap: 10px 0;
+    font-size: 18px;
+    grid-template-columns: 75px 45px 170px;
+}
+
+.receipt-total {
+    font-weight: 700;
+    max-width: 300px;
+    border-top: 1px solid #333;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.receipt-title {
+    font-size: 28px;
+    padding: 15px 15px 25px;
+    font-weight: 700;
+}
+
+.receipt-item-name {
+    text-align: right;
+    text-overflow: ellipsis;
+}
+
+.receipt-item-amount {
+    text-align: right;
+}
+
+.receipt-item-cost {
+    color: #c90000;
+    text-align: left;
+}
+
+.receipt-total-money {
+    color: #c90000;
+    text-align: start;
+}
+
+.share-btn {
+    background-color: #fff;
+    border: none;
+    color: white;
+    padding: 2px 4px;
+    font-size: 16px;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+
+.share-btn:hover {
+    background-color: grey;
+}
+
+.share-area {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    justify-content: center;
+}
+
+.share-icon {
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: 0px 10px 0px 10px;
+    transition: all 0.3s ease;
+}
+
+.share-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
