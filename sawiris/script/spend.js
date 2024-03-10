@@ -215,7 +215,7 @@ shareArea.addEventListener('click', (event) => {
         default: url = "https://www.facebook.com/sharer/sharer.php?u=";
 
     }
-    url += encodeURIComponent('https://sam7test.github.io/sawiris/pages/spend.html');
+    url += encodeURIComponent('https://elblasy.com/sawiris/');
     window.open(url, '_blank');
 })
 // Add method to prototype. this allows you to use this function on numbers and strings directly
