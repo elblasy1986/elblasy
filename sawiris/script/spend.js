@@ -1,5 +1,5 @@
 let data = getData();
-const wealth = 186925976000;
+const wealth = 186925976000 جنيه;
 
 document.querySelector('.money-bar').textContent = getWealth().toLocaleString("en-US");
 const grid = document.querySelector('.items');
