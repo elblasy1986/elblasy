@@ -346,6 +346,24 @@ function getData(){
     boughtItems:0,
     img: "../images/57.jpg"
 },
+{ 
+    item: "هليكوبتر أباتشى",
+    price: 620000000,
+    boughtItems:0,
+    img: "../images/58.jpg"
+},
+{ 
+    item: "هليكوبتر أباتشى",
+    price: 620000000,
+    boughtItems:0,
+    img: "../images/59.jpg"
+},
+{ 
+    item: "هليكوبتر أباتشى",
+    price: 620000000,
+    boughtItems:0,
+    img: "../images/60.jpg"
+},
 
 
 
