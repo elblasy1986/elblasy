@@ -64,55 +64,55 @@ function getData(){
     item: "تذكرة سينما",
     price: 135,
     boughtItems:0,
-    img: "../images/13.jpg"
+    img: "../images/11.jpg"
 },
 {
     item: "شبشب",
     price: 144,
     boughtItems:0,
-    img: "../images/11.jpg"
+    img: "../images/12.jpg"
 },
 {
     item: "كرتونة بيض",
     price: 173,
     boughtItems:0,
-    img: "../images/12.jpg"
+    img: "../images/13.jpg"
 },
 {
     item: "اشتراك واتش ات لمدة سنة",
     price: 200,
     boughtItems:0,
-    img: "../images/19.jpg"
+    img: "../images/14.jpg"
 },
 {
     item: "وجبة فراخ بروست كومبو",
     price: 221,
     boughtItems:0,
-    img: "../images/14.jpg"
+    img: "../images/15.jpg"
 },
 {
     item: "كرسى بلاستيك",
     price: 270,
     boughtItems:0,
-    img: "../images/15.jpg"
+    img: "../images/16.jpg"
 },
 {
     item: "علبة حفاضات",
     price: 335,
     boughtItems:0,
-    img: "../images/16.jpg"
+    img: "../images/17.jpg"
 },
 {
     item: "تفويلة بنزين ٩٥",
     price: 750,
     boughtItems:0,
-    img: "../images/17.jpg"
+    img: "../images/18.jpg"
 },
 {
     item: "تذكرة حفلة لعمرو دياب",
     price: 1750,
     boughtItems:0,
-    img: "../images/18.jpg"
+    img: "../images/19.jpg"
 },
 {
     item: "طقم حلل",
@@ -136,13 +136,13 @@ function getData(){
     item: "اشتراك جولدز جيم لمدة سنة",
     price: 13000,
     boughtItems:0,
-    img: "../images/24.jpg"
+    img: "../images/23.jpg"
 },
 {
     item: "سماعات آير بودز",
     price: 15900,
     boughtItems:0,
-    img: "../images/23.jpg"
+    img: "../images/24.jpg"
 },
 {
     item: "زجاجة برفان أصلية",
@@ -154,7 +154,7 @@ function getData(){
     item: "عجلة ترينكس",
     price: 32000,
     boughtItems:0,
-    img: "../images/28.jpg"
+    img: "../images/26.jpg"
 },
 {
     item: "موتوسيكل حلاوة صينى",
@@ -166,97 +166,97 @@ function getData(){
     item: "بلايستيشن ٥",
     price: 40500,
     boughtItems:0,
-    img: "../images/26.jpg"
+    img: "../images/28.jpg"
 },
 {
     item: "سامسونج جالاكسى إس٢٤",
     price: 24000,
     boughtItems:0,
-    img: "../images/30.jpg"
+    img: "../images/29.jpg"
 },
 {
     item: "بدلة",
     price: 24200,
     boughtItems:0,
-    img: "../images/31.jpg"
+    img: "../images/30.jpg"
 },
 {
     item: "عملية تجميل",
     price: 25000,
     boughtItems:0,
-    img: "../images/32.jpg"
+    img: "../images/31.jpg"
 },
 {
     item: "فستان",
     price: 29700,
     boughtItems:0,
-    img: "../images/33.jpg"
+    img: "../images/32.jpg"
 },
 {
     item: "رحلة عمرة",
     price: 35000,
     boughtItems:0,
-    img: "../images/34.jpg"
+    img: "../images/33.jpg"
 },
 {
     item: "آيفون ١٥ برو",
     price: 41800,
     boughtItems:0,
-    img: "../images/35.jpg"
+    img: "../images/34.jpg"
 },
 {
     item: "تليفيزيون ٦٥ بوصة",
     price: 48000,
     boughtItems:0,
-    img: "../images/36.jpg"
+    img: "../images/35.jpg"
 },
 {
     item: "ماك بوك برو",
     price: 52500,
     boughtItems:0,
-    img: "../images/37.jpg"
+    img: "../images/36.jpg"
 },
 {
     item: "سبيكة ذهب ٥٠ جرام",
     price: 52800,
     boughtItems:0,
-    img: "../images/38.jpg"
+    img: "../images/37.jpg"
 },
 {
     item: "توكتوك",
     price: 60000,
     boughtItems:0,
-    img: "../images/39.jpg"
+    img: "../images/38.jpg"
 },
 {
     item: "رحلة حج",
     price: 92000,
     boughtItems:0,
-    img: "../images/40.jpg"
+    img: "../images/39.jpg"
 },
 {
     item: "كمبيوتر ألعاب متطور",
     price: 120000,
     boughtItems:0,
-    img: "../images/41.jpg"
+    img: "../images/40.jpg"
 },
 {
     item: "ساعة رولكس",
     price: 130000,
     boughtItems:0,
-    img: "../images/42.jpg"
+    img: "../images/41.jpg"
 },
 {
     item: "موتوسيكل هوندا",
     price:180000 ,
     boughtItems:0,
-    img: "../images/43.jpg"
+    img: "../images/42.jpg"
 },
 {
     item: "فدان أرض زراعية",
     price: 250000,
     boughtItems:0,
-    img: "../images/29.jpg"
+    img: "../images/43.jpg"
 },
 {
     item: "نيسان صنى",
