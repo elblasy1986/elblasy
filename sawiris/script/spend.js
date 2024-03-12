@@ -134,7 +134,7 @@ function buyMore(totalMoney, oldValue, newValue, cost, item, inputValue) {
         totalMoney -= addedItems * cost;
         inputValue.value = newValue;
     }
-    document.querySelector('.money-bar').textContent = totalMoney.toLocaleString("en-us") جنيه;
+    document.querySelector('.money-bar').textContent = totalMoney.toLocaleString("en-us");
     oldValue = newValue;
     updateItem(newValue, item);
 
