@@ -37,7 +37,7 @@ getData().forEach(function (item) {
     gridItem.innerHTML =
         `<img class="item-img" src="${item.img}">
     <div class="item-name">${item.item}</div>
-    <div class="item-cost">${(item.price).toLocaleString("en-us")}</div>
+    <div class="item-cost">${(item.price).toLocaleString("en-us")} جنيه</div>
     <div class="item-controls">
         <button class="item-buy">شراء</button>
         <input type="number" class="item-input" value ='0' min='0'>
