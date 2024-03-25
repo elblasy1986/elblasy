@@ -4,7 +4,7 @@ const wealth = 186925976000;
 document.querySelector('.money-bar').textContent = getWealth().toLocaleString("en-US");
 const grid = document.querySelector('.items');
 if (window.navigator && window.navigator.canShare) {
-    const shareBtn = document.querySelector('.share-btn');
+    const shareBtn = document.querySelector('.share-area');
     shareBtn.style.visibility = "visible"
     shareBtn.addEventListener('click', function getReceiptImage(e) {
         e.preventDefault();
