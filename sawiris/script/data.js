@@ -1,4 +1,3 @@
-
 function getData(){
     let items = [{
     item: "كيس كاتشب",
