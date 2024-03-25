@@ -362,6 +362,6 @@ function getData(){
     img: "../images/60.jpg"
 },
 
-]
+];
 return items;
 }
