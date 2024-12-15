@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Memory Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🍓 Fruit Memory Game 🍉</h1>
+        <div class="info">
+            <span id="moves">Moves: 0</span>
+            <span id="timer">Time: 0s</span>
+        </div>
+        <div id="game-board"></div>
+        <button id="restart-btn">Restart Game</button>
+    </div>
+    <div id="win-popup" class="popup">
+        <div class="popup-content">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p id="win-message"></p>
+            <button id="close-popup">Play Again</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
