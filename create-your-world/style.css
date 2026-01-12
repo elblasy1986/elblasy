@@ -14,10 +14,23 @@ html,body{ height:100%; }
 
 body{
   margin:0;
-  background:
+  
+  /* BACKGROUND CONFIGURATION */
+  background-color: var(--bg);
+  background-image:
     radial-gradient(1200px 700px at 20% 0%, #132546 0%, transparent 60%),
-    radial-gradient(1000px 600px at 90% 20%, #1a2d3a 0%, transparent 55%),
-    var(--bg);
+    radial-gradient(1000px 600px at 90% 20%, #1a2d3a 0%, transparent 55%);
+  
+  /* Prevents the image from tiling/repeating */
+  background-repeat: no-repeat;
+  
+  /* Keeps the background locked in place while scrolling */
+  background-attachment: fixed;
+  
+  /* Forces the background to cover the entire available space */
+  background-size: 100% 100%;
+  
+  min-height: 100vh;
   color:var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -340,7 +353,7 @@ input[type="range"]::-moz-range-thumb { cursor: pointer; }
   
   /* MOBILE SPECIFIC */
   .planet-wrap{ 
-    /* Changed min-height to HEIGHT to force canvas to shrink */
+    /* MOBILE HEIGHT: Updated to 360px */
     height: 360px; 
     min-height: unset;
     flex: 0 0 auto;
