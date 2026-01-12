@@ -26,14 +26,12 @@ const UI = {
 // --- HISTORY STATE MANAGEMENT ---
 let undoStack = [];
 let redoStack = [];
-let isRestoringState = false; // Flag to ignore events during undo/redo
+let isRestoringState = false;
 
 function getCurrentState() {
   return {
     seed: planetSeed,
-    // Deep copy elements array because order changes
     elements: JSON.parse(JSON.stringify(ELEMENTS)),
-    // Deep copy values object
     values: { ...values }
   };
 }
@@ -43,32 +41,26 @@ function saveState() {
 
   const state = getCurrentState();
   
-  // If stack is not empty, check if state actually changed to avoid duplicates
   if (undoStack.length > 0) {
     const last = undoStack[undoStack.length - 1];
     if (JSON.stringify(last) === JSON.stringify(state)) return;
   }
 
   undoStack.push(state);
-  redoStack = []; // Clear redo stack on new action
+  redoStack = []; 
   updateUndoRedoUI();
 }
 
 function restoreState(state) {
   isRestoringState = true;
 
-  // Restore Seed
   planetSeed = state.seed;
-  UI.seedInput.value = planetSeed; // Update Input UI
+  UI.seedInput.value = planetSeed; 
 
-  // Restore Elements Order
   ELEMENTS = JSON.parse(JSON.stringify(state.elements));
-
-  // Restore Values
   values = { ...state.values };
 
-  // Rebuild UI
-  buildSliders(); // This will respect the new order in ELEMENTS
+  buildSliders(); 
   refreshUIValues();
   rebuildTileFromValuesFast();
 
@@ -77,10 +69,7 @@ function restoreState(state) {
 
 function performUndo() {
   if (undoStack.length === 0) return;
-
-  // Save current state to redo stack before undoing
   redoStack.push(getCurrentState());
-
   const prevState = undoStack.pop();
   restoreState(prevState);
   updateUndoRedoUI();
@@ -88,10 +77,7 @@ function performUndo() {
 
 function performRedo() {
   if (redoStack.length === 0) return;
-
-  // Save current state to undo stack before redoing
   undoStack.push(getCurrentState());
-
   const nextState = redoStack.pop();
   restoreState(nextState);
   updateUndoRedoUI();
@@ -445,7 +431,6 @@ function drawPlanet(){
   ctx.restore();
 }
 
-// --- LAYOUT SYNC (FORCE LEFT TO MATCH RIGHT) ---
 function syncHeights() {
   UI.planetPanel.style.height = 'auto';
   const rightH = UI.controlsPanel.offsetHeight;
@@ -453,7 +438,7 @@ function syncHeights() {
   drawPlanet();
 }
 
-// --- CUSTOM DRAG & DROP SYSTEM (No HTML5 Drag) ---
+// --- HYBRID DRAG & DROP (Mouse + Touch) ---
 let draggedItem = null;
 let draggedEl = null;
 let ghostEl = null;
@@ -462,40 +447,79 @@ let dragStartX = 0;
 let dragStartY = 0;
 let isDragging = false;
 
-function onRowMouseDown(e) {
+// Unified Start Logic
+function initDrag(e) {
   // STRICT CHECK: IGNORE if clicking Input (Track or Thumb)
   if (e.target.tagName === 'INPUT') return;
 
-  e.preventDefault(); 
+  // For touch, prevent default only if we determine it's a drag later?
+  // Actually, for instant drag feel, we might want to prevent default now IF it's mouse.
+  // For touch, we need to be careful about scrolling.
+  
+  const isTouch = (e.type === 'touchstart');
+  if (!isTouch) e.preventDefault(); 
   
   draggedEl = e.currentTarget;
   const idx = parseInt(draggedEl.dataset.index);
   draggedItem = ELEMENTS[idx];
   
-  dragStartX = e.clientX;
-  dragStartY = e.clientY;
+  const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+  const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+  
+  dragStartX = clientX;
+  dragStartY = clientY;
   
   const rect = draggedEl.getBoundingClientRect();
-  dragOffsetY = e.clientY - rect.top;
+  dragOffsetY = clientY - rect.top;
 
-  window.addEventListener('mousemove', onWindowMouseMove);
-  window.addEventListener('mouseup', onWindowMouseUp);
+  if (isTouch) {
+      window.addEventListener('touchmove', onWindowTouchMove, { passive: false });
+      window.addEventListener('touchend', onWindowTouchEnd);
+  } else {
+      window.addEventListener('mousemove', onWindowMouseMove);
+      window.addEventListener('mouseup', onWindowMouseUp);
+  }
 }
 
+// MOUSE HANDLERS
 function onWindowMouseMove(e) {
+  handleMove(e.clientX, e.clientY, e);
+}
+function onWindowMouseUp(e) {
+  cleanupDrag();
+  window.removeEventListener('mousemove', onWindowMouseMove);
+  window.removeEventListener('mouseup', onWindowMouseUp);
+}
+
+// TOUCH HANDLERS
+function onWindowTouchMove(e) {
+  // preventDefault to stop scrolling while dragging
+  if (isDragging) e.preventDefault(); 
+  handleMove(e.touches[0].clientX, e.touches[0].clientY, e);
+}
+function onWindowTouchEnd(e) {
+  cleanupDrag();
+  window.removeEventListener('touchmove', onWindowTouchMove);
+  window.removeEventListener('touchend', onWindowTouchEnd);
+}
+
+// COMMON LOGIC
+function handleMove(clientX, clientY, originalEvent) {
   if (!isDragging) {
-    if (Math.abs(e.clientY - dragStartY) > 3) {
-      // START DRAG: Save Undo State Here!
-      saveState(); 
+    if (Math.abs(clientY - dragStartY) > 5) {
+      // START DRAG
+      // If touch, we need to prevent default to stop scrolling now
+      if (originalEvent.cancelable) originalEvent.preventDefault();
+      
+      saveState(); // Save state for Undo
       startDrag();
     }
   }
   
   if (isDragging && ghostEl) {
-    ghostEl.style.top = (e.clientY - dragOffsetY) + 'px';
+    ghostEl.style.top = (clientY - dragOffsetY) + 'px';
     ghostEl.style.left = draggedEl.getBoundingClientRect().left + 'px';
-    
-    checkSwap(e.clientY);
+    checkSwap(clientY);
   }
 }
 
@@ -508,10 +532,20 @@ function startDrag() {
   draggedEl.classList.add('invisible');
 }
 
+function cleanupDrag() {
+  if (isDragging) {
+    if (ghostEl) ghostEl.remove();
+    if (draggedEl) draggedEl.classList.remove('invisible');
+  }
+  isDragging = false;
+  ghostEl = null;
+  draggedEl = null;
+  draggedItem = null;
+}
+
 function checkSwap(mouseY) {
   const siblings = Array.from(UI.sliders.children);
   const draggedIdx = siblings.indexOf(draggedEl);
-  
   let targetEl = null;
   
   for (let i = 0; i < siblings.length; i++) {
@@ -544,17 +578,14 @@ function checkSwap(mouseY) {
 }
 
 function swapRows(fromIdx, toIdx) {
-  // Data Swap
   const movedItem = ELEMENTS.splice(fromIdx, 1)[0];
   ELEMENTS.splice(toIdx, 0, movedItem);
   
-  // FLIP Animation Prep
   const container = UI.sliders;
   const children = Array.from(container.children);
   const positions = new Map();
   children.forEach(c => positions.set(c, c.getBoundingClientRect().top));
   
-  // DOM Swap
   const fromEl = children[fromIdx];
   const toEl = children[toIdx];
   
@@ -564,10 +595,8 @@ function swapRows(fromIdx, toIdx) {
     container.insertBefore(fromEl, toEl);
   }
   
-  // Texture Update
   rebuildTileFromValuesFast();
   
-  // FLIP Animation Play
   Array.from(container.children).forEach(child => {
     if (child.classList.contains('invisible')) return;
     
@@ -578,28 +607,12 @@ function swapRows(fromIdx, toIdx) {
     if (delta !== 0) {
       child.style.transform = `translateY(${delta}px)`;
       child.style.transition = 'none';
-      
       requestAnimationFrame(() => {
         child.style.transition = ''; 
         child.style.transform = '';
       });
     }
   });
-}
-
-function onWindowMouseUp(e) {
-  window.removeEventListener('mousemove', onWindowMouseMove);
-  window.removeEventListener('mouseup', onWindowMouseUp);
-  
-  if (isDragging) {
-    if (ghostEl) ghostEl.remove();
-    if (draggedEl) draggedEl.classList.remove('invisible');
-  }
-  
-  isDragging = false;
-  ghostEl = null;
-  draggedEl = null;
-  draggedItem = null;
 }
 
 function buildSliders(){
@@ -610,8 +623,9 @@ function buildSliders(){
     row.className = "row";
     row.dataset.index = String(idx);
     
-    // Attach custom drag handler
-    row.addEventListener('mousedown', onRowMouseDown);
+    // Attach Hybrid Handlers
+    row.addEventListener('mousedown', initDrag);
+    row.addEventListener('touchstart', initDrag, { passive: false });
 
     const label = document.createElement("div");
     label.className = "label";
@@ -645,48 +659,21 @@ function buildSliders(){
     input.value = String(values[el.key] || 0);
     input.id = `rng_${el.key}`;
     
-    // Stop event so row drag doesn't start
-    input.addEventListener("mousedown", (e) => {
-        e.stopPropagation();
-    });
+    // Stop drag start on sliders
+    input.addEventListener("mousedown", (e) => e.stopPropagation());
     input.addEventListener("touchstart", (e) => e.stopPropagation(), {passive: true});
 
     // --- UNDO LOGIC FOR SLIDERS ---
-    // Save state BEFORE starting to slide (mousedown) doesn't work well because 
-    // we don't know if they will actually change it.
-    // Better: Save state on 'change' which fires when user RELEASES the handle.
-    // However, since we need to undo TO the value before the drag, 
-    // we actually need to save state on mousedown but only if it wasn't just saved.
-    // Simplest approach: Use 'change' event to save the NEW state? 
-    // No, standard undo is: I changed 10->20. Undo should go back to 10.
-    // So we need to push the *previous* state right before the change happens.
-    // But 'input' fires continuously.
-    // Solution: We save the state on 'mousedown' (start of interaction) into a temp var,
-    // then on 'change' (end of interaction), we push that temp var to the stack.
     let tempState = null;
     
-    input.addEventListener("mousedown", () => {
-        tempState = getCurrentState();
-    });
+    // Capture state on touchstart/mousedown (Before Change)
+    const startCapture = () => { tempState = getCurrentState(); };
+    input.addEventListener("mousedown", startCapture);
+    input.addEventListener("touchstart", startCapture, {passive: true});
     
+    // Commit state on change (After Release)
     input.addEventListener("change", () => {
         if(tempState) {
-            // We manually push the PREVIOUS state to the undo stack
-            // But wait, our system pushes the CURRENT state to undo stack before making a change?
-            // No, usually 'undo' stack contains previous states.
-            // If I am at State A. I drag to State B. Undo stack should have A.
-            // Our saveState() function saves the CURRENT state to the stack.
-            // So we should call saveState() *before* the value changes?
-            // But 'input' updates live. 
-            // Correct Logic: 
-            // 1. MouseDown: Capture State A (temp).
-            // 2. Input: Updates visual to B (live).
-            // 3. Change (MouseUp): Commit. 
-            // We need to push State A to the Undo Stack.
-            // Our saveState() helper pushes the *current* application state.
-            // So we can't use saveState() directly here because the app state is already B (live update).
-            // We need to manually push the 'tempState' we captured at mousedown.
-            
             if (undoStack.length === 0 || JSON.stringify(undoStack[undoStack.length-1]) !== JSON.stringify(tempState)) {
                 undoStack.push(tempState);
                 redoStack = [];
@@ -734,7 +721,6 @@ function refreshSelectedUI(){
   }
 }
 
-// seed
 function randomSeedOnStart(){
   const s = randomSeedStringUniform();
   UI.seedInput.value = s;
@@ -744,7 +730,7 @@ function randomSeedOnStart(){
 }
 
 function setSeedFromInputFinalize(){
-  saveState(); // Save old state before changing
+  saveState(); 
   const final = sanitizeSeedFinal(UI.seedInput.value);
   UI.seedInput.value = final;
   const n = parseInt(final, 10);
@@ -754,7 +740,7 @@ function setSeedFromInputFinalize(){
 }
 
 function rerollSeed(){
-  saveState(); // Save old state before changing
+  saveState(); 
   const s = randomSeedStringUniform();
   UI.seedInput.value = s;
   planetSeed = parseInt(s, 10) || 0;
@@ -865,11 +851,8 @@ function init(){
 
   UI.rotSpeed.addEventListener("mousedown", (e) => e.stopPropagation());
 
-  // Init listeners for Undo/Redo
   UI.undoBtn.addEventListener("click", performUndo);
   UI.redoBtn.addEventListener("click", performRedo);
-  
-  // Initial UI check
   updateUndoRedoUI();
 
   randomSeedOnStart(); 
@@ -895,7 +878,6 @@ function init(){
   rotationSpeed = clamp(parseFloat(UI.rotSpeed.value) || 0.9, ROT_MIN, ROT_MAX);
 
   UI.captureBtn.addEventListener("click", capturePoster);
-  
   window.addEventListener('resize', syncHeights);
 
   requestAnimationFrame(tick);
