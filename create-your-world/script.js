@@ -431,10 +431,20 @@ function drawPlanet(){
   ctx.restore();
 }
 
+// --- LAYOUT SYNC (FORCE LEFT TO MATCH RIGHT) ---
 function syncHeights() {
-  UI.planetPanel.style.height = 'auto';
-  const rightH = UI.controlsPanel.offsetHeight;
-  UI.planetPanel.style.height = rightH + 'px';
+  // Only sync heights on desktop where they are side-by-side
+  if (window.innerWidth > 980) {
+    UI.planetPanel.style.height = 'auto';
+    UI.controlsPanel.style.height = 'auto';
+    const maxH = Math.max(UI.planetPanel.offsetHeight, UI.controlsPanel.offsetHeight);
+    UI.planetPanel.style.height = maxH + 'px';
+    UI.controlsPanel.style.height = maxH + 'px';
+  } else {
+    // Reset to auto on mobile so they stack naturally
+    UI.planetPanel.style.height = 'auto';
+    UI.controlsPanel.style.height = 'auto';
+  }
   drawPlanet();
 }
 
@@ -452,10 +462,6 @@ function initDrag(e) {
   // STRICT CHECK: IGNORE if clicking Input (Track or Thumb)
   if (e.target.tagName === 'INPUT') return;
 
-  // For touch, prevent default only if we determine it's a drag later?
-  // Actually, for instant drag feel, we might want to prevent default now IF it's mouse.
-  // For touch, we need to be careful about scrolling.
-  
   const isTouch = (e.type === 'touchstart');
   if (!isTouch) e.preventDefault(); 
   
@@ -878,6 +884,7 @@ function init(){
   rotationSpeed = clamp(parseFloat(UI.rotSpeed.value) || 0.9, ROT_MIN, ROT_MAX);
 
   UI.captureBtn.addEventListener("click", capturePoster);
+  
   window.addEventListener('resize', syncHeights);
 
   requestAnimationFrame(tick);
