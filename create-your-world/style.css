@@ -91,8 +91,8 @@ h1{ margin:0; letter-spacing:1px; font-size:20px; line-height:1.2; }
   border: 2px dashed rgba(126,227,255,.25);
   border-radius: 18px;
   flex: 1;
-  /* DESKTOP HEIGHT: Reduced to 460px for a compact look */
-  min-height: 460px; 
+  /* DESKTOP HEIGHT: Reduced from 460px to 440px */
+  min-height: 440px; 
   overflow: hidden;
 }
 
@@ -340,8 +340,8 @@ input[type="range"]::-moz-range-thumb { cursor: pointer; }
   
   /* MOBILE SPECIFIC */
   .planet-wrap{ 
-    /* Reduced mobile height: 420px */
-    min-height: 420px; 
+    /* MOBILE HEIGHT: Reduced from 420px to 400px */
+    min-height: 400px; 
   }
   
   .controls {
