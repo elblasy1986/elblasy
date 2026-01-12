@@ -119,7 +119,7 @@ const TILE_N = TILE_W * TILE_H;
 
 const ROT_MIN = 0.5;
 const ROT_MAX = 1.25;
-let rotationSpeed = 0.9;
+let rotationSpeed = 0.65;
 const ROT_ANGLE = 12 * Math.PI / 180;
 let offX = 0;
 
