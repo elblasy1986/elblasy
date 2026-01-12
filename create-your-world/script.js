@@ -431,17 +431,17 @@ function drawPlanet(){
   ctx.restore();
 }
 
-// --- LAYOUT SYNC (FORCE LEFT TO MATCH RIGHT) ---
+// --- LAYOUT SYNC (FORCE LEFT TO MATCH RIGHT ON DESKTOP ONLY) ---
 function syncHeights() {
-  // Only sync heights on desktop where they are side-by-side
   if (window.innerWidth > 980) {
+    // Desktop: Match heights
     UI.planetPanel.style.height = 'auto';
     UI.controlsPanel.style.height = 'auto';
     const maxH = Math.max(UI.planetPanel.offsetHeight, UI.controlsPanel.offsetHeight);
     UI.planetPanel.style.height = maxH + 'px';
     UI.controlsPanel.style.height = maxH + 'px';
   } else {
-    // Reset to auto on mobile so they stack naturally
+    // Mobile: Reset to auto to let content shrink-wrap
     UI.planetPanel.style.height = 'auto';
     UI.controlsPanel.style.height = 'auto';
   }
