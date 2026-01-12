@@ -20,7 +20,7 @@ body{
     var(--bg);
   color:var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  touch-action: none; 
+  /* REMOVED: touch-action: none; -> This was blocking the scroll! */
 }
 
 .app{ max-width:1200px; margin:0 auto; padding:14px; }
@@ -104,8 +104,6 @@ h1{ margin:0; letter-spacing:1px; font-size:20px; line-height:1.2; }
   border-radius: 18px;
 }
 
-/* --- ACTION BUTTONS (Camera, Undo, Redo) --- */
-/* Shared style for all icon buttons on the planet */
 .action-btn {
   width: 44px;
   height: 44px;
@@ -122,14 +120,12 @@ h1{ margin:0; letter-spacing:1px; font-size:20px; line-height:1.2; }
 .action-btn:hover:not(:disabled) { background: rgba(8,12,22,.85); }
 .action-btn:active:not(:disabled) { transform: translateY(1px); }
 
-/* Disabled state for Undo/Redo */
 .action-btn:disabled {
   opacity: 0.5;
   cursor: default;
   pointer-events: none;
 }
 
-/* Positioning */
 .cam-pos {
   position: absolute;
   right: 12px;
@@ -242,7 +238,7 @@ h1{ margin:0; letter-spacing:1px; font-size:20px; line-height:1.2; }
   border-radius: 14px;
   cursor: grab; 
   user-select: none;
-  touch-action: none;
+  /* REMOVED: touch-action: none; -> This blocked scrolling on the list */
   position: relative;
   transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   z-index: 1;
@@ -297,7 +293,8 @@ input[type="range"]{
   width: 100%;
   accent-color: var(--accent);
   cursor: pointer; 
-  touch-action: pan-x;
+  /* Allows dragging slider left/right, but scroll up/down */
+  touch-action: pan-x; 
 }
 input[type="range"]::-webkit-slider-thumb { cursor: pointer; }
 input[type="range"]::-moz-range-thumb { cursor: pointer; }
