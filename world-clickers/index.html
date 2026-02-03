@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+    <!-- Audio Assets -->
+    <audio id="audio-bg-music" loop src="sounds/background_music.ogg"></audio>
+    <audio id="audio-click" src="sounds/pop_sound.wav"></audio>
+    <audio id="audio-purchase" src="sounds/purchase_sound.wav"></audio>
+
+    <!-- UI Overlay (Top Left Menu) -->
+    <div class="ui-controls">
+        <i class="fa-solid fa-bars" id="btn-menu"></i>
+        <i class="fa-solid fa-user-astronaut" id="btn-astronauts"></i>
+        <i class="fa-solid fa-cart-shopping" id="btn-shop"></i>
+        <i class="fa-solid fa-star" id="btn-leaderboard"></i>
+    </div>
+
+    <!-- Top Right Controls -->
+    <div class="profile-control">
+        <i class="fa-solid fa-music" id="btn-music"></i>
+        <i class="fa-solid fa-volume-high" id="btn-audio"></i>
+        <i class="fa-solid fa-circle-exclamation" id="btn-help"></i>
+        <i class="fa-solid fa-user" id="btn-profile"></i>
+    </div>
+
+    <!-- Main Game Wrapper -->
+    <div class="game-wrapper">
+        <!-- Logo -->
+        <img src="world_clickers_logo.png" alt="World Clickers Logo" class="logo">
+
+        <!-- Main Game Area -->
+        <main class="game-stage">
+
+            <!-- Score Header -->
+            <header class="game-header">
+                <div class="score-board">
+                    <span class="currency-symbol">$</span><span id="score-value">0</span>
+                </div>
+            </header>
+
+            <!-- Anchor Wrapper -->
+            <div class="globe-wrapper-anchor">
+                <!-- Systems Rotator -->
+                <div class="systems-rotator">
+                    <!-- EARTH SYSTEM -->
+                    <div class="globe-system" id="earth-system">
+                        <div class="pulse-wrapper">
+                            <!-- Start Overlay -->
+                            <div id="start-overlay">
+                                <span>PLAY</span>
+                            </div>
+
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="earth-interact-zone">
+                                <div class="layer earth-layer"></div>
+                                <div class="layer clouds-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Earth Glow -->
+                            <div class="globe-glow"></div>
+                        </div>
+                    </div>
+
+                    <!-- MOON SYSTEM (Initially Hidden/Off-screen) -->
+                    <div class="globe-system off-screen-right" id="moon-system">
+                        <div class="pulse-wrapper">
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="moon-interact-zone">
+                                <div class="layer moon-layer"></div>
+                                <div class="layer moon-border-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Moon Glow -->
+                            <div class="globe-glow moon-glow"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moon Travel Button (Static) -->
+                <div class="moon-travel-btn" id="btn-travel">
+                    <i class="fa-solid fa-shuttle-space"></i>
+                    <div class="text-container">
+                        <span>Fly to The</span>
+                        <span class="title">Moon</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Help Overlay -->
+    <div id="help-overlay" class="hidden">
+        <div class="help-content">
+            <i class="fa-solid fa-xmark close-btn" id="btn-close-help"></i>
+            <img src="favicon.png" alt="World Clickers" class="help-icon">
+            <div class="help-text">
+                <p>World Clickers is a global idle-clicker and resource-mining game where players generate wealth by
+                    clicking, auto-mining, and strategically investing in tools. Each click contributes to a
+                    country-based economy, allowing nations to compete for global dominance through collective wealth
+                    accumulation.</p>
+                <br>
+                <p>As players progress, astronauts unlock lunar exploration, opening an entirely new tier of resources
+                    with dramatically higher values. The first astronaut from each country to land on the Moon will have
+                    their name permanently recorded forever as the first representative of their nation to reach the
+                    Moon, creating historic moments, national pride, and true digital legacy.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Menu Overlay -->
+    <div id="menu-overlay" class="hidden">
+        <div class="menu-content">
+            <i class="fa-solid fa-xmark close-btn" id="btn-close-menu"></i>
+            <!-- Menu Navigation -->
+            <nav class="menu-nav">
+                <div class="menu-item" id="btn-menu-resources">
+                    <i class="fa-solid fa-cube"></i>
+                    <span>Resources Guide</span>
+                </div>
+                <div class="menu-item" id="btn-menu-tools">
+                    <i class="fa-solid fa-trowel"></i>
+                    <span>Tools Guide</span>
+                </div>
+            </nav>
+
+            <div class="menu-footer">
+                <span>Privacy</span>
+                <span>Terms</span>
+                <span>Contact</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources Guide Overlay -->
+    <div id="resources-overlay" class="hidden">
+        <div class="help-content guide-content">
+            <i class="fa-solid fa-xmark close-btn" id="btn-close-resources"></i>
+
+            <div class="help-text guide-text">
+                <h1 class="guide-title">Resources Guide</h1>
+
+                <div class="guide-tabs">
+                    <div class="menu-item tab-btn active" id="tab-res-earth">
+                        <i class="fa-solid fa-earth-africa"></i>
+                        <span>Earth</span>
+                    </div>
+                    <div class="menu-item tab-btn" id="tab-res-moon">
+                        <i class="fa-solid fa-moon"></i>
+                        <span>Moon</span>
+                    </div>
+                </div>
+
+                <div id="list-res-earth" class="guide-list">
+                    <!-- Earth Items (10 Items) -->
+                    <div class="guide-item">
+                        <img src="resources/wood.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Wood</h3>
+                            <p>Common Earth resource (<b>28%</b> rarity, value <b>1</b>). The foundation of early
+                                progression and basic income.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/fish.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Fish</h3>
+                            <p>Common resource (<b>22%</b> rarity, value <b>2</b>). Represents oceans and food supply
+                                with slightly higher returns than wood.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/coal.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Coal</h3>
+                            <p>Common but strategic (<b>15%</b> rarity, value <b>4</b>). Powers early industrial
+                                progress and steady growth.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/stone.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Stone</h3>
+                            <p>Appears at <b>10%</b> rarity (value <b>5</b>). Supports durability, construction, and
+                                expansion.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/oil.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Oil</h3>
+                            <p>Uncommon resource (<b>8%</b> rarity, value <b>10</b>). Introduces modern energy and
+                                higher income.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/iron.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Iron</h3>
+                            <p>Uncommon industrial resource (<b>7%</b> rarity, value <b>15</b>). Key to mid-game
+                                manufacturing and strength.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/copper.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Copper</h3>
+                            <p>Rare resource (<b>5%</b> rarity, value <b>20</b>). Vital for advanced industry and
+                                electrical systems.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/silver.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Silver</h3>
+                            <p>Rare precious metal (<b>3%</b> rarity, value <b>40</b>). Enables high-value wealth and
+                                leaderboard growth.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/gold.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Gold</h3>
+                            <p>Very Rare (<b>1.5%</b> rarity, value <b>80</b>). A symbol of power, prestige, and global
+                                wealth.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/diamond.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Diamond</h3>
+                            <p>Ultra Rare Earth resource (<b>0.5%</b> rarity, value <b>150</b>). The peak of Earth
+                                mining rewards.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="list-res-moon" class="guide-list hidden">
+                    <!-- Moon Items (10 Items) -->
+                    <div class="guide-item">
+                        <img src="resources/regolith_dust.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Regolith Dust</h3>
+                            <p>Most common lunar resource (<b>35%</b> rarity, value <b>200</b>). Abundant yet highly
+                                valuable.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/lunar_glass.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Lunar Glass</h3>
+                            <p>Appears at <b>25%</b> rarity (value <b>300</b>). Formed under extreme lunar conditions.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/lunar_ice.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Lunar Ice</h3>
+                            <p>Uncommon (<b>15%</b> rarity, value <b>450</b>). Essential for survival and future
+                                colonization.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/lunar_sapphire.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Lunar Sapphire</h3>
+                            <p>Rare (<b>8%</b> rarity, value <b>700</b>). Highly desired cosmic crystal.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/ancient_meteor_alloy.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Ancient Meteor Alloy</h3>
+                            <p>Rare resource (<b>6%</b> rarity, value <b>1000</b>). Forged from ancient meteor impacts.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/quantum_fiber.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Quantum Fiber</h3>
+                            <p>Epic material (<b>4%</b> rarity, value <b>1500</b>). Introduces advanced futuristic
+                                technology.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/stardust_crystals.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Stardust Crystals</h3>
+                            <p>Epic resource (<b>3%</b> rarity, value <b>2000</b>). Pure cosmic energy.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/moonstone_core.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Moonstone Core</h3>
+                            <p>Legendary (<b>2.5%</b> rarity, value <b>3000</b>). The heart of lunar power.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/dark_matter_fragments.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Dark Matter Fragments</h3>
+                            <p>Mythic resource (<b>1.3%</b> rarity, value <b>4000</b>). Extremely rare and powerful.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="resources/ethereum_pulse.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Ethereum Pulse</h3>
+                            <p>Ultra Mythic (<b>0.2%</b> rarity, value <b>5000</b>). The ultimate cosmic resource.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tools Guide Overlay -->
+    <div id="tools-overlay" class="hidden">
+        <div class="help-content guide-content">
+            <i class="fa-solid fa-xmark close-btn" id="btn-close-tools"></i>
+
+            <div class="help-text guide-text">
+                <h1 class="guide-title">Tools Guide</h1>
+
+                <div class="guide-tabs">
+                    <div class="menu-item tab-btn active" id="tab-tools-earth">
+                        <i class="fa-solid fa-earth-africa"></i>
+                        <span>Earth</span>
+                    </div>
+                    <div class="menu-item tab-btn" id="tab-tools-moon">
+                        <i class="fa-solid fa-moon"></i>
+                        <span>Moon</span>
+                    </div>
+                </div>
+
+                <div id="list-tools-earth" class="guide-list">
+                    <!-- Earth Tools (10 Items) -->
+                    <div class="guide-item">
+                        <img src="tools/timber_axe.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Timber Axe – $0.49</h3>
+                            <p>Entry-level tool for Wood. Auto-mines 1 Wood/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/hydro_netter.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Hydro Netter – $0.79</h3>
+                            <p>Collects Fish automatically. Auto-mines 1 Fish/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/coal_cracker.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Coal Cracker – $1.29</h3>
+                            <p>Built for Coal extraction. Auto-mines 1 Coal/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/stone_splitter.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Stone Splitter – $1.59</h3>
+                            <p>Designed for Stone mining. Auto-mines 1 Stone/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/oil_extractor.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Oil Extractor – $2.49</h3>
+                            <p>Unlocks Oil harvesting. Auto-mines 1 Oil/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/iron_digger.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Iron Digger – $3.49</h3>
+                            <p>Heavy industrial tool for Iron. Auto-mines 1 Iron/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/copper_cutter.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Copper Cutter – $4.49</h3>
+                            <p>Precision Copper extraction. Auto-mines 1 Copper/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/silver_shaver.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Silver Shaver – $6.49</h3>
+                            <p>Optimized for Silver veins. Auto-mines 1 Silver/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/gold_miner_rig.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Gold Miner Rig – $8.99</h3>
+                            <p>High-end Gold mining tool. Auto-mines 1 Gold/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/crystal_pierce_drill.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Crystal Pierce Drill – $12.99</h3>
+                            <p>Required for Diamond extraction. Auto-mines 1 Diamond/sec forever.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="list-tools-moon" class="guide-list hidden">
+                    <!-- Moon Tools (10 Items) -->
+                    <div class="guide-item">
+                        <img src="tools/dust_vacuumer.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Dust Vacuumer – $13.99</h3>
+                            <p>Collects Regolith Dust. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/glass_glow_cutter.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Glass Glow Cutter – $14.99</h3>
+                            <p>Extracts Lunar Glass efficiently. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/frost_core_drill.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Frost Core Drill – $15.99</h3>
+                            <p>Harvests Lunar Ice safely. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/sapphire_saw.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Sapphire Saw – $16.99</h3>
+                            <p>Precision tool for Lunar Sapphire. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/meteor_forge_extractor.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Meteor Forge Extractor – $17.99</h3>
+                            <p>Extracts Ancient Meteor Alloy. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/quantum_thread_puller.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Quantum Thread Puller – $18.49</h3>
+                            <p>Handles Quantum Fiber. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/star_shard_collector.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Star Shard Collector – $18.99</h3>
+                            <p>Gathers Stardust Crystals. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/core_pulse_harvester.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Core Pulse Harvester – $19.49</h3>
+                            <p>Extracts Moonstone Core. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/void_splitter.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Void Splitter – $19.79</h3>
+                            <p>Fractures Dark Matter Fragments. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <img src="tools/pulse_conductor.png" class="guide-img">
+                        <div class="guide-info">
+                            <h3>Pulse Conductor – $19.99</h3>
+                            <p>Exclusive Ethereum Pulse tool. Auto-mines 1 unit/sec forever.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Overlay -->
+    <div id="shop-overlay" class="hidden">
+        <div class="help-content shop-content">
+            <i class="fa-solid fa-xmark close-btn" id="btn-close-shop"></i>
+            <div class="shop-header">
+                <h1 class="guide-title" id="shop-title">Tool Shop</h1>
+            </div>
+
+            <div id="shop-list" class="shop-list">
+                <!-- Items populated by JS -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
