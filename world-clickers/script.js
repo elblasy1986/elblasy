@@ -503,7 +503,134 @@ function init() {
     document.addEventListener('contextmenu', e => e.preventDefault());
 }
 
+// --- Loading & Preload Logic ---
+async function preloadAssets() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingBar = document.getElementById('loading-bar-fill');
+
+    // 1. Gather all Assets
+    const imagePaths = [
+        'space/background.png',
+        'space/earth.png',
+        'space/clouds.png',
+        'space/earth_glow.png',
+        'space/circular_shading.png',
+        'space/moon.png',
+        'space/moon_border.png',
+        'space/moon_glow.png',
+        'favicon.png'
+    ];
+
+    // Add Resources
+    CONFIG.resources.forEach(r => imagePaths.push(r.img));
+    CONFIG.moonResources.forEach(r => imagePaths.push(r.img));
+
+    // Add Tools
+    CONFIG.earthTools.forEach(t => imagePaths.push(t.img));
+    CONFIG.moonTools.forEach(t => imagePaths.push(t.img));
+
+    const audioPaths = [
+        'sounds/background_music.ogg',
+        'sounds/pop_sound.wav',
+        'sounds/purchase_sound.wav'
+    ];
+
+    const totalAssets = imagePaths.length + audioPaths.length + 1; // +1 for fonts
+    let loadedCount = 0;
+
+    const updateProgress = () => {
+        loadedCount++;
+        const percent = Math.min((loadedCount / totalAssets) * 100, 100);
+        if (loadingBar) loadingBar.style.width = `${percent}%`;
+    };
+
+    // 2. Load Images
+    const imagePromises = imagePaths.map(src => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => { updateProgress(); resolve(); };
+            img.onerror = () => {
+                console.warn(`Failed to load image: ${src}`);
+                updateProgress(); // Count errors too to avoid hanging
+                resolve();
+            };
+        });
+    });
+
+    // 3. Load Audio
+    // For audio, we use fetch/blob or just Audio object. 
+    // Audio object 'canplaythrough' is best for game SFX.
+    const audioPromises = audioPaths.map(src => {
+        return new Promise((resolve) => {
+            const audio = new Audio();
+            audio.src = src;
+            // 'canplaythrough' implies it's ready to play
+            // 'loadeddata' is faster but maybe not "fully" ready
+            // We'll use a timeout fallback just in case audio strictness blocks us
+            const onReady = () => {
+                cleanup();
+                updateProgress();
+                resolve();
+            };
+
+            const onError = () => {
+                cleanup();
+                console.warn(`Failed to load audio: ${src}`);
+                updateProgress();
+                resolve();
+            };
+
+            const cleanup = () => {
+                audio.removeEventListener('canplaythrough', onReady);
+                audio.removeEventListener('error', onError);
+            };
+
+            audio.addEventListener('canplaythrough', onReady);
+            audio.addEventListener('error', onError);
+
+            // Fallback if browser policy or network stalls audio
+            setTimeout(() => {
+                if (loadedCount < totalAssets) {
+                    // Force resolve this specific one if it's taking too long (3s)
+                    // But we rely on the event mostly.
+                    // Actually, let's just let the promise race or handle it.
+                    // We won't force resolve here to respect "Real Loading", 
+                    // but we don't want to hang forever.
+                }
+            }, 5000);
+
+            // Trigger load
+            audio.load();
+        });
+    });
+
+    // 4. Wait for Fonts
+    const fontPromise = document.fonts.ready.then(() => {
+        updateProgress();
+    });
+
+    // 5. Run All
+    await Promise.all([...imagePromises, ...audioPromises, fontPromise]);
+
+    // 6. Complete
+    // Small buffer for UX
+    setTimeout(() => {
+        if (loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden'); // or remove
+                loadingOverlay.style.display = 'none'; // Ensure standard hiding
+
+                // Initialize Game
+                init();
+            }, 500);
+        } else {
+            init();
+        }
+    }, 500);
+}
+
+
 // Run
-// Ensure we don't attach double listeners if this runs multiple times in some envs, 
-// but for standard page load, this is fine.
-window.addEventListener('DOMContentLoaded', init);
+window.addEventListener('DOMContentLoaded', preloadAssets);
