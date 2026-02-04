@@ -358,8 +358,23 @@ function handleTravel() {
     }, 1500);
 }
 
+// Track if touch event was recently handled to prevent synthetic mouse events
+let lastTouchTime = 0;
 
 function handleMine(e) {
+    const now = Date.now();
+
+    // Prevent synthetic mouse events after touch
+    if (e.type === 'mousedown' || e.type === 'click') {
+        // If a touch event happened within 500ms, ignore this mouse event
+        if (now - lastTouchTime < 500) return;
+    }
+
+    // Track touch events
+    if (e.type === 'touchstart') {
+        lastTouchTime = now;
+    }
+
     // Only allow Left Click (button 0) for mouse events
     if (e.type === 'mousedown' && e.button !== 0) return;
 
@@ -376,8 +391,7 @@ function handleMine(e) {
     // Prevent interaction during travel
     if (state.isTravelling) return;
 
-    // Rate Limit
-    const now = Date.now();
+    // Rate Limit - prevent double clicks
     if (now - state.lastClickTime < CONFIG.clickRateLimitMs) return;
 
     state.lastClickTime = now;
