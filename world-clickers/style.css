@@ -611,7 +611,7 @@ body {
 
 .close-btn {
     position: absolute;
-    top: 0;
+    top: -25px;
     right: 0;
     font-size: 2rem;
     color: white;
@@ -943,9 +943,8 @@ body {
     width: 90%;
     max-width: 600px;
     max-height: 85vh;
-    /* Allow scrolling if long */
-    overflow: hidden;
-    /* Fix: Container static */
+    /* Allow close button to appear above container */
+    overflow: visible;
     display: flex;
     flex-direction: column;
     padding: 30px;
@@ -1184,4 +1183,338 @@ body {
     height: 100%;
     background-color: #fff;
     transition: width 0.1s linear;
+}
+
+/* ========================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: 768px) {
+
+    /* --- Fix Background Scrollbars --- */
+    html,
+    body {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        background-attachment: fixed;
+    }
+
+    /* --- Globe System --- */
+    .globe-wrapper-anchor {
+        width: 280px;
+        height: 280px;
+    }
+
+    .globe-mask {
+        width: 274px;
+        height: 274px;
+        top: 3px;
+        left: 3px;
+    }
+
+    /* Fix stretched globe textures - scale proportionally */
+    /* Original: 589px width at 400px container = 1.4725 ratio */
+    /* Mobile: 280px container * 1.4725 = ~412px width */
+    .earth-layer,
+    .moon-layer {
+        background-size: 412px auto;
+    }
+
+    .clouds-layer {
+        background-size: 412px auto;
+    }
+
+    /* Update animation keyframes for mobile texture width */
+    @keyframes rotateGlobe {
+        from {
+            background-position-x: 0px;
+        }
+
+        to {
+            background-position-x: 412px;
+        }
+    }
+
+    .globe-glow {
+        top: -35px;
+        left: -35px;
+        right: -35px;
+        bottom: -35px;
+    }
+
+    /* Shading Layer - Scale proportionally */
+    .shading-layer {
+        width: 290px !important;
+        height: 290px !important;
+        top: -8px !important;
+        left: -8px !important;
+    }
+
+    /* --- Logo & Header --- */
+    .logo {
+        width: 150px;
+        margin-bottom: 10px;
+    }
+
+    /* Move score down on mobile */
+    .game-header {
+        top: calc(25% - 40px);
+    }
+
+    .score-board {
+        font-size: 2.5rem;
+    }
+
+    /* --- Control Icons --- */
+    .ui-controls,
+    .profile-control {
+        top: 15px;
+        gap: 18px;
+    }
+
+    .ui-controls {
+        left: 15px;
+    }
+
+    .profile-control {
+        right: 15px;
+    }
+
+    .ui-controls i,
+    .profile-control i {
+        font-size: 1.3rem;
+    }
+
+    /* --- Start Overlay PLAY Text --- */
+    #start-overlay span {
+        font-size: 2.5rem;
+    }
+
+    /* --- Travel Button - Moved down more --- */
+    .moon-travel-btn {
+        bottom: -50px;
+        right: -10px;
+        width: 60px;
+    }
+
+    .moon-travel-btn i {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .moon-travel-btn span {
+        font-size: 0.65rem;
+    }
+
+    .moon-travel-btn .title {
+        font-size: 1rem;
+    }
+
+    /* --- Overlay Panels --- */
+    .help-content,
+    .guide-content,
+    .menu-content,
+    .shop-content {
+        width: 95%;
+        max-width: none;
+        padding: 25px 15px;
+        max-height: 90vh;
+    }
+
+    .close-btn {
+        font-size: 1.5rem;
+        top: -20px;
+        right: 5px;
+    }
+
+    /* --- Help Panel --- */
+    .help-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 20px;
+    }
+
+    .help-text {
+        font-size: 0.95rem;
+        padding-right: 5px;
+    }
+
+    /* --- Guide Panels --- */
+    .guide-title {
+        font-size: 1.5rem;
+        margin: 5px 0 15px;
+    }
+
+    .guide-tabs {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 8px 20px;
+        font-size: 1rem;
+    }
+
+    .tab-btn i {
+        font-size: 1.3rem;
+    }
+
+    .guide-item {
+        padding: 12px;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .guide-img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .guide-info h3 {
+        font-size: 0.9rem;
+    }
+
+    .guide-info p {
+        font-size: 0.8rem;
+    }
+
+    /* --- Menu Panel --- */
+    .menu-item {
+        padding: 12px 15px;
+        font-size: 1rem;
+    }
+
+    .menu-item i {
+        font-size: 1.2rem;
+        width: 30px;
+        margin-right: 10px;
+    }
+
+    .menu-footer {
+        gap: 20px;
+        font-size: 0.7rem;
+    }
+
+    /* --- Shop Panel --- */
+    .shop-content {
+        padding: 20px 10px;
+    }
+
+    .shop-list {
+        padding-right: 5px;
+    }
+
+    .shop-item {
+        padding: 12px 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .shop-item img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .shop-info {
+        margin-left: 10px;
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .shop-name {
+        font-size: 0.95rem;
+    }
+
+    .shop-price {
+        font-size: 1.1rem;
+    }
+
+    .btn-buy {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    /* --- Loading Screen --- */
+    .loading-content {
+        width: 250px;
+    }
+
+    #loading-overlay .loading-logo {
+        width: 80px;
+        height: 80px;
+    }
+
+    .loading-bar-container {
+        height: 15px;
+    }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 400px) {
+    .globe-wrapper-anchor {
+        width: 240px;
+        height: 240px;
+    }
+
+    .globe-mask {
+        width: 234px;
+        height: 234px;
+    }
+
+    /* Fix stretched globe textures for extra small screens */
+    /* 240px container * 1.4725 = ~354px width */
+    .earth-layer,
+    .moon-layer,
+    .clouds-layer {
+        background-size: 354px auto;
+    }
+
+    @keyframes rotateGlobe {
+        from {
+            background-position-x: 0px;
+        }
+
+        to {
+            background-position-x: 354px;
+        }
+    }
+
+    .shading-layer {
+        width: 250px !important;
+        height: 250px !important;
+    }
+
+    .globe-glow {
+        top: -30px;
+        left: -30px;
+        right: -30px;
+        bottom: -30px;
+    }
+
+    .logo {
+        width: 120px;
+    }
+
+    .score-board {
+        font-size: 2rem;
+    }
+
+    #start-overlay span {
+        font-size: 2rem;
+    }
+
+    .guide-img {
+        width: 55px;
+        height: 55px;
+    }
+
+    .shop-item img {
+        width: 45px;
+        height: 45px;
+    }
 }

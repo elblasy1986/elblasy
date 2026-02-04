@@ -529,13 +529,15 @@ async function preloadAssets() {
     CONFIG.earthTools.forEach(t => imagePaths.push(t.img));
     CONFIG.moonTools.forEach(t => imagePaths.push(t.img));
 
-    const audioPaths = [
-        'sounds/background_music.ogg',
-        'sounds/pop_sound.wav',
-        'sounds/purchase_sound.wav'
-    ];
+    // Get DOM audio elements for preloading
+    const domAudioElements = [
+        document.getElementById('audio-bg-music'),
+        document.getElementById('audio-click'),
+        document.getElementById('audio-purchase')
+    ].filter(el => el !== null);
 
-    const totalAssets = imagePaths.length + audioPaths.length + 1; // +1 for fonts
+    // Calculate total assets: images + audio elements + fonts
+    const totalAssets = imagePaths.length + domAudioElements.length + 1; // +1 for fonts
     let loadedCount = 0;
 
     const updateProgress = () => {
@@ -558,25 +560,31 @@ async function preloadAssets() {
         });
     });
 
-    // 3. Load Audio
-    // For audio, we use fetch/blob or just Audio object. 
-    // Audio object 'canplaythrough' is best for game SFX.
-    const audioPromises = audioPaths.map(src => {
+    // 3. Load Audio - Use the ACTUAL DOM audio elements
+    // This ensures the game's audio elements are ready, not separate Audio objects
+    const audioPromises = domAudioElements.map(audio => {
         return new Promise((resolve) => {
-            const audio = new Audio();
-            audio.src = src;
-            // 'canplaythrough' implies it's ready to play
-            // 'loadeddata' is faster but maybe not "fully" ready
-            // We'll use a timeout fallback just in case audio strictness blocks us
+            // Check if already loaded
+            if (audio.readyState >= 4) { // HAVE_ENOUGH_DATA
+                updateProgress();
+                resolve();
+                return;
+            }
+
+            let resolved = false;
             const onReady = () => {
+                if (resolved) return;
+                resolved = true;
                 cleanup();
                 updateProgress();
                 resolve();
             };
 
             const onError = () => {
+                if (resolved) return;
+                resolved = true;
                 cleanup();
-                console.warn(`Failed to load audio: ${src}`);
+                console.warn(`Failed to load audio: ${audio.src}`);
                 updateProgress();
                 resolve();
             };
@@ -586,22 +594,22 @@ async function preloadAssets() {
                 audio.removeEventListener('error', onError);
             };
 
-            audio.addEventListener('canplaythrough', onReady);
-            audio.addEventListener('error', onError);
+            audio.addEventListener('canplaythrough', onReady, { once: true });
+            audio.addEventListener('error', onError, { once: true });
 
-            // Fallback if browser policy or network stalls audio
+            // Trigger load on the DOM element
+            audio.load();
+
+            // Timeout fallback for strict browser policies (5 seconds max wait)
             setTimeout(() => {
-                if (loadedCount < totalAssets) {
-                    // Force resolve this specific one if it's taking too long (3s)
-                    // But we rely on the event mostly.
-                    // Actually, let's just let the promise race or handle it.
-                    // We won't force resolve here to respect "Real Loading", 
-                    // but we don't want to hang forever.
+                if (!resolved) {
+                    resolved = true;
+                    cleanup();
+                    console.log(`Audio timeout reached for: ${audio.src}`);
+                    updateProgress();
+                    resolve();
                 }
             }, 5000);
-
-            // Trigger load
-            audio.load();
         });
     });
 
