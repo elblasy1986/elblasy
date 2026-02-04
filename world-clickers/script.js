@@ -55,6 +55,18 @@ const CONFIG = {
     ]
 };
 
+// --- Country Detection ---
+// Country code redirects (show different country's flag)
+const COUNTRY_CODE_REDIRECTS = {
+    'IL': 'PS' // Israel shows Palestine flag
+};
+
+// Country name overrides (for proper naming)
+const COUNTRY_NAME_OVERRIDES = {
+    'PS': 'Palestine', // Ensure Palestine is named correctly
+    'IL': 'Palestine'  // Israel also shows as Palestine
+};
+
 // --- Game State ---
 let state = {
     score: 0,
@@ -63,7 +75,8 @@ let state = {
     audioEnabled: true,
     gameStarted: false,
     location: 'EARTH', // 'EARTH' or 'MOON'
-    isTravelling: false
+    isTravelling: false,
+    country: null // Player's country info { code, name }
 };
 
 // --- DOM Elements ---
@@ -135,10 +148,63 @@ const dom = {
     // Travel
     btnTravel: document.getElementById('btn-travel'),
     btnTravelText: document.querySelector('#btn-travel .title'),
-    btnTravelHelper: document.querySelector('#btn-travel .text-container span:first-child')
+    btnTravelHelper: document.querySelector('#btn-travel .text-container span:first-child'),
+
+    // Country Flag
+    countryFlag: document.getElementById('country-flag'),
+
+    // Leaderboard
+    leaderboardOverlay: document.getElementById('leaderboard-overlay'),
+    btnCloseLeaderboard: document.getElementById('btn-close-leaderboard'),
+    tabLbPlayers: document.getElementById('tab-lb-players'),
+    tabLbCountries: document.getElementById('tab-lb-countries'),
+    listLbPlayers: document.getElementById('list-lb-players'),
+    listLbCountries: document.getElementById('list-lb-countries')
 };
 
-// --- Audio Init ---
+// --- Country Detection ---
+async function detectCountry() {
+    try {
+        const response = await fetch('http://ip-api.com/json/');
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            let countryCode = data.countryCode;
+
+            // Check if country code should be redirected (e.g., IL -> PS)
+            if (COUNTRY_CODE_REDIRECTS[countryCode]) {
+                countryCode = COUNTRY_CODE_REDIRECTS[countryCode];
+            }
+
+            return {
+                code: countryCode,
+                name: COUNTRY_NAME_OVERRIDES[data.countryCode] || data.country
+            };
+        }
+    } catch (error) {
+        console.warn('Failed to detect country:', error);
+    }
+    return null;
+}
+
+function displayFlag(countryCode) {
+    if (dom.countryFlag && countryCode) {
+        // Use circle-flags for properly designed circular flags
+        dom.countryFlag.src = `https://hatscripts.github.io/circle-flags/flags/${countryCode.toLowerCase()}.svg`;
+        dom.countryFlag.style.display = 'block';
+        dom.countryFlag.alt = `${state.country?.name || countryCode} Flag`;
+    }
+}
+
+async function initCountryFlag() {
+    const country = await detectCountry();
+    if (country) {
+        state.country = country;
+        displayFlag(country.code);
+        console.log(`Player country: ${country.name} (${country.code})`);
+    }
+}
+
 // --- Audio Init ---
 function initAudio() {
     if (dom.audioBg && dom.audioBg.paused && state.musicEnabled) {
@@ -190,12 +256,24 @@ function toggleMenu() {
 
 function toggleResources() {
     dom.menuOverlay.classList.add('hidden'); // Close Menu
+    const isHidden = dom.resourcesOverlay.classList.contains('hidden');
     dom.resourcesOverlay.classList.toggle('hidden');
+    // Reset scroll to top when opening
+    if (isHidden) {
+        if (dom.listResEarth) dom.listResEarth.scrollTop = 0;
+        if (dom.listResMoon) dom.listResMoon.scrollTop = 0;
+    }
 }
 
 function toggleTools() {
     dom.menuOverlay.classList.add('hidden'); // Close Menu
+    const isHidden = dom.toolsOverlay.classList.contains('hidden');
     dom.toolsOverlay.classList.toggle('hidden');
+    // Reset scroll to top when opening
+    if (isHidden) {
+        if (dom.listToolsEarth) dom.listToolsEarth.scrollTop = 0;
+        if (dom.listToolsMoon) dom.listToolsMoon.scrollTop = 0;
+    }
 }
 
 // --- Shop Logic ---
@@ -205,6 +283,8 @@ function toggleShop() {
         // Opening
         dom.shopOverlay.classList.remove('hidden');
         renderShop();
+        // Reset scroll to top when opening
+        if (dom.shopList) dom.shopList.scrollTop = 0;
     } else {
         // Closing
         dom.shopOverlay.classList.add('hidden');
@@ -247,6 +327,115 @@ function renderShop() {
             }
             // No cost deduction, no visual change per request
         });
+    });
+}
+
+// --- Leaderboard Data (Sample/Prototype) ---
+const LEADERBOARD_COUNTRIES = [
+    { code: 'US', name: 'United States', score: Math.floor(Math.random() * 500000) + 100000 },
+    { code: 'CN', name: 'China', score: Math.floor(Math.random() * 500000) + 100000 },
+    { code: 'JP', name: 'Japan', score: Math.floor(Math.random() * 400000) + 50000 },
+    { code: 'DE', name: 'Germany', score: Math.floor(Math.random() * 300000) + 50000 },
+    { code: 'GB', name: 'United Kingdom', score: Math.floor(Math.random() * 300000) + 50000 },
+    { code: 'FR', name: 'France', score: Math.floor(Math.random() * 250000) + 40000 },
+    { code: 'BR', name: 'Brazil', score: Math.floor(Math.random() * 200000) + 30000 },
+    { code: 'IN', name: 'India', score: Math.floor(Math.random() * 200000) + 30000 },
+    { code: 'KR', name: 'South Korea', score: Math.floor(Math.random() * 180000) + 25000 },
+    { code: 'CA', name: 'Canada', score: Math.floor(Math.random() * 150000) + 20000 },
+    { code: 'AU', name: 'Australia', score: Math.floor(Math.random() * 150000) + 20000 },
+    { code: 'IT', name: 'Italy', score: Math.floor(Math.random() * 120000) + 15000 },
+    { code: 'ES', name: 'Spain', score: Math.floor(Math.random() * 100000) + 10000 },
+    { code: 'MX', name: 'Mexico', score: Math.floor(Math.random() * 100000) + 10000 },
+    { code: 'RU', name: 'Russia', score: Math.floor(Math.random() * 90000) + 8000 },
+    { code: 'NL', name: 'Netherlands', score: Math.floor(Math.random() * 80000) + 5000 },
+    { code: 'TR', name: 'Turkey', score: Math.floor(Math.random() * 70000) + 5000 },
+    { code: 'SA', name: 'Saudi Arabia', score: Math.floor(Math.random() * 60000) + 4000 },
+    { code: 'EG', name: 'Egypt', score: Math.floor(Math.random() * 50000) + 3000 },
+    { code: 'PS', name: 'Palestine', score: Math.floor(Math.random() * 45000) + 2500 },
+    { code: 'AE', name: 'United Arab Emirates', score: Math.floor(Math.random() * 40000) + 2000 },
+    { code: 'PL', name: 'Poland', score: Math.floor(Math.random() * 35000) + 1500 },
+    { code: 'SE', name: 'Sweden', score: Math.floor(Math.random() * 30000) + 1000 },
+    { code: 'NO', name: 'Norway', score: Math.floor(Math.random() * 25000) + 500 },
+    { code: 'FI', name: 'Finland', score: 0 },
+    { code: 'DK', name: 'Denmark', score: 0 },
+    { code: 'PT', name: 'Portugal', score: 0 },
+    { code: 'GR', name: 'Greece', score: 0 },
+    { code: 'IE', name: 'Ireland', score: 0 },
+    { code: 'NZ', name: 'New Zealand', score: 0 }
+].sort((a, b) => b.score - a.score);
+
+const LEADERBOARD_PLAYERS = [
+    { name: 'ShadowMiner_X', score: Math.floor(Math.random() * 100000) + 50000 },
+    { name: 'CryptoDigger99', score: Math.floor(Math.random() * 90000) + 40000 },
+    { name: 'MoonWalker2025', score: Math.floor(Math.random() * 80000) + 35000 },
+    { name: 'EarthShaker', score: Math.floor(Math.random() * 70000) + 30000 },
+    { name: 'DiamondHunter', score: Math.floor(Math.random() * 60000) + 25000 },
+    { name: 'StardustKing', score: Math.floor(Math.random() * 50000) + 20000 },
+    { name: 'GoldRusher', score: Math.floor(Math.random() * 45000) + 18000 },
+    { name: 'CosmicClicker', score: Math.floor(Math.random() * 40000) + 15000 },
+    { name: 'ResourcePro', score: Math.floor(Math.random() * 35000) + 12000 },
+    { name: 'NightMiner', score: Math.floor(Math.random() * 30000) + 10000 },
+    { name: 'QuantumFarmer', score: Math.floor(Math.random() * 25000) + 8000 },
+    { name: 'LunarLegend', score: Math.floor(Math.random() * 20000) + 6000 },
+    { name: 'SpaceAce', score: Math.floor(Math.random() * 15000) + 4000 },
+    { name: 'OreCollector', score: Math.floor(Math.random() * 10000) + 2000 },
+    { name: 'NewPlayer123', score: Math.floor(Math.random() * 5000) + 500 }
+].sort((a, b) => b.score - a.score);
+
+// --- Leaderboard Logic ---
+function toggleLeaderboard() {
+    const isHidden = dom.leaderboardOverlay.classList.contains('hidden');
+    if (isHidden) {
+        dom.leaderboardOverlay.classList.remove('hidden');
+        renderLeaderboard();
+        // Reset scroll to top when opening
+        if (dom.listLbPlayers) dom.listLbPlayers.scrollTop = 0;
+        if (dom.listLbCountries) dom.listLbCountries.scrollTop = 0;
+    } else {
+        dom.leaderboardOverlay.classList.add('hidden');
+    }
+}
+
+function switchLeaderboardTab(isPlayers) {
+    if (isPlayers) {
+        dom.tabLbPlayers.classList.add('active');
+        dom.tabLbCountries.classList.remove('active');
+        dom.listLbPlayers.classList.remove('hidden');
+        dom.listLbCountries.classList.add('hidden');
+    } else {
+        dom.tabLbPlayers.classList.remove('active');
+        dom.tabLbCountries.classList.add('active');
+        dom.listLbPlayers.classList.add('hidden');
+        dom.listLbCountries.classList.remove('hidden');
+    }
+}
+
+function renderLeaderboard() {
+    // Render Players
+    dom.listLbPlayers.innerHTML = '';
+    LEADERBOARD_PLAYERS.forEach((player, index) => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        item.innerHTML = `
+            <span class="lb-rank">${index + 1}.</span>
+            <span class="lb-name">${player.name}</span>
+            <span class="lb-score">$${player.score.toLocaleString()}</span>
+        `;
+        dom.listLbPlayers.appendChild(item);
+    });
+
+    // Render Countries
+    dom.listLbCountries.innerHTML = '';
+    LEADERBOARD_COUNTRIES.forEach((country, index) => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        item.innerHTML = `
+            <span class="lb-rank">${index + 1}.</span>
+            <img class="lb-flag" src="https://hatscripts.github.io/circle-flags/flags/${country.code.toLowerCase()}.svg" alt="${country.name}">
+            <span class="lb-name">${country.name}</span>
+            <span class="lb-score">$${country.score.toLocaleString()}</span>
+        `;
+        dom.listLbCountries.appendChild(item);
     });
 }
 
@@ -517,11 +706,12 @@ function init() {
 
     // Bottom Buttons
     if (dom.btnShop) dom.btnShop.addEventListener('click', toggleShop);
-    // Leaderboard listener would go here
+    if (dom.btnLeaderboard) dom.btnLeaderboard.addEventListener('click', toggleLeaderboard);
 
     if (dom.btnCloseResources) dom.btnCloseResources.addEventListener('click', () => dom.resourcesOverlay.classList.add('hidden'));
     if (dom.btnCloseTools) dom.btnCloseTools.addEventListener('click', () => dom.toolsOverlay.classList.add('hidden'));
-    if (dom.btnCloseShop) dom.btnCloseShop.addEventListener('click', toggleShop); // Shop Close Listener
+    if (dom.btnCloseShop) dom.btnCloseShop.addEventListener('click', toggleShop);
+    if (dom.btnCloseLeaderboard) dom.btnCloseLeaderboard.addEventListener('click', toggleLeaderboard);
 
     // Tab Listeners
     if (dom.tabResEarth) dom.tabResEarth.addEventListener('click', () => switchResourceTab(true));
@@ -529,6 +719,10 @@ function init() {
 
     if (dom.tabToolsEarth) dom.tabToolsEarth.addEventListener('click', () => switchToolTab(true));
     if (dom.tabToolsMoon) dom.tabToolsMoon.addEventListener('click', () => switchToolTab(false));
+
+    // Leaderboard Tab Listeners
+    if (dom.tabLbPlayers) dom.tabLbPlayers.addEventListener('click', () => switchLeaderboardTab(true));
+    if (dom.tabLbCountries) dom.tabLbCountries.addEventListener('click', () => switchLeaderboardTab(false));
 
     document.addEventListener('dragstart', e => e.preventDefault());
 
@@ -665,9 +859,11 @@ async function preloadAssets() {
 
                 // Initialize Game
                 init();
+                initCountryFlag(); // Detect and display country flag
             }, 500);
         } else {
             init();
+            initCountryFlag(); // Detect and display country flag
         }
     }, 500);
 }

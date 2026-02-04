@@ -56,8 +56,11 @@
 
             <!-- Score Header -->
             <header class="game-header">
-                <div class="score-board">
-                    <span class="currency-symbol">$</span><span id="score-value">0</span>
+                <div class="score-container">
+                    <img id="country-flag" class="country-flag" src="" alt="Country Flag" style="display: none;">
+                    <div class="score-board">
+                        <span class="currency-symbol">$</span><span id="score-value">0</span>
+                    </div>
                 </div>
             </header>
 
@@ -528,6 +531,36 @@
     </div>
 
 
+
+    <!-- Leaderboard Overlay -->
+    <div id="leaderboard-overlay" class="hidden">
+        <div class="help-content guide-content">
+            <i class="fa-solid fa-xmark close-btn" id="btn-close-leaderboard"></i>
+
+            <div class="help-text guide-text">
+                <h1 class="guide-title">Leaderboard</h1>
+
+                <div class="guide-tabs">
+                    <div class="menu-item tab-btn active" id="tab-lb-countries">
+                        <i class="fa-solid fa-flag"></i>
+                        <span>Countries</span>
+                    </div>
+                    <div class="menu-item tab-btn" id="tab-lb-players">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Players</span>
+                    </div>
+                </div>
+
+                <div id="list-lb-countries" class="guide-list leaderboard-list">
+                    <!-- Countries list populated by JS -->
+                </div>
+
+                <div id="list-lb-players" class="guide-list leaderboard-list hidden">
+                    <!-- Players list populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
