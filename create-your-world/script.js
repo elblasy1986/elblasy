@@ -1,893 +1,644 @@
-let ELEMENTS = [
-  { key: "water",  name: "WATER",  color: "#4fb3ff" },
-  { key: "forest", name: "FOREST", color: "#1fa64d" },
-  { key: "desert", name: "DESERT", color: "#e6c56a" },
-  { key: "rock",   name: "ROCK",   color: "#7f93a8" },
-  { key: "mud",    name: "MUD",    color: "#7a5a3a" },
-  { key: "ice",    name: "ICE",    color: "#b9f0ff" },
-  { key: "lava",   name: "LAVA",   color: "#ff5b3a" }
-];
+/**
+ * World Clicker - Main Game Logic
+ */
 
-const UI = {
-  sliders: document.getElementById("sliders"),
-  selectedName: document.getElementById("selectedName"),
-  selectedVal: document.getElementById("selectedVal"),
-  seedInput: document.getElementById("seedInput"),
-  reroll: document.getElementById("reroll"),
-  canvas: document.getElementById("planet"),
-  rotSpeed: document.getElementById("rotSpeed"),
-  captureBtn: document.getElementById("captureBtn"),
-  planetPanel: document.querySelector(".planet-panel"),
-  controlsPanel: document.querySelector(".controls"),
-  undoBtn: document.getElementById("undoBtn"),
-  redoBtn: document.getElementById("redoBtn")
+// --- Configuration ---
+const CONFIG = {
+    clickRateLimitMs: 100, // 10 clicks per second max = 100ms interval
+    resources: [
+        { name: 'WOOD', rarity: 28, value: 1, img: 'resources/wood.png' },
+        { name: 'FISH', rarity: 22, value: 2, img: 'resources/fish.png' },
+        { name: 'COAL', rarity: 15, value: 4, img: 'resources/coal.png' },
+        { name: 'STONE', rarity: 10, value: 5, img: 'resources/stone.png' },
+        { name: 'OIL', rarity: 8, value: 10, img: 'resources/oil.png' },
+        { name: 'IRON', rarity: 7, value: 15, img: 'resources/iron.png' },
+        { name: 'COPPER', rarity: 5, value: 20, img: 'resources/copper.png' },
+        { name: 'SILVER', rarity: 3, value: 40, img: 'resources/silver.png' },
+        { name: 'GOLD', rarity: 1.5, value: 80, img: 'resources/gold.png' },
+        { name: 'DIAMOND', rarity: 0.5, value: 150, img: 'resources/diamond.png' }
+    ],
+    moonResources: [
+        { name: 'REGOLITH DUST', rarity: 35, value: 200, img: 'resources/regolith_dust.png' },
+        { name: 'LUNAR GLASS', rarity: 25, value: 300, img: 'resources/lunar_glass.png' },
+        { name: 'LUNAR ICE', rarity: 15, value: 50, img: 'resources/lunar_ice.png' },
+        { name: 'LUNAR SAPPHIRE', rarity: 8, value: 700, img: 'resources/lunar_sapphire.png' },
+        { name: 'ANCIENT METEOR ALLOY', rarity: 6, value: 1000, img: 'resources/ancient_meteor_alloy.png' },
+        { name: 'QUANTUM FIBER', rarity: 4, value: 1500, img: 'resources/quantum_fiber.png' },
+        { name: 'STARDUST CRYSTALS', rarity: 3, value: 2000, img: 'resources/stardust_crystals.png' },
+        { name: 'MOONSTONE CORE', rarity: 2.5, value: 3000, img: 'resources/moonstone_core.png' },
+        { name: 'DARK MATTER FRAGMENTS', rarity: 1.3, value: 4000, img: 'resources/dark_matter_fragments.png' },
+        { name: 'ETHEREUM PULSE', rarity: 0.2, value: 5000, img: 'resources/ethereum_pulse.png' }
+    ],
+    earthTools: [
+        { id: 't_wood', name: 'Timber Axe', price: 0.49, val: 1, res: 'Wood', img: 'tools/timber_axe.png' },
+        { id: 't_fish', name: 'Hydro Netter', price: 0.79, val: 1, res: 'Fish', img: 'tools/hydro_netter.png' },
+        { id: 't_coal', name: 'Coal Cracker', price: 1.29, val: 1, res: 'Coal', img: 'tools/coal_cracker.png' },
+        { id: 't_stone', name: 'Stone Splitter', price: 1.59, val: 1, res: 'Stone', img: 'tools/stone_splitter.png' },
+        { id: 't_oil', name: 'Oil Extractor', price: 2.49, val: 1, res: 'Oil', img: 'tools/oil_extractor.png' },
+        { id: 't_iron', name: 'Iron Digger', price: 3.49, val: 1, res: 'Iron', img: 'tools/iron_digger.png' },
+        { id: 't_copper', name: 'Copper Cutter', price: 4.49, val: 1, res: 'Copper', img: 'tools/copper_cutter.png' },
+        { id: 't_silver', name: 'Silver Shaver', price: 6.49, val: 1, res: 'Silver', img: 'tools/silver_shaver.png' },
+        { id: 't_gold', name: 'Gold Miner Rig', price: 8.99, val: 1, res: 'Gold', img: 'tools/gold_miner_rig.png' },
+        { id: 't_diamond', name: 'Crystal Drill', price: 12.99, val: 1, res: 'Diamond', img: 'tools/crystal_pierce_drill.png' }
+    ],
+    moonTools: [
+        { id: 'm_dust', name: 'Dust Vacuumer', price: 13.99, val: 1, res: 'Regolith Dust', img: 'tools/dust_vacuumer.png' },
+        { id: 'm_glass', name: 'Glass Glow Cutter', price: 14.99, val: 1, res: 'Lunar Glass', img: 'tools/glass_glow_cutter.png' },
+        { id: 'm_ice', name: 'Frost Core Drill', price: 15.99, val: 1, res: 'Lunar Ice', img: 'tools/frost_core_drill.png' },
+        { id: 'm_sapphire', name: 'Sapphire Saw', price: 16.99, val: 1, res: 'Lunar Sapphire', img: 'tools/sapphire_saw.png' },
+        { id: 'm_meteor', name: 'Meteor Forge', price: 17.99, val: 1, res: 'Meteor Alloy', img: 'tools/meteor_forge_extractor.png' },
+        { id: 'm_fiber', name: 'Quantum Puller', price: 18.49, val: 1, res: 'Quantum Fiber', img: 'tools/quantum_thread_puller.png' },
+        { id: 'm_shard', name: 'Star Shard Col.', price: 18.99, val: 1, res: 'Stardust', img: 'tools/star_shard_collector.png' },
+        { id: 'm_core', name: 'Core Pulse Harv.', price: 19.49, val: 1, res: 'Moonstone', img: 'tools/core_pulse_harvester.png' },
+        { id: 'm_void', name: 'Void Splitter', price: 19.79, val: 1, res: 'Dark Matter', img: 'tools/void_splitter.png' },
+        { id: 'm_pulse', name: 'Pulse Conductor', price: 19.99, val: 1, res: 'Ether. Pulse', img: 'tools/pulse_conductor.png' }
+    ]
 };
 
-// --- HISTORY STATE MANAGEMENT ---
-let undoStack = [];
-let redoStack = [];
-let isRestoringState = false;
+// --- Game State ---
+let state = {
+    score: 0,
+    lastClickTime: 0,
+    musicEnabled: true,
+    audioEnabled: true,
+    gameStarted: false,
+    location: 'EARTH', // 'EARTH' or 'MOON'
+    isTravelling: false
+};
 
-function getCurrentState() {
-  return {
-    seed: planetSeed,
-    elements: JSON.parse(JSON.stringify(ELEMENTS)),
-    values: { ...values }
-  };
-}
+// --- DOM Elements ---
+// We use a getter or ensure this runs after DOM load via init, 
+// but defining structure here is fine if looked up later.
+// Actually, to be safe against nulls if this runs early, we'll keep the lookup object 
+// but populate/use it inside init or just define it here assuming defer/bottom of body.
+// The file is linked at bottom of body, so document.getElementById should work.
+const dom = {
+    scoreDisplay: document.getElementById('score-value'),
 
-function saveState() {
-  if (isRestoringState) return;
+    // Systems
+    earthSystem: document.getElementById('earth-system'),
+    moonSystem: document.getElementById('moon-system'),
 
-  const state = getCurrentState();
-  
-  if (undoStack.length > 0) {
-    const last = undoStack[undoStack.length - 1];
-    if (JSON.stringify(last) === JSON.stringify(state)) return;
-  }
+    // Interact Zones
+    earthZone: document.getElementById('earth-interact-zone'),
+    moonZone: document.getElementById('moon-interact-zone'),
 
-  undoStack.push(state);
-  redoStack = []; 
-  updateUndoRedoUI();
-}
+    startOverlay: document.getElementById('start-overlay'),
+    helpOverlay: document.getElementById('help-overlay'),
 
-function restoreState(state) {
-  isRestoringState = true;
+    resourcesOverlay: document.getElementById('resources-overlay'), // New
+    toolsOverlay: document.getElementById('tools-overlay'), // New
+    // Audio
+    audioBg: document.getElementById('audio-bg-music'),
+    audioClick: document.getElementById('audio-click'),
+    audioPurchase: document.getElementById('audio-purchase'),
 
-  planetSeed = state.seed;
-  UI.seedInput.value = planetSeed; 
+    // Top Right Buttons (Restored)
+    btnMusic: document.getElementById('btn-music'),
+    btnAudio: document.getElementById('btn-audio'),
+    btnHelp: document.getElementById('btn-help'),
+    btnProfile: document.getElementById('btn-profile'), // If needed
 
-  ELEMENTS = JSON.parse(JSON.stringify(state.elements));
-  values = { ...state.values };
+    // Menu & Controls
+    menuOverlay: document.getElementById('menu-overlay'),
+    btnMenu: document.getElementById('btn-menu'),
+    btnCloseMenu: document.getElementById('btn-close-menu'),
 
-  buildSliders(); 
-  refreshUIValues();
-  rebuildTileFromValuesFast();
+    btnMenuResources: document.getElementById('btn-menu-resources'),
+    btnMenuTools: document.getElementById('btn-menu-tools'),
+    btnMenuAstronauts: document.getElementById('btn-menu-astronauts'), // Restored
+    btnShop: document.getElementById('btn-shop'),
+    btnLeaderboard: document.getElementById('btn-leaderboard'),
 
-  isRestoringState = false;
-}
+    // Shop Elements
+    shopOverlay: document.getElementById('shop-overlay'),
+    btnCloseShop: document.getElementById('btn-close-shop'),
+    shopList: document.getElementById('shop-list'),
+    shopTitle: document.getElementById('shop-title'),
 
-function performUndo() {
-  if (undoStack.length === 0) return;
-  redoStack.push(getCurrentState());
-  const prevState = undoStack.pop();
-  restoreState(prevState);
-  updateUndoRedoUI();
-}
+    // Guide Close Buttons (Restored)
+    btnCloseHelp: document.getElementById('btn-close-help'), // MISSING KEY RESTORED
+    btnCloseResources: document.getElementById('btn-close-resources'),
+    btnCloseTools: document.getElementById('btn-close-tools'),
 
-function performRedo() {
-  if (redoStack.length === 0) return;
-  undoStack.push(getCurrentState());
-  const nextState = redoStack.pop();
-  restoreState(nextState);
-  updateUndoRedoUI();
-}
+    // Guide Tabs & Lists
+    tabResEarth: document.getElementById('tab-res-earth'),
+    tabResMoon: document.getElementById('tab-res-moon'),
+    listResEarth: document.getElementById('list-res-earth'),
+    listResMoon: document.getElementById('list-res-moon'),
 
-function updateUndoRedoUI() {
-  UI.undoBtn.disabled = undoStack.length === 0;
-  UI.redoBtn.disabled = redoStack.length === 0;
-}
+    tabToolsEarth: document.getElementById('tab-tools-earth'),
+    tabToolsMoon: document.getElementById('tab-tools-moon'),
+    listToolsEarth: document.getElementById('list-tools-earth'),
+    listToolsMoon: document.getElementById('list-tools-moon'),
 
-// --- INTERACTION SETTINGS ---
-document.addEventListener('contextmenu', event => {
-  if (event.target !== UI.seedInput) {
-    event.preventDefault();
-  }
-});
+    // Travel
+    btnTravel: document.getElementById('btn-travel'),
+    btnTravelText: document.querySelector('#btn-travel .title'),
+    btnTravelHelper: document.querySelector('#btn-travel .text-container span:first-child')
+};
 
-document.body.style.userSelect = "none";
-document.body.style.webkitUserSelect = "none";
-document.body.style.msUserSelect = "none";
-UI.seedInput.style.userSelect = "text";
-UI.seedInput.style.webkitUserSelect = "text";
-
-const cssW = UI.canvas.width;
-const cssH = UI.canvas.height;
-const dpr = Math.max(1, Math.ceil(window.devicePixelRatio || 1));
-UI.canvas.width = cssW * dpr;
-UI.canvas.height = cssH * dpr;
-UI.canvas.style.width = cssW + "px";
-UI.canvas.style.height = cssH + "px";
-
-const ctx = UI.canvas.getContext("2d", { alpha: true });
-ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-// SETTINGS
-const TILE_W = 512;
-const TILE_H = 512;
-const TILE_N = TILE_W * TILE_H;
-
-const ROT_MIN = 0.5;
-const ROT_MAX = 1.25;
-let rotationSpeed = 0.65;
-const ROT_ANGLE = 12 * Math.PI / 180;
-let offX = 0;
-
-let planetSeed = 0;
-let values = {};
-let selectedIndex = 0;
-
-let biomeMap = new Uint8Array(TILE_N);
-
-const tileCanvas = document.createElement("canvas");
-tileCanvas.width = TILE_W;
-tileCanvas.height = TILE_H;
-const tileCtx = tileCanvas.getContext("2d", { willReadFrequently: true });
-let tileImage = tileCtx.createImageData(TILE_W, TILE_H);
-let tilePattern = null;
-
-const BAND_W = 2048;
-const BAND_H = 2048;
-const bandCanvas = document.createElement("canvas");
-bandCanvas.width = BAND_W;
-bandCanvas.height = BAND_H;
-const bandCtx = bandCanvas.getContext("2d");
-
-const shadeCanvas = document.createElement("canvas");
-shadeCanvas.width = 256;
-shadeCanvas.height = 256;
-const shadeCtx = shadeCanvas.getContext("2d");
-
-let cachedSeed = null;
-let cachedNoise = null;
-let cachedSorted = null;
-
-function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-function round1(n){ return Math.round(n * 10) / 10; }
-function hexToRgb(hex){
-  const h = hex.replace("#","");
-  const num = parseInt(h,16);
-  return { r:(num>>16)&255, g:(num>>8)&255, b:num&255 };
-}
-
-function mulberry32(a) {
-  return function() {
-    var t = a += 0x6D2B79F5;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  }
-}
-
-function sanitizeSeedTyping(raw, maxLen){
-  let out = "";
-  let digitsCount = 0;
-  for (let i=0; i<raw.length; i++){
-    const ch = raw[i];
-    if (i === 0 && (ch === "-" || ch === "+")) { out += ch; continue; }
-    if (ch >= "0" && ch <= "9") {
-      if (digitsCount < 8) { out += ch; digitsCount++; }
+// --- Audio Init ---
+// --- Audio Init ---
+function initAudio() {
+    if (dom.audioBg && dom.audioBg.paused && state.musicEnabled) {
+        dom.audioBg.volume = 0.3;
+        dom.audioBg.play().catch(e => console.log("Audio autoplay blocked until interaction"));
     }
-    if (out.length >= 9) break;
-  }
-  return out;
 }
 
-function sanitizeSeedFinal(raw){
-  if (raw === "" || raw === "-" || raw === "+") return "0";
-  let sign = "";
-  let digits = raw;
-  if (raw[0] === "-" || raw[0] === "+") { sign = raw[0]; digits = raw.slice(1); }
-  digits = digits.replace(/^0+/, "");
-  if (digits === "") digits = "0";
-  if (digits === "0") return "0";
-  if (sign === "-") return "-" + digits;
-  return digits;
-}
+// --- Audio Features ---
+function toggleMusic() {
+    state.musicEnabled = !state.musicEnabled;
+    const icon = dom.btnMusic;
 
-const SEED_MAX = 99999999;
-function cryptoU32(){
-  const a = new Uint32Array(1);
-  crypto.getRandomValues(a);
-  return a[0] >>> 0;
-}
-function randomIntInclusive(min, max){
-  const range = (max - min + 1) >>> 0;
-  const limit = Math.floor(0x100000000 / range) * range;
-  let r;
-  do { r = cryptoU32(); } while (r >= limit);
-  return min + (r % range);
-}
-function randomSeedStringUniform(){
-  const n = randomIntInclusive(-SEED_MAX, SEED_MAX);
-  return String(n);
-}
-
-function randomStartValues(){
-  const rng = mulberry32(planetSeed + 12345);
-  const w = ELEMENTS.map(() => rng());
-  const sum = w.reduce((a,b)=>a+b,0);
-  values = {};
-  for (let i=0;i<ELEMENTS.length;i++) values[ELEMENTS[i].key] = (w[i] / sum) * 100;
-  let total = 0;
-  for (const e of ELEMENTS){
-    values[e.key] = Math.max(0, Math.round(values[e.key] * 10) / 10);
-    total += values[e.key];
-  }
-  const diff = Math.round((100 - total) * 10) / 10;
-  values[ELEMENTS[0].key] = Math.max(0, Math.round((values[ELEMENTS[0].key] + diff) * 10) / 10);
-  refreshUIValues();
-}
-
-function applyChangeLive(changedKey, newValue){
-  newValue = clamp(newValue, 0, 100);
-  values[changedKey] = newValue;
-  const otherKeys = ELEMENTS.map(e => e.key).filter(k => k !== changedKey);
-  const remaining = 100 - newValue;
-  let othersSum = 0;
-  for (const k of otherKeys) othersSum += Math.max(0, values[k] || 0);
-  if (othersSum <= 0){
-    const per = remaining / otherKeys.length;
-    for (const k of otherKeys) values[k] = per;
-  } else {
-    const scale = remaining / othersSum;
-    for (const k of otherKeys) values[k] = (values[k] || 0) * scale;
-  }
-  let total = 0;
-  for (const e of ELEMENTS){
-    values[e.key] = Math.max(0, Math.round(values[e.key] * 10) / 10);
-    total += values[e.key];
-  }
-  const diff = Math.round((100 - total) * 10) / 10;
-  values[changedKey] = clamp(Math.round((values[changedKey] + diff) * 10) / 10, 0, 100);
-  refreshSelectedUI();
-  refreshUIValues();
-  rebuildTileFromValuesFast();
-}
-
-function valueNoise2D(x, y, seed, period){
-  const xi0 = Math.floor(x);
-  const yi0 = Math.floor(y);
-  const xf = x - xi0;
-  const yf = y - yi0;
-  const xi1 = xi0 + 1;
-  const yi1 = yi0 + 1;
-  function mod(n, m){ return ((n % m) + m) % m; }
-  function hash(ix, iy){
-    const px = mod(ix, period);
-    const py = mod(iy, period);
-    const s = (seed | 0);
-    let h = (px * 374761393 + py * 668265263) ^ ((s >>> 0) * 2654435761);
-    h = (h ^ (h >> 13)) >>> 0;
-    h = (h * 1274126177) >>> 0;
-    return ((h ^ (h >> 16)) >>> 0) / 4294967296;
-  }
-  const v00 = hash(xi0, yi0);
-  const v10 = hash(xi1, yi0);
-  const v01 = hash(xi0, yi1);
-  const v11 = hash(xi1, yi1);
-  const sx = xf * xf * (3 - 2 * xf);
-  const sy = yf * yf * (3 - 2 * yf);
-  const ix0 = v00 + (v10 - v00) * sx;
-  const ix1 = v01 + (v11 - v01) * sx;
-  return ix0 + (ix1 - ix0) * sy;
-}
-
-function buildSeedCache(){
-  if (cachedSeed === planetSeed && cachedNoise && cachedSorted) return;
-  cachedSeed = planetSeed;
-  cachedNoise = new Float32Array(TILE_N);
-  const period1 = 8;
-  const period2 = 16;
-  const f1 = period1 / TILE_W;
-  const f2 = period2 / TILE_W;
-  for (let y=0;y<TILE_H;y++){
-    for (let x=0;x<TILE_W;x++){
-      const n1 = valueNoise2D(x*f1, y*f1, planetSeed, period1);
-      const n2 = valueNoise2D(x*f2 + 77, y*f2 + 77, planetSeed, period2);
-      cachedNoise[y*TILE_W + x] = (n1*0.75 + n2*0.25);
-    }
-  }
-  const idx = new Array(TILE_N);
-  for (let i=0;i<TILE_N;i++) idx[i] = i;
-  idx.sort((a,b)=> cachedNoise[a] - cachedNoise[b]);
-  cachedSorted = new Uint32Array(TILE_N);
-  for (let i=0;i<TILE_N;i++) cachedSorted[i] = idx[i];
-}
-
-function computeExactCounts(){
-  const exact = ELEMENTS.map(e => (Math.max(0, values[e.key] || 0) / 100) * TILE_N);
-  const counts = exact.map(v => Math.floor(v));
-  let used = counts.reduce((a,b)=>a+b,0);
-  let rem = TILE_N - used;
-  const fracs = exact.map((v,i)=>({i, frac: v - Math.floor(v)}));
-  fracs.sort((a,b)=>b.frac-a.frac);
-  for (let k=0;k<rem;k++) counts[fracs[k % fracs.length].i]++;
-  let total = counts.reduce((a,b)=>a+b,0);
-  if (total !== TILE_N) counts[0] += (TILE_N - total);
-  return counts;
-}
-
-function despeckle(map, passes=1){
-  for (let p=0;p<passes;p++){
-    const copy = new Uint8Array(map);
-    for (let y=0;y<TILE_H;y++){
-      const ym1 = (y-1+TILE_H)%TILE_H;
-      const yp1 = (y+1)%TILE_H;
-      for (let x=0;x<TILE_W;x++){
-        const xm1 = (x-1+TILE_W)%TILE_W;
-        const xp1 = (x+1)%TILE_W;
-        const i = y*TILE_W+x;
-        const t = copy[i];
-        const n1 = copy[y*TILE_W+xm1];
-        const n2 = copy[y*TILE_W+xp1];
-        const n3 = copy[ym1*TILE_W+x];
-        const n4 = copy[yp1*TILE_W+x];
-        let same=0;
-        if (n1===t) same++;
-        if (n2===t) same++;
-        if (n3===t) same++;
-        if (n4===t) same++;
-        if (same<=1){
-          const m = new Map();
-          for (const n of [n1,n2,n3,n4]) m.set(n, (m.get(n)||0)+1);
-          let best=t, bestC=-1;
-          for (const [k,v] of m.entries()){
-            if (v>bestC){ bestC=v; best=k; }
-          }
-          map[i]=best;
+    if (state.musicEnabled) {
+        if (dom.audioBg) {
+            dom.audioBg.volume = 0.3;
+            if (dom.audioBg.paused) dom.audioBg.play().catch(() => { });
         }
-      }
+        icon.style.opacity = '1';
+        icon.classList.remove('fa-music-slash');
+        icon.classList.add('fa-music');
+    } else {
+        if (dom.audioBg) dom.audioBg.pause();
+        icon.style.opacity = '0.4'; // Dim to indicate off
+        // Removed class switching to prevent icon disappearing if specific glyph is missing
     }
-  }
 }
 
-function rebuildTileFromValuesFast(){
-  buildSeedCache();
-  const counts = computeExactCounts();
-  let cursor = 0;
-  for (let biomeIndex=0; biomeIndex<ELEMENTS.length; biomeIndex++){
-    const take = counts[biomeIndex];
-    for (let k=0;k<take;k++){
-      biomeMap[cachedSorted[cursor++]] = biomeIndex;
+function toggleAudio() {
+    state.audioEnabled = !state.audioEnabled;
+    const icon = dom.btnAudio;
+
+    if (state.audioEnabled) {
+        icon.style.opacity = '1';
+    } else {
+        icon.style.opacity = '0.4'; // Matches Music Icon
     }
-  }
-  despeckle(biomeMap, 1);
-  const data = tileImage.data;
-  for (let i=0;i<TILE_N;i++){
-    const bIndex = biomeMap[i];
-    const colorHex = ELEMENTS[bIndex].color;
-    const c = hexToRgb(colorHex);
-    const p = i*4;
-    data[p]=c.r; data[p+1]=c.g; data[p+2]=c.b; data[p+3]=255;
-  }
-  tileCtx.putImageData(tileImage, 0, 0);
-  tilePattern = bandCtx.createPattern(tileCanvas, "repeat");
 }
 
-function rebuildBand(){
-  if (!tilePattern) return;
-  bandCtx.setTransform(1,0,0,1,0,0);
-  bandCtx.clearRect(0,0,BAND_W,BAND_H);
-  bandCtx.imageSmoothingEnabled = false;
-  const dx = (offX | 0);
-  bandCtx.translate(-dx, 0);
-  bandCtx.fillStyle = tilePattern;
-  bandCtx.fillRect(0, 0, BAND_W + TILE_W, BAND_H);
-  bandCtx.setTransform(1,0,0,1,0,0);
+// --- Help Logic ---
+function toggleHelp() {
+    dom.helpOverlay.classList.toggle('hidden');
 }
 
-function rebuildShading(){
-  const w = shadeCanvas.width, h = shadeCanvas.height;
-  shadeCtx.clearRect(0,0,w,h);
-  const g = shadeCtx.createRadialGradient(
-    w/2, h/2, 0,
-    w/2, h/2, Math.min(w,h) * 0.62
-  );
-  g.addColorStop(0.00, "rgba(0,0,0,0)");
-  g.addColorStop(0.35, "rgba(0,0,0,0.12)");
-  g.addColorStop(0.70, "rgba(0,0,0,0.30)");
-  g.addColorStop(1.00, "rgba(0,0,0,0.45)");
-  shadeCtx.fillStyle = g;
-  shadeCtx.fillRect(0,0,w,h);
+// --- Menu Logic ---
+function toggleMenu() {
+    dom.menuOverlay.classList.toggle('hidden');
 }
 
-function drawPlanet(){
-  const w = cssW, h = cssH;
-  ctx.clearRect(0,0,w,h);
-  const cx = w/2, cy = h/2;
-  const radius = Math.min(w,h) * 0.40;
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius+14, 0, Math.PI*2);
-  ctx.fillStyle = "rgba(0,0,0,.22)";
-  ctx.fill();
-  ctx.restore();
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI*2);
-  ctx.clip();
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(ROT_ANGLE);
-  ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(bandCanvas, -BAND_W/2, -BAND_H/2);
-  ctx.restore();
-  ctx.save();
-  ctx.globalCompositeOperation = "multiply";
-  ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(shadeCanvas, cx-radius, cy-radius, radius*2, radius*2);
-  ctx.restore();
-  ctx.restore();
+function toggleResources() {
+    dom.menuOverlay.classList.add('hidden'); // Close Menu
+    dom.resourcesOverlay.classList.toggle('hidden');
 }
 
-// --- LAYOUT SYNC (FORCE LEFT TO MATCH RIGHT ON DESKTOP ONLY) ---
-function syncHeights() {
-  if (window.innerWidth > 980) {
-    // Desktop: Match heights
-    UI.planetPanel.style.height = 'auto';
-    UI.controlsPanel.style.height = 'auto';
-    const maxH = Math.max(UI.planetPanel.offsetHeight, UI.controlsPanel.offsetHeight);
-    UI.planetPanel.style.height = maxH + 'px';
-    UI.controlsPanel.style.height = maxH + 'px';
-  } else {
-    // Mobile: Reset to auto to let content shrink-wrap
-    UI.planetPanel.style.height = 'auto';
-    UI.controlsPanel.style.height = 'auto';
-  }
-  drawPlanet();
+function toggleTools() {
+    dom.menuOverlay.classList.add('hidden'); // Close Menu
+    dom.toolsOverlay.classList.toggle('hidden');
 }
 
-// --- HYBRID DRAG & DROP (Mouse + Touch) ---
-let draggedItem = null;
-let draggedEl = null;
-let ghostEl = null;
-let dragOffsetY = 0;
-let dragStartX = 0;
-let dragStartY = 0;
-let isDragging = false;
-
-// Unified Start Logic
-function initDrag(e) {
-  // STRICT CHECK: IGNORE if clicking Input (Track or Thumb)
-  if (e.target.tagName === 'INPUT') return;
-
-  const isTouch = (e.type === 'touchstart');
-  if (!isTouch) e.preventDefault(); 
-  
-  draggedEl = e.currentTarget;
-  const idx = parseInt(draggedEl.dataset.index);
-  draggedItem = ELEMENTS[idx];
-  
-  const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-  const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-  
-  dragStartX = clientX;
-  dragStartY = clientY;
-  
-  const rect = draggedEl.getBoundingClientRect();
-  dragOffsetY = clientY - rect.top;
-
-  if (isTouch) {
-      window.addEventListener('touchmove', onWindowTouchMove, { passive: false });
-      window.addEventListener('touchend', onWindowTouchEnd);
-  } else {
-      window.addEventListener('mousemove', onWindowMouseMove);
-      window.addEventListener('mouseup', onWindowMouseUp);
-  }
-}
-
-// MOUSE HANDLERS
-function onWindowMouseMove(e) {
-  handleMove(e.clientX, e.clientY, e);
-}
-function onWindowMouseUp(e) {
-  cleanupDrag();
-  window.removeEventListener('mousemove', onWindowMouseMove);
-  window.removeEventListener('mouseup', onWindowMouseUp);
-}
-
-// TOUCH HANDLERS
-function onWindowTouchMove(e) {
-  // preventDefault to stop scrolling while dragging
-  if (isDragging) e.preventDefault(); 
-  handleMove(e.touches[0].clientX, e.touches[0].clientY, e);
-}
-function onWindowTouchEnd(e) {
-  cleanupDrag();
-  window.removeEventListener('touchmove', onWindowTouchMove);
-  window.removeEventListener('touchend', onWindowTouchEnd);
-}
-
-// COMMON LOGIC
-function handleMove(clientX, clientY, originalEvent) {
-  if (!isDragging) {
-    if (Math.abs(clientY - dragStartY) > 5) {
-      // START DRAG
-      // If touch, we need to prevent default to stop scrolling now
-      if (originalEvent.cancelable) originalEvent.preventDefault();
-      
-      saveState(); // Save state for Undo
-      startDrag();
+// --- Shop Logic ---
+function toggleShop() {
+    const isHidden = dom.shopOverlay.classList.contains('hidden');
+    if (isHidden) {
+        // Opening
+        dom.shopOverlay.classList.remove('hidden');
+        renderShop();
+    } else {
+        // Closing
+        dom.shopOverlay.classList.add('hidden');
     }
-  }
-  
-  if (isDragging && ghostEl) {
-    ghostEl.style.top = (clientY - dragOffsetY) + 'px';
-    ghostEl.style.left = draggedEl.getBoundingClientRect().left + 'px';
-    checkSwap(clientY);
-  }
 }
 
-function startDrag() {
-  isDragging = true;
-  ghostEl = draggedEl.cloneNode(true);
-  ghostEl.classList.add('drag-ghost');
-  ghostEl.style.width = draggedEl.offsetWidth + 'px';
-  document.body.appendChild(ghostEl);
-  draggedEl.classList.add('invisible');
-}
+function renderShop() {
+    dom.shopList.innerHTML = ''; // Clear previous
 
-function cleanupDrag() {
-  if (isDragging) {
-    if (ghostEl) ghostEl.remove();
-    if (draggedEl) draggedEl.classList.remove('invisible');
-  }
-  isDragging = false;
-  ghostEl = null;
-  draggedEl = null;
-  draggedItem = null;
-}
-
-function checkSwap(mouseY) {
-  const siblings = Array.from(UI.sliders.children);
-  const draggedIdx = siblings.indexOf(draggedEl);
-  let targetEl = null;
-  
-  for (let i = 0; i < siblings.length; i++) {
-    const el = siblings[i];
-    if (el === draggedEl) continue;
-    
-    const rect = el.getBoundingClientRect();
-    const mid = rect.top + rect.height / 2;
-    
-    // CENTER CROSSING LOGIC
-    if (i > draggedIdx) {
-        if (mouseY > mid) {
-            targetEl = el;
-            break; 
-        }
-    } 
-    else if (i < draggedIdx) {
-        if (mouseY < mid) {
-            targetEl = el;
-        }
+    let tools = [];
+    if (state.location === 'MOON') {
+        dom.shopTitle.textContent = "Moon Tools Shop";
+        tools = CONFIG.moonTools;
+    } else {
+        dom.shopTitle.textContent = "Earth Tools Shop";
+        tools = CONFIG.earthTools;
     }
-  }
 
-  if (targetEl) {
-      const targetIdx = siblings.indexOf(targetEl);
-      if (Math.abs(targetIdx - draggedIdx) === 1) {
-          swapRows(draggedIdx, targetIdx);
-      }
-  }
-}
+    tools.forEach(tool => {
+        const item = document.createElement('div');
+        item.className = 'shop-item';
+        item.innerHTML = `
+            <img src="${tool.img}" alt="${tool.name}">
+            <div class="shop-info">
+                <div class="shop-name">${tool.name}</div>
+                <div class="shop-price">$${tool.price}</div>
+            </div>
+            <button class="btn-buy" id="btn-buy-${tool.id}">BUY</button>
+        `;
+        dom.shopList.appendChild(item);
 
-function swapRows(fromIdx, toIdx) {
-  const movedItem = ELEMENTS.splice(fromIdx, 1)[0];
-  ELEMENTS.splice(toIdx, 0, movedItem);
-  
-  const container = UI.sliders;
-  const children = Array.from(container.children);
-  const positions = new Map();
-  children.forEach(c => positions.set(c, c.getBoundingClientRect().top));
-  
-  const fromEl = children[fromIdx];
-  const toEl = children[toIdx];
-  
-  if (fromIdx < toIdx) {
-    container.insertBefore(fromEl, toEl.nextSibling);
-  } else {
-    container.insertBefore(fromEl, toEl);
-  }
-  
-  rebuildTileFromValuesFast();
-  
-  Array.from(container.children).forEach(child => {
-    if (child.classList.contains('invisible')) return;
-    
-    const oldTop = positions.get(child);
-    const newTop = child.getBoundingClientRect().top;
-    const delta = oldTop - newTop;
-    
-    if (delta !== 0) {
-      child.style.transform = `translateY(${delta}px)`;
-      child.style.transition = 'none';
-      requestAnimationFrame(() => {
-        child.style.transition = ''; 
-        child.style.transform = '';
-      });
-    }
-  });
-}
-
-function buildSliders(){
-  UI.sliders.innerHTML = "";
-
-  ELEMENTS.forEach((el, idx) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.dataset.index = String(idx);
-    
-    // Attach Hybrid Handlers
-    row.addEventListener('mousedown', initDrag);
-    row.addEventListener('touchstart', initDrag, { passive: false });
-
-    const label = document.createElement("div");
-    label.className = "label";
-
-    const badge = document.createElement("div");
-    badge.className = "badge";
-
-    const sw = document.createElement("span");
-    sw.className = "swatch";
-    sw.style.background = el.color;
-
-    const nm = document.createElement("span");
-    nm.textContent = el.name;
-
-    badge.appendChild(sw);
-    badge.appendChild(nm);
-
-    const val = document.createElement("div");
-    val.className = "value";
-    val.id = `val_${el.key}`;
-    val.textContent = `${round1(values[el.key] || 0)}%`;
-
-    label.appendChild(badge);
-    label.appendChild(val);
-
-    const input = document.createElement("input");
-    input.type = "range";
-    input.min = "0";
-    input.max = "100";
-    input.step = "0.1";
-    input.value = String(values[el.key] || 0);
-    input.id = `rng_${el.key}`;
-    
-    // Stop drag start on sliders
-    input.addEventListener("mousedown", (e) => e.stopPropagation());
-    input.addEventListener("touchstart", (e) => e.stopPropagation(), {passive: true});
-
-    // --- UNDO LOGIC FOR SLIDERS ---
-    let tempState = null;
-    
-    // Capture state on touchstart/mousedown (Before Change)
-    const startCapture = () => { tempState = getCurrentState(); };
-    input.addEventListener("mousedown", startCapture);
-    input.addEventListener("touchstart", startCapture, {passive: true});
-    
-    // Commit state on change (After Release)
-    input.addEventListener("change", () => {
-        if(tempState) {
-            if (undoStack.length === 0 || JSON.stringify(undoStack[undoStack.length-1]) !== JSON.stringify(tempState)) {
-                undoStack.push(tempState);
-                redoStack = [];
-                updateUndoRedoUI();
+        // Add First Click Listener (Buy Logic + Audio)
+        // Add First Click Listener (Sound Only)
+        const btn = document.getElementById(`btn-buy-${tool.id}`);
+        btn.addEventListener('click', () => {
+            // Play Purchase Sound (Only if Enabled)
+            if (state.audioEnabled && dom.audioPurchase) {
+                dom.audioPurchase.currentTime = 0;
+                dom.audioPurchase.play().catch(e => console.log("Audio play failed", e));
             }
-            tempState = null;
+            // No cost deduction, no visual change per request
+        });
+    });
+}
+
+// --- Tab Logic ---
+function switchResourceTab(isEarth) {
+    if (isEarth) {
+        dom.tabResEarth.classList.add('active');
+        dom.tabResMoon.classList.remove('active');
+        dom.listResEarth.classList.remove('hidden');
+        dom.listResMoon.classList.add('hidden');
+    } else {
+        dom.tabResEarth.classList.remove('active');
+        dom.tabResMoon.classList.add('active');
+        dom.listResEarth.classList.add('hidden');
+        dom.listResMoon.classList.remove('hidden');
+    }
+}
+
+function switchToolTab(isEarth) {
+    if (isEarth) {
+        dom.tabToolsEarth.classList.add('active');
+        dom.tabToolsMoon.classList.remove('active');
+        dom.listToolsEarth.classList.remove('hidden');
+        dom.listToolsMoon.classList.add('hidden');
+    } else {
+        dom.tabToolsEarth.classList.remove('active');
+        dom.tabToolsMoon.classList.add('active');
+        dom.listToolsEarth.classList.add('hidden');
+        dom.listToolsMoon.classList.remove('hidden');
+    }
+}
+
+// --- core Logic ---
+function getRandomResource() {
+    const rand = Math.random() * 100;
+    let pool = CONFIG.resources;
+
+    // Select pool based on location
+    if (state.location === 'MOON') {
+        pool = CONFIG.moonResources;
+    }
+
+    let cumulative = 0;
+    for (const res of pool) {
+        cumulative += res.rarity;
+        if (rand < cumulative) {
+            return res;
         }
-    });
-
-    input.addEventListener("input", () => {
-      selectedIndex = ELEMENTS.indexOf(el); 
-      applyChangeLive(el.key, parseFloat(input.value));
-    });
-
-    row.addEventListener("click", () => {
-      selectedIndex = ELEMENTS.indexOf(el); 
-      refreshSelectedUI();
-    });
-
-    row.appendChild(label);
-    row.appendChild(input);
-    UI.sliders.appendChild(row);
-  });
-
-  refreshSelectedUI();
-  refreshUIValues();
-  syncHeights();
+    }
+    return pool[0];
 }
 
-function refreshUIValues(){
-  for (const el of ELEMENTS){
-    const v = round1(values[el.key] || 0);
-    const valEl = document.getElementById(`val_${el.key}`);
-    const rngEl = document.getElementById(`rng_${el.key}`);
-    if (valEl) valEl.textContent = `${v}%`;
-    if (rngEl) rngEl.value = String(v);
-  }
-}
+function spawnPopup(x, y, resource) {
+    const popup = document.createElement('div');
+    popup.className = 'resource-popup';
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
 
-function refreshSelectedUI(){
-  const el = ELEMENTS[selectedIndex];
-  if (el) {
-    if(UI.selectedName) UI.selectedName.textContent = el.name;
-    if(UI.selectedVal) UI.selectedVal.textContent = `${round1(values[el.key] || 0)}%`;
-  }
-}
+    popup.innerHTML = `
+        <img src="${resource.img}" alt="${resource.name}">
+        <span>+${resource.value}</span>
+    `;
 
-function randomSeedOnStart(){
-  const s = randomSeedStringUniform();
-  UI.seedInput.value = s;
-  planetSeed = parseInt(s, 10) || 0;
-  cachedSeed = null;
-  randomStartValues(); 
-}
+    document.body.appendChild(popup);
 
-function setSeedFromInputFinalize(){
-  saveState(); 
-  const final = sanitizeSeedFinal(UI.seedInput.value);
-  UI.seedInput.value = final;
-  const n = parseInt(final, 10);
-  planetSeed = Number.isFinite(n) ? n : 0;
-  cachedSeed = null;
-  rebuildTileFromValuesFast();
-}
-
-function rerollSeed(){
-  saveState(); 
-  const s = randomSeedStringUniform();
-  UI.seedInput.value = s;
-  planetSeed = parseInt(s, 10) || 0;
-  cachedSeed = null;
-  rebuildTileFromValuesFast();
-}
-
-function roundRect(ctx2, x, y, w, h, r, fill, stroke){
-  const rr = Math.min(r, w/2, h/2);
-  ctx2.beginPath();
-  ctx2.moveTo(x+rr, y);
-  ctx2.arcTo(x+w, y, x+w, y+h, rr);
-  ctx2.arcTo(x+w, y+h, x, y+h, rr);
-  ctx2.arcTo(x, y+h, x, y, rr);
-  ctx2.arcTo(x, y, x+w, y, rr);
-  ctx2.closePath();
-  if (fill) ctx2.fill();
-  if (stroke) ctx2.stroke();
-}
-
-function capturePoster(){
-  const active = ELEMENTS
-    .map(e => ({ ...e, v: round1(values[e.key] || 0) }))
-    .filter(e => e.v > 0);
-  const W = 900;
-  const planetSize = 720;
-  const py = 160;
-  const CUT = 33;
-  const legendPadTop = 90;
-  const rowH = 56;
-  const legendBottomPad = Math.max(10, 60 - CUT);
-  const legendInnerH = legendPadTop + (active.length * rowH) + legendBottomPad;
-  const footerPad = 70;
-  const H = py + planetSize + 60 + legendInnerH + footerPad;
-  const poster = document.createElement("canvas");
-  poster.width = W;
-  poster.height = H;
-  const pctx = poster.getContext("2d");
-  pctx.fillStyle = "#0b0f1a";
-  pctx.fillRect(0,0,W,H);
-  pctx.fillStyle = "#eaf2ff";
-  pctx.font = "bold 44px ui-monospace, Menlo, Consolas, monospace";
-  pctx.fillText("CREATE YOUR WORLD", 60, 80);
-  pctx.fillStyle = "rgba(234,242,255,0.7)";
-  pctx.font = "22px ui-monospace, Menlo, Consolas, monospace";
-  pctx.fillText(`Seed: ${planetSeed}`, 60, 118);
-  const px = Math.floor((W - planetSize)/2);
-  pctx.imageSmoothingEnabled = true;
-  pctx.drawImage(UI.canvas, px, py, planetSize, planetSize);
-  const legendY = py + planetSize + 60;
-  const boxX = 60;
-  const boxW = W - 120;
-  const boxH = legendInnerH;
-  pctx.fillStyle = "rgba(16,26,42,0.88)";
-  roundRect(pctx, boxX, legendY, boxW, boxH, 24, true, false);
-  pctx.fillStyle = "#eaf2ff";
-  pctx.font = "bold 30px ui-monospace, Menlo, Consolas, monospace";
-  pctx.fillText("ELEMENTS", boxX + 34, legendY + 58);
-  const rowStartY = legendY + legendPadTop;
-  pctx.font = "24px ui-monospace, Menlo, Consolas, monospace";
-  for (let i=0;i<active.length;i++){
-    const e = active[i];
-    const y = rowStartY + i*rowH;
-    pctx.fillStyle = e.color;
-    roundRect(pctx, boxX + 34, y + 12, 32, 32, 8, true, false);
-    pctx.fillStyle = "#eaf2ff";
-    pctx.fillText(e.name, boxX + 80, y + 38);
-    const pct = `${e.v.toFixed(1)}%`;
-    pctx.fillStyle = "rgba(234,242,255,0.85)";
-    const tw = pctx.measureText(pct).width;
-    pctx.fillText(pct, boxX + boxW - 34 - tw, y + 38);
-  }
-  pctx.fillStyle = "rgba(234,242,255,0.65)";
-  pctx.font = "20px ui-monospace, Menlo, Consolas, monospace";
-  const url = "elblasy.com/create-your-world";
-  const tw2 = pctx.measureText(url).width;
-  pctx.fillText(url, W - 60 - tw2, H - 35);
-  poster.toBlob((blob) => {
-    if (!blob) return;
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `planet_${planetSeed}.png`;
-    document.body.appendChild(a);
-    a.click();
     setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      a.remove();
-    }, 0);
-  }, "image/png");
+        popup.remove();
+    }, 1000);
 }
 
-let lastT = performance.now();
-function tick(t){
-  const dt = Math.min(0.05, (t - lastT) / 1000);
-  lastT = t;
-  const speed = 85 * rotationSpeed;
-  offX = (offX + speed * dt) % TILE_W;
-  rebuildBand();
-  drawPlanet();
-  requestAnimationFrame(tick);
+// --- Travel Logic ---
+function updateTravelButton() {
+    if (state.location === 'EARTH') {
+        dom.btnTravelHelper.textContent = "Fly to the";
+        dom.btnTravelText.textContent = "Moon";
+    } else {
+        dom.btnTravelHelper.textContent = "Fly to";
+        dom.btnTravelText.textContent = "Earth";
+    }
 }
 
-function init(){
-  UI.rotSpeed.min = String(ROT_MIN);
-  UI.rotSpeed.max = String(ROT_MAX);
-  UI.rotSpeed.step = "0.01";
-  UI.seedInput.maxLength = 9;
+function handleTravel() {
+    if (state.isTravelling || !state.gameStarted) return;
 
-  UI.rotSpeed.addEventListener("mousedown", (e) => e.stopPropagation());
+    state.isTravelling = true;
 
-  UI.undoBtn.addEventListener("click", performUndo);
-  UI.redoBtn.addEventListener("click", performRedo);
-  updateUndoRedoUI();
+    // Fade OUT button
+    dom.btnTravel.classList.remove('visible');
 
-  randomSeedOnStart(); 
-  buildSliders();
-  rebuildShading();
-  rebuildTileFromValuesFast();
-  rebuildBand();
+    if (state.location === 'EARTH') {
+        dom.earthSystem.classList.add('off-screen-left');
+        dom.moonSystem.classList.remove('off-screen-right');
+        state.location = 'MOON';
+    } else {
+        dom.moonSystem.classList.add('off-screen-right');
+        dom.earthSystem.classList.remove('off-screen-left');
+        state.location = 'EARTH';
+    }
 
-  UI.seedInput.addEventListener("input", () => {
-    UI.seedInput.value = sanitizeSeedTyping(UI.seedInput.value, 9);
-  });
-  UI.seedInput.addEventListener("change", setSeedFromInputFinalize);
-  UI.seedInput.addEventListener("blur", setSeedFromInputFinalize);
-  UI.seedInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter"){ UI.seedInput.blur(); }
-  });
+    // Text update moved to timeout to prevent visual jump before fade
 
-  UI.reroll.addEventListener("click", rerollSeed);
+    setTimeout(() => {
+        state.isTravelling = false;
 
-  UI.rotSpeed.addEventListener("input", () => {
-    rotationSpeed = clamp(parseFloat(UI.rotSpeed.value) || 0.9, ROT_MIN, ROT_MAX);
-  });
-  rotationSpeed = clamp(parseFloat(UI.rotSpeed.value) || 0.9, ROT_MIN, ROT_MAX);
+        updateTravelButton(); // Update text while hidden
 
-  UI.captureBtn.addEventListener("click", capturePoster);
-  
-  window.addEventListener('resize', syncHeights);
-
-  requestAnimationFrame(tick);
+        // Fade IN button
+        dom.btnTravel.classList.add('visible');
+    }, 1500);
 }
 
-init();
+
+function handleMine(e) {
+    // Only allow Left Click (button 0)
+    if (e.button !== 0) return;
+
+    // --- Start Game Logic ---
+    if (!state.gameStarted) {
+        state.gameStarted = true;
+        dom.startOverlay.classList.add('hidden');
+        dom.btnTravel.classList.add('visible'); // Show Travel Button
+        initAudio();
+        return;
+    }
+
+    // --- Mining Logic ---
+    // Prevent interaction during travel
+    if (state.isTravelling) return;
+
+    // Rate Limit
+    const now = Date.now();
+    if (now - state.lastClickTime < CONFIG.clickRateLimitMs) return;
+
+    state.lastClickTime = now;
+
+    if (state.audioEnabled && dom.audioClick) {
+        const sound = dom.audioClick.cloneNode();
+        sound.volume = 0.5;
+        sound.play().catch(() => { });
+    }
+
+    const resource = getRandomResource();
+    state.score += resource.value;
+
+    dom.scoreDisplay.textContent = state.score.toLocaleString();
+
+    spawnPopup(e.clientX, e.clientY, resource);
+
+    localStorage.setItem('worldClickerScore', state.score);
+
+    // Animation Pulse (Target dynamic system's wrapper)
+    let systemEl;
+    if (state.location === 'MOON') {
+        systemEl = dom.moonSystem;
+    } else {
+        systemEl = dom.earthSystem;
+    }
+
+    // Find the wrapper
+    const wrapper = systemEl.querySelector('.pulse-wrapper');
+    if (wrapper) {
+        // Clear separate timeout if exists to prevent fighting
+        if (wrapper.pulseTimer) clearTimeout(wrapper.pulseTimer);
+
+        wrapper.classList.remove('trigger-pulse');
+        void wrapper.offsetWidth;
+        wrapper.classList.add('trigger-pulse');
+
+        wrapper.pulseTimer = setTimeout(() => {
+            wrapper.classList.remove('trigger-pulse');
+            wrapper.pulseTimer = null;
+        }, 200);
+    }
+}
+
+// --- Initialization ---
+function init() {
+    // Load Score
+    const savedScore = localStorage.getItem('worldClickerScore');
+    if (savedScore) {
+        state.score = parseInt(savedScore, 10) || 0;
+        dom.scoreDisplay.textContent = state.score.toLocaleString();
+    }
+
+    // Click Listeners
+    if (dom.earthZone) dom.earthZone.addEventListener('mousedown', handleMine);
+    if (dom.moonZone) dom.moonZone.addEventListener('mousedown', handleMine);
+    // Fix: Allow clicking the "PLAY" text/overlay to start the game
+    if (dom.startOverlay) dom.startOverlay.addEventListener('click', handleMine);
+
+    // Travel
+    if (dom.btnTravel) dom.btnTravel.addEventListener('click', handleTravel);
+
+    // Audio
+    if (dom.btnMusic) dom.btnMusic.addEventListener('click', toggleMusic);
+    if (dom.btnAudio) dom.btnAudio.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleAudio();
+    });
+
+    // Help Listeners
+    if (dom.btnHelp) {
+        dom.btnHelp.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleHelp();
+        });
+    }
+    if (dom.btnCloseHelp) {
+        dom.btnCloseHelp.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleHelp();
+        });
+    }
+
+    // Menu Listeners
+    if (dom.btnMenu) {
+        dom.btnMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+    }
+    if (dom.btnCloseMenu) {
+        dom.btnCloseMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+    }
+
+
+
+    // Guide Listeners
+    if (dom.btnMenuResources) dom.btnMenuResources.addEventListener('click', toggleResources);
+    if (dom.btnMenuTools) dom.btnMenuTools.addEventListener('click', toggleTools);
+    if (dom.btnMenuAstronauts) dom.btnMenuAstronauts.addEventListener('click', () => console.log("Astronauts clicked"));
+
+    // Bottom Buttons
+    if (dom.btnShop) dom.btnShop.addEventListener('click', toggleShop);
+    // Leaderboard listener would go here
+
+    if (dom.btnCloseResources) dom.btnCloseResources.addEventListener('click', () => dom.resourcesOverlay.classList.add('hidden'));
+    if (dom.btnCloseTools) dom.btnCloseTools.addEventListener('click', () => dom.toolsOverlay.classList.add('hidden'));
+    if (dom.btnCloseShop) dom.btnCloseShop.addEventListener('click', toggleShop); // Shop Close Listener
+
+    // Tab Listeners
+    if (dom.tabResEarth) dom.tabResEarth.addEventListener('click', () => switchResourceTab(true));
+    if (dom.tabResMoon) dom.tabResMoon.addEventListener('click', () => switchResourceTab(false));
+
+    if (dom.tabToolsEarth) dom.tabToolsEarth.addEventListener('click', () => switchToolTab(true));
+    if (dom.tabToolsMoon) dom.tabToolsMoon.addEventListener('click', () => switchToolTab(false));
+
+    document.addEventListener('dragstart', e => e.preventDefault());
+
+    // Disable Right Click Menu
+    document.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+// --- Loading & Preload Logic ---
+async function preloadAssets() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingBar = document.getElementById('loading-bar-fill');
+
+    // 1. Gather all Assets
+    const imagePaths = [
+        'space/background.png',
+        'space/earth.png',
+        'space/clouds.png',
+        'space/earth_glow.png',
+        'space/circular_shading.png',
+        'space/moon.png',
+        'space/moon_border.png',
+        'space/moon_glow.png',
+        'favicon.png'
+    ];
+
+    // Add Resources
+    CONFIG.resources.forEach(r => imagePaths.push(r.img));
+    CONFIG.moonResources.forEach(r => imagePaths.push(r.img));
+
+    // Add Tools
+    CONFIG.earthTools.forEach(t => imagePaths.push(t.img));
+    CONFIG.moonTools.forEach(t => imagePaths.push(t.img));
+
+    // Get DOM audio elements for preloading
+    const domAudioElements = [
+        document.getElementById('audio-bg-music'),
+        document.getElementById('audio-click'),
+        document.getElementById('audio-purchase')
+    ].filter(el => el !== null);
+
+    // Calculate total assets: images + audio elements + fonts
+    const totalAssets = imagePaths.length + domAudioElements.length + 1; // +1 for fonts
+    let loadedCount = 0;
+
+    const updateProgress = () => {
+        loadedCount++;
+        const percent = Math.min((loadedCount / totalAssets) * 100, 100);
+        if (loadingBar) loadingBar.style.width = `${percent}%`;
+    };
+
+    // 2. Load Images
+    const imagePromises = imagePaths.map(src => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => { updateProgress(); resolve(); };
+            img.onerror = () => {
+                console.warn(`Failed to load image: ${src}`);
+                updateProgress(); // Count errors too to avoid hanging
+                resolve();
+            };
+        });
+    });
+
+    // 3. Load Audio - Use the ACTUAL DOM audio elements
+    // This ensures the game's audio elements are ready, not separate Audio objects
+    const audioPromises = domAudioElements.map(audio => {
+        return new Promise((resolve) => {
+            // Check if already loaded
+            if (audio.readyState >= 4) { // HAVE_ENOUGH_DATA
+                updateProgress();
+                resolve();
+                return;
+            }
+
+            let resolved = false;
+            const onReady = () => {
+                if (resolved) return;
+                resolved = true;
+                cleanup();
+                updateProgress();
+                resolve();
+            };
+
+            const onError = () => {
+                if (resolved) return;
+                resolved = true;
+                cleanup();
+                console.warn(`Failed to load audio: ${audio.src}`);
+                updateProgress();
+                resolve();
+            };
+
+            const cleanup = () => {
+                audio.removeEventListener('canplaythrough', onReady);
+                audio.removeEventListener('error', onError);
+            };
+
+            audio.addEventListener('canplaythrough', onReady, { once: true });
+            audio.addEventListener('error', onError, { once: true });
+
+            // Trigger load on the DOM element
+            audio.load();
+
+            // Timeout fallback for strict browser policies (5 seconds max wait)
+            setTimeout(() => {
+                if (!resolved) {
+                    resolved = true;
+                    cleanup();
+                    console.log(`Audio timeout reached for: ${audio.src}`);
+                    updateProgress();
+                    resolve();
+                }
+            }, 5000);
+        });
+    });
+
+    // 4. Wait for Fonts
+    const fontPromise = document.fonts.ready.then(() => {
+        updateProgress();
+    });
+
+    // 5. Run All
+    await Promise.all([...imagePromises, ...audioPromises, fontPromise]);
+
+    // 6. Complete
+    // Small buffer for UX
+    setTimeout(() => {
+        if (loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden'); // or remove
+                loadingOverlay.style.display = 'none'; // Ensure standard hiding
+
+                // Initialize Game
+                init();
+            }, 500);
+        } else {
+            init();
+        }
+    }, 500);
+}
+
+
+// Run
+window.addEventListener('DOMContentLoaded', preloadAssets);
