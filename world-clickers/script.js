@@ -360,8 +360,8 @@ function handleTravel() {
 
 
 function handleMine(e) {
-    // Only allow Left Click (button 0)
-    if (e.button !== 0) return;
+    // Only allow Left Click (button 0) for mouse events
+    if (e.type === 'mousedown' && e.button !== 0) return;
 
     // --- Start Game Logic ---
     if (!state.gameStarted) {
@@ -393,7 +393,17 @@ function handleMine(e) {
 
     dom.scoreDisplay.textContent = state.score.toLocaleString();
 
-    spawnPopup(e.clientX, e.clientY, resource);
+    // Get coordinates - handle both mouse and touch events
+    let clientX, clientY;
+    if (e.type === 'touchstart' && e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+
+    spawnPopup(clientX, clientY, resource);
 
     localStorage.setItem('worldClickerScore', state.score);
 
@@ -431,11 +441,20 @@ function init() {
         dom.scoreDisplay.textContent = state.score.toLocaleString();
     }
 
-    // Click Listeners
-    if (dom.earthZone) dom.earthZone.addEventListener('mousedown', handleMine);
-    if (dom.moonZone) dom.moonZone.addEventListener('mousedown', handleMine);
+    // Click Listeners (Desktop: mousedown, Mobile: touchstart)
+    if (dom.earthZone) {
+        dom.earthZone.addEventListener('mousedown', handleMine);
+        dom.earthZone.addEventListener('touchstart', handleMine, { passive: true });
+    }
+    if (dom.moonZone) {
+        dom.moonZone.addEventListener('mousedown', handleMine);
+        dom.moonZone.addEventListener('touchstart', handleMine, { passive: true });
+    }
     // Fix: Allow clicking the "PLAY" text/overlay to start the game
-    if (dom.startOverlay) dom.startOverlay.addEventListener('click', handleMine);
+    if (dom.startOverlay) {
+        dom.startOverlay.addEventListener('click', handleMine);
+        dom.startOverlay.addEventListener('touchstart', handleMine, { passive: true });
+    }
 
     // Travel
     if (dom.btnTravel) dom.btnTravel.addEventListener('click', handleTravel);

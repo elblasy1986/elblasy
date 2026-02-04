@@ -596,7 +596,7 @@ body {
     position: relative;
     width: 90%;
     max-width: 600px;
-    max-height: 70vh;
+    height: 65vh;
     padding: 40px;
     display: flex;
     flex-direction: column;
@@ -686,11 +686,14 @@ body {
     position: relative;
     width: 90%;
     max-width: 400px;
+    height: 65vh;
     padding: 60px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     color: white;
+    overflow: hidden;
 }
 
 .menu-list {
@@ -757,8 +760,17 @@ body {
 }
 
 .guide-content {
-    /* Shares help-content base, but maybe wider? */
-    /* .help-content is max-width 600px. That's fine. */
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    height: 65vh;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+    overflow: visible;
 }
 
 .guide-text {
@@ -943,9 +955,17 @@ body {
 }
 
 .shop-content {
-    /* Match guide-content styling for consistent popup appearance */
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    height: 65vh;
     padding: 40px;
-    /* max-height and overflow inherited from help-content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+    overflow: visible;
 }
 
 .shop-list {
@@ -1320,7 +1340,7 @@ body {
         width: 95%;
         max-width: none;
         padding: 25px 15px;
-        max-height: 90vh;
+        height: 65vh;
     }
 
     .close-btn {
