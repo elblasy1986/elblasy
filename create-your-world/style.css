@@ -6,6 +6,8 @@
     user-select: none;
     /* Disable text selection for game feel */
     -webkit-user-drag: none;
+    /* Disable blue tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -594,12 +596,14 @@ body {
     position: relative;
     width: 90%;
     max-width: 600px;
+    max-height: 70vh;
     padding: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     color: white;
+    overflow: visible;
 }
 
 .help-icon {
@@ -939,17 +943,9 @@ body {
 }
 
 .shop-content {
-    /* reuse help-content but ensure it fits */
-    width: 90%;
-    max-width: 600px;
-    max-height: 85vh;
-    /* Allow close button to appear above container */
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-    padding: 30px;
-    position: relative;
-    /* Ensure Close Button anchors here */
+    /* Match guide-content styling for consistent popup appearance */
+    padding: 40px;
+    /* max-height and overflow inherited from help-content */
 }
 
 .shop-list {
@@ -958,7 +954,8 @@ body {
     flex-direction: column;
     gap: 15px;
     overflow-y: auto;
-    /* Fix: Content scrolls */
+    /* Match help-text max-height for consistent popup sizing */
+    max-height: 60vh;
     flex: 1;
     /* Fill remaining space */
     padding-right: 10px;
