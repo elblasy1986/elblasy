@@ -165,11 +165,13 @@ const dom = {
 // --- Country Detection ---
 async function detectCountry() {
     try {
-        const response = await fetch('http://ip-api.com/json/');
+        // Using HTTPS API to avoid mixed-content blocking on GitHub Pages
+        const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
 
-        if (data.status === 'success') {
-            let countryCode = data.countryCode;
+        // ipapi.co returns country_code and country_name directly (no status field)
+        if (data.country_code) {
+            let countryCode = data.country_code;
 
             // Check if country code should be redirected (e.g., IL -> PS)
             if (COUNTRY_CODE_REDIRECTS[countryCode]) {
@@ -178,7 +180,7 @@ async function detectCountry() {
 
             return {
                 code: countryCode,
-                name: COUNTRY_NAME_OVERRIDES[data.countryCode] || data.country
+                name: COUNTRY_NAME_OVERRIDES[data.country_code] || data.country_name
             };
         }
     } catch (error) {
