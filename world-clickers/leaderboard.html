@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page">
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to game
+    </a>
+
+    <div class="page-wrapper">
+        <div class="guide-text">
+            <h1 class="guide-title">Leaderboard</h1>
+
+            <div class="guide-tabs">
+                <div class="menu-item tab-btn active" id="tab-lb-countries">
+                    <i class="fa-solid fa-flag"></i>
+                    <span>Countries</span>
+                </div>
+                <div class="menu-item tab-btn" id="tab-lb-players">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Players</span>
+                </div>
+            </div>
+
+            <div id="list-lb-countries" class="guide-list leaderboard-list"></div>
+            <div id="list-lb-players" class="guide-list leaderboard-list hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const LEADERBOARD_TOOLS = [
+            { id: 't_wood', img: 'tools/timber_axe.png' },
+            { id: 't_fish', img: 'tools/hydro_netter.png' },
+            { id: 't_coal', img: 'tools/coal_cracker.png' },
+            { id: 't_stone', img: 'tools/stone_splitter.png' },
+            { id: 't_oil', img: 'tools/oil_extractor.png' },
+            { id: 't_iron', img: 'tools/iron_digger.png' },
+            { id: 't_copper', img: 'tools/copper_cutter.png' },
+            { id: 't_silver', img: 'tools/silver_shaver.png' },
+            { id: 't_gold', img: 'tools/gold_miner_rig.png' },
+            { id: 't_diamond', img: 'tools/crystal_pierce_drill.png' },
+            { id: 'm_dust', img: 'tools/dust_vacuumer.png' },
+            { id: 'm_glass', img: 'tools/glass_glow_cutter.png' },
+            { id: 'm_ice', img: 'tools/frost_core_drill.png' },
+            { id: 'm_sapphire', img: 'tools/sapphire_saw.png' },
+            { id: 'm_meteor', img: 'tools/meteor_forge_extractor.png' },
+            { id: 'm_fiber', img: 'tools/quantum_thread_puller.png' },
+            { id: 'm_stardust', img: 'tools/star_shard_collector.png' },
+            { id: 'm_core', img: 'tools/core_pulse_harvester.png' },
+            { id: 'm_matter', img: 'tools/void_splitter.png' },
+            { id: 'm_pulse', img: 'tools/pulse_conductor.png' }
+        ];
+
+        const LEADERBOARD_COUNTRIES = [
+            { code: 'US', name: 'United States', score: Math.floor(Math.random() * 500000) + 100000 },
+            { code: 'CN', name: 'China', score: Math.floor(Math.random() * 500000) + 100000 },
+            { code: 'JP', name: 'Japan', score: Math.floor(Math.random() * 400000) + 50000 },
+            { code: 'DE', name: 'Germany', score: Math.floor(Math.random() * 300000) + 50000 },
+            { code: 'GB', name: 'United Kingdom', score: Math.floor(Math.random() * 300000) + 50000 },
+            { code: 'FR', name: 'France', score: Math.floor(Math.random() * 250000) + 40000 },
+            { code: 'BR', name: 'Brazil', score: Math.floor(Math.random() * 200000) + 30000 },
+            { code: 'IN', name: 'India', score: Math.floor(Math.random() * 200000) + 30000 },
+            { code: 'KR', name: 'South Korea', score: Math.floor(Math.random() * 180000) + 25000 },
+            { code: 'CA', name: 'Canada', score: Math.floor(Math.random() * 150000) + 20000 },
+            { code: 'AU', name: 'Australia', score: Math.floor(Math.random() * 150000) + 20000 },
+            { code: 'IT', name: 'Italy', score: Math.floor(Math.random() * 120000) + 15000 },
+            { code: 'ES', name: 'Spain', score: Math.floor(Math.random() * 100000) + 10000 },
+            { code: 'MX', name: 'Mexico', score: Math.floor(Math.random() * 100000) + 10000 },
+            { code: 'RU', name: 'Russia', score: Math.floor(Math.random() * 90000) + 8000 },
+            { code: 'NL', name: 'Netherlands', score: Math.floor(Math.random() * 80000) + 5000 },
+            { code: 'TR', name: 'Turkey', score: Math.floor(Math.random() * 70000) + 5000 },
+            { code: 'SA', name: 'Saudi Arabia', score: Math.floor(Math.random() * 60000) + 4000 },
+            { code: 'EG', name: 'Egypt', score: Math.floor(Math.random() * 50000) + 3000 },
+            { code: 'PS', name: 'Palestine', score: Math.floor(Math.random() * 45000) + 2500 },
+            { code: 'AE', name: 'United Arab Emirates', score: Math.floor(Math.random() * 40000) + 2000 },
+            { code: 'PL', name: 'Poland', score: Math.floor(Math.random() * 35000) + 1500 },
+            { code: 'SE', name: 'Sweden', score: Math.floor(Math.random() * 30000) + 1000 },
+            { code: 'NO', name: 'Norway', score: Math.floor(Math.random() * 25000) + 500 },
+            { code: 'FI', name: 'Finland', score: 0 },
+            { code: 'DK', name: 'Denmark', score: 0 },
+            { code: 'PT', name: 'Portugal', score: 0 },
+            { code: 'GR', name: 'Greece', score: 0 },
+            { code: 'IE', name: 'Ireland', score: 0 },
+            { code: 'NZ', name: 'New Zealand', score: 0 }
+        ].sort((a, b) => b.score - a.score);
+
+        const LEADERBOARD_PLAYERS = [
+            { name: 'ShadowMiner_X', score: Math.floor(Math.random() * 100000) + 50000 },
+            { name: 'CryptoDigger99', score: Math.floor(Math.random() * 90000) + 40000 },
+            { name: 'MoonWalker2025', score: Math.floor(Math.random() * 80000) + 35000 },
+            { name: 'EarthShaker', score: Math.floor(Math.random() * 70000) + 30000 },
+            { name: 'DiamondHunter', score: Math.floor(Math.random() * 60000) + 25000 },
+            { name: 'StardustKing', score: Math.floor(Math.random() * 50000) + 20000 },
+            { name: 'GoldRusher', score: Math.floor(Math.random() * 45000) + 18000 },
+            { name: 'CosmicClicker', score: Math.floor(Math.random() * 40000) + 15000 },
+            { name: 'ResourcePro', score: Math.floor(Math.random() * 35000) + 12000 },
+            { name: 'NightMiner', score: Math.floor(Math.random() * 30000) + 10000 },
+            { name: 'QuantumFarmer', score: Math.floor(Math.random() * 25000) + 8000 },
+            { name: 'LunarLegend', score: Math.floor(Math.random() * 20000) + 6000 },
+            { name: 'SpaceAce', score: Math.floor(Math.random() * 15000) + 4000 },
+            { name: 'OreCollector', score: Math.floor(Math.random() * 10000) + 2000 },
+            { name: 'NewPlayer123', score: Math.floor(Math.random() * 5000) + 500 }
+        ].sort((a, b) => b.score - a.score);
+
+        function toggleDetails(row) {
+            const entry = row.parentElement;
+            const details = entry.querySelector('.leaderboard-details');
+            const isActive = entry.classList.contains('active');
+
+            // Close all other entries
+            document.querySelectorAll('.leaderboard-entry.active').forEach(activeEntry => {
+                if (activeEntry !== entry) {
+                    activeEntry.classList.remove('active');
+                }
+            });
+
+            // Toggle current
+            if (!isActive) {
+                entry.classList.add('active');
+                if (!details.hasAttribute('data-populated')) {
+                    generateRandomTools(details);
+                    details.setAttribute('data-populated', 'true');
+                }
+            } else {
+                entry.classList.remove('active');
+            }
+        }
+
+        function generateRandomTools(container) {
+            // Pick random number of tools between 3 and 20
+            const toolCount = Math.floor(Math.random() * (20 - 3 + 1)) + 3;
+
+            // Pick 'toolCount' unique random tools
+            const shuffled = [...LEADERBOARD_TOOLS].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, toolCount);
+
+            // Sort by original order (index in LEADERBOARD_TOOLS)
+            selected.sort((a, b) => LEADERBOARD_TOOLS.indexOf(a) - LEADERBOARD_TOOLS.indexOf(b));
+
+            const grid = document.createElement('div');
+            grid.className = 'tools-grid';
+
+            selected.forEach(tool => {
+                const count = Math.floor(Math.random() * 50) + 1; // Random count 1-50
+                const toolItem = document.createElement('div');
+                toolItem.className = 'tool-item';
+                toolItem.innerHTML = `
+                    <img class="tool-icon" src="${tool.img}" alt="Tool">
+                    <span class="tool-x">×</span>
+                    <span>${count}</span>
+                `;
+                grid.appendChild(toolItem);
+            });
+            container.appendChild(grid);
+        }
+
+        function renderLeaderboard() {
+            const listCountries = document.getElementById('list-lb-countries');
+            const listPlayers = document.getElementById('list-lb-players');
+
+            // Render Countries
+            listCountries.innerHTML = '';
+            LEADERBOARD_COUNTRIES.forEach((country, index) => {
+                const entry = document.createElement('div');
+                entry.className = 'leaderboard-entry';
+                entry.innerHTML = `
+                    <div class="leaderboard-item" onclick="toggleDetails(this)">
+                        <span class="lb-rank">${index + 1}.</span>
+                        <img class="lb-flag" src="https://hatscripts.github.io/circle-flags/flags/${country.code.toLowerCase()}.svg" alt="${country.name}">
+                        <span class="lb-name">${country.name}</span>
+                        <span class="lb-score">$${country.score.toLocaleString()}</span>
+                        <i class="fa-solid fa-chevron-right lb-arrow"></i>
+                    </div>
+                    <div class="leaderboard-details"></div>
+                `;
+                listCountries.appendChild(entry);
+            });
+
+            // Render Players
+            listPlayers.innerHTML = '';
+            LEADERBOARD_PLAYERS.forEach((player, index) => {
+                const entry = document.createElement('div');
+                entry.className = 'leaderboard-entry';
+                entry.innerHTML = `
+                    <div class="leaderboard-item" onclick="toggleDetails(this)">
+                        <span class="lb-rank">${index + 1}.</span>
+                        <span class="lb-name">${player.name}</span>
+                        <span class="lb-score">$${player.score.toLocaleString()}</span>
+                        <i class="fa-solid fa-chevron-right lb-arrow"></i>
+                    </div>
+                    <div class="leaderboard-details"></div>
+                `;
+                listPlayers.appendChild(entry);
+            });
+        }
+        // Disable Right Click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Tab switching
+        const tabCountries = document.getElementById('tab-lb-countries');
+        const tabPlayers = document.getElementById('tab-lb-players');
+        const listCountries = document.getElementById('list-lb-countries');
+        const listPlayers = document.getElementById('list-lb-players');
+
+        tabCountries.addEventListener('click', () => {
+            tabCountries.classList.add('active');
+            tabPlayers.classList.remove('active');
+            listCountries.classList.remove('hidden');
+            listPlayers.classList.add('hidden');
+        });
+
+        tabPlayers.addEventListener('click', () => {
+            tabPlayers.classList.add('active');
+            tabCountries.classList.remove('active');
+            listPlayers.classList.remove('hidden');
+            listCountries.classList.add('hidden');
+        });
+
+        window.addEventListener('DOMContentLoaded', renderLeaderboard);
+    </script>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+
+</html>

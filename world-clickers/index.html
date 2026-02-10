@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <img src="favicon.png" class="loading-logo" alt="World Clickers">
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill" id="loading-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Assets -->
+    <audio id="audio-bg-music" loop src="sounds/background_music.ogg"></audio>
+    <audio id="audio-click" src="sounds/pop_sound.wav"></audio>
+    <audio id="audio-purchase" src="sounds/purchase_sound.wav"></audio>
+
+    <!-- UI Overlay (Top Left Menu) -->
+    <div class="ui-controls">
+        <i class="fa-solid fa-bars" id="btn-menu"></i>
+        <i class="fa-solid fa-cube" id="btn-resources"></i>
+        <i class="fa-solid fa-user-astronaut" id="btn-astronauts"></i>
+        <i class="fa-solid fa-cart-shopping" id="btn-shop"></i>
+        <i class="fa-solid fa-star" id="btn-leaderboard"></i>
+    </div>
+
+    <!-- Top Right Controls -->
+    <div class="profile-control">
+        <i class="fa-solid fa-music" id="btn-music"></i>
+        <i class="fa-solid fa-volume-high" id="btn-audio"></i>
+        <i class="fa-solid fa-circle-exclamation" id="btn-help"></i>
+        <i class="fa-solid fa-user" id="btn-profile"></i>
+    </div>
+
+    <!-- Main Game Wrapper -->
+    <div class="game-wrapper">
+        <!-- Logo -->
+        <img src="world_clickers_logo.png" alt="World Clickers Logo" class="logo">
+
+        <!-- Main Game Area -->
+        <main class="game-stage">
+
+            <!-- Score Header -->
+            <header class="game-header">
+                <div class="header-content">
+                    <div class="score-container">
+                        <img id="country-flag" class="country-flag" src="" alt="Country Flag" style="display: none;">
+                        <div class="score-board">
+                            <span class="currency-symbol">$</span><span id="score-value">0</span>
+                        </div>
+                    </div>
+                    <div class="player-score">
+                        <i class="fa-solid fa-user player-icon"></i>
+                        <span class="currency-symbol-small">$</span><span id="player-score-value">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Anchor Wrapper -->
+            <div class="globe-wrapper-anchor">
+                <!-- Systems Rotator -->
+                <div class="systems-rotator">
+                    <!-- EARTH SYSTEM -->
+                    <div class="globe-system" id="earth-system">
+                        <div class="pulse-wrapper">
+                            <!-- Start Overlay -->
+                            <div id="start-overlay">
+                                <span>PLAY</span>
+                            </div>
+
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="earth-interact-zone">
+                                <div class="layer earth-layer"></div>
+                                <div class="layer clouds-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Earth Glow -->
+                            <div class="globe-glow"></div>
+                        </div>
+                    </div>
+
+                    <!-- MOON SYSTEM (Initially Hidden/Off-screen) -->
+                    <div class="globe-system off-screen-right" id="moon-system">
+                        <div class="pulse-wrapper">
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="moon-interact-zone">
+                                <div class="layer moon-layer"></div>
+                                <div class="layer moon-border-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Moon Glow -->
+                            <div class="globe-glow moon-glow"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moon Travel Button (Static) -->
+                <div class="moon-travel-btn" id="btn-travel">
+                    <i class="fa-solid fa-shuttle-space"></i>
+                    <div class="text-container">
+                        <span>Fly to The</span>
+                        <span class="title">Moon</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="hidden">
+        <i class="fa-solid fa-xmark" id="btn-mobile-close"></i>
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-item" id="btn-mobile-resources">
+                <i class="fa-solid fa-cube"></i>
+                <span>Resources Guide</span>
+            </div>
+            <div class="mobile-menu-item" id="btn-mobile-astronauts">
+                <i class="fa-solid fa-user-astronaut"></i>
+                <span>Astronauts</span>
+            </div>
+            <div class="mobile-menu-item" id="btn-mobile-shop">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>Tools Shop</span>
+            </div>
+            <div class="mobile-menu-item" id="btn-mobile-leaderboard">
+                <i class="fa-solid fa-star"></i>
+                <span>Leaderboard</span>
+            </div>
+
+            <div class="mobile-menu-footer">
+                <i class="fa-solid fa-music" id="btn-mobile-music"></i>
+                <i class="fa-solid fa-volume-high" id="btn-mobile-audio"></i>
+                <i class="fa-solid fa-circle-exclamation" id="btn-mobile-help"></i>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
