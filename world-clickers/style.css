@@ -2240,12 +2240,28 @@ a.menu-item:hover {
         backdrop-filter: blur(2px);
     }
 
-    /* Increase bottom padding for mobile wrapper to ensure margin at bottom */
-    .page-wrapper {
-        padding-bottom: 80px !important;
+    /* Reduce flag size on mobile globally */
+    .country-flag {
+        width: 2rem;
+        height: 2rem;
     }
 
+    /* Remove scroll issue on standalone pages */
+    .standalone-page,
+    .standalone-page body {
+        overflow: hidden !important;
+        height: 100% !important;
+    }
 
+    .page-wrapper {
+        padding-bottom: 20px !important;
+        /* Reduced from 80px */
+    }
+
+    /* Shrink nickname placeholder on mobile */
+    #nickname-input::placeholder {
+        font-size: 1rem;
+    }
 }
 
 /* --- Travel Confirmation Popup --- */

@@ -20,7 +20,7 @@ const CONFIG = {
     moonResources: [
         { name: 'REGOLITH DUST', rarity: 35, value: 200, img: 'resources/regolith_dust.png' },
         { name: 'LUNAR GLASS', rarity: 25, value: 300, img: 'resources/lunar_glass.png' },
-        { name: 'LUNAR ICE', rarity: 15, value: 50, img: 'resources/lunar_ice.png' },
+        { name: 'LUNAR ICE', rarity: 15, value: 450, img: 'resources/lunar_ice.png' },
         { name: 'LUNAR SAPPHIRE', rarity: 8, value: 700, img: 'resources/lunar_sapphire.png' },
         { name: 'ANCIENT METEOR ALLOY', rarity: 6, value: 1000, img: 'resources/ancient_meteor_alloy.png' },
         { name: 'QUANTUM FIBER', rarity: 4, value: 1500, img: 'resources/quantum_fiber.png' },
