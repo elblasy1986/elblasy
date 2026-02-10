@@ -1463,12 +1463,20 @@ a.menu-item:hover {
         background-attachment: fixed;
     }
 
-    /* Override body restrictions for standalone pages to allow scrolling */
+    /* Un-lock both html and body for standalone pages to allow scrolling */
+    html.standalone-page,
     body.standalone-page {
         overflow: auto !important;
         position: relative !important;
         height: auto !important;
         width: 100% !important;
+    }
+
+    /* Support case where only body has the class (modern browsers) */
+    html:has(body.standalone-page) {
+        overflow: auto !important;
+        position: relative !important;
+        height: auto !important;
     }
 
     /* --- Globe System --- */
