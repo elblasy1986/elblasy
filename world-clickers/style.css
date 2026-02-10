@@ -1463,6 +1463,14 @@ a.menu-item:hover {
         background-attachment: fixed;
     }
 
+    /* Override body restrictions for standalone pages to allow scrolling */
+    body.standalone-page {
+        overflow: auto !important;
+        position: relative !important;
+        height: auto !important;
+        width: 100% !important;
+    }
+
     /* --- Globe System --- */
     .globe-wrapper-anchor {
         width: 280px;
@@ -2222,6 +2230,11 @@ a.menu-item:hover {
         border-radius: 0;
         z-index: 9999;
         backdrop-filter: blur(2px);
+    }
+
+    /* Increase bottom padding for mobile wrapper to ensure margin at bottom */
+    .page-wrapper {
+        padding-bottom: 80px !important;
     }
 
 
