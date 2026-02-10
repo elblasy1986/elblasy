@@ -23,6 +23,16 @@ body {
     color: white;
 }
 
+/* --- Standalone Pages (Login, Nickname, etc.) --- */
+.standalone-page,
+.standalone-page body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    margin: 0;
+    padding: 0;
+}
+
 /* --- Layout --- */
 .game-wrapper {
     display: flex;
@@ -2246,12 +2256,6 @@ a.menu-item:hover {
         height: 2rem;
     }
 
-    /* Remove scroll issue on standalone pages */
-    .standalone-page,
-    .standalone-page body {
-        overflow: hidden !important;
-        height: 100% !important;
-    }
 
     .page-wrapper {
         padding-bottom: 20px !important;
@@ -2529,6 +2533,10 @@ a.menu-item:hover {
     }
 
     .profile-nickname {
+        font-size: 2rem;
+    }
+
+    .profile-value {
         font-size: 2rem;
     }
 }
