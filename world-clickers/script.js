@@ -121,6 +121,11 @@ const dom = {
     btnTravelText: document.querySelector('#btn-travel .title'),
     btnTravelHelper: document.querySelector('#btn-travel .text-container span:first-child'),
 
+    // Travel Confirmation Popup
+    travelConfirmOverlay: document.getElementById('travel-confirm-overlay'),
+    btnTravelClose: document.getElementById('btn-travel-close'),
+    btnPayTravel: document.getElementById('btn-pay-travel'),
+
     // Country Flag
     countryFlag: document.getElementById('country-flag')
 };
@@ -342,6 +347,32 @@ function updateTravelButton() {
 function handleTravel() {
     if (state.isTravelling || !state.gameStarted) return;
 
+    if (state.location === 'EARTH') {
+        // Show confirmation popup when leaving Earth
+        if (dom.travelConfirmOverlay) {
+            dom.travelConfirmOverlay.classList.remove('hidden');
+        }
+    } else {
+        // Leaving Moon -> Going to Earth (no popup for now)
+        executeTravel();
+    }
+}
+
+function executeTravel() {
+    if (state.isTravelling || !state.gameStarted) return;
+
+    // Play purchase sound for the thematic "Pay $100" button ONLY when traveling TO the Moon
+    if (state.location === 'EARTH' && state.audioEnabled && dom.audioPurchase) {
+        const sound = dom.audioPurchase.cloneNode();
+        sound.volume = 0.5;
+        sound.play().catch(() => { });
+    }
+
+    // Hide confirmation popup if visible
+    if (dom.travelConfirmOverlay) {
+        dom.travelConfirmOverlay.classList.add('hidden');
+    }
+
     state.isTravelling = true;
 
     // Fade OUT button
@@ -534,6 +565,12 @@ function init() {
     // Travel
     if (dom.btnTravel) dom.btnTravel.addEventListener('click', handleTravel);
 
+    // Travel Confirmation
+    if (dom.btnPayTravel) dom.btnPayTravel.addEventListener('click', executeTravel);
+    if (dom.btnTravelClose) dom.btnTravelClose.addEventListener('click', () => {
+        if (dom.travelConfirmOverlay) dom.travelConfirmOverlay.classList.add('hidden');
+    });
+
     // Audio
     if (dom.btnMusic) dom.btnMusic.addEventListener('click', toggleMusic);
     if (dom.btnAudio) dom.btnAudio.addEventListener('click', (e) => {
@@ -553,7 +590,9 @@ function init() {
     if (dom.btnShop) dom.btnShop.addEventListener('click', openShop);
     if (dom.btnLeaderboard) dom.btnLeaderboard.addEventListener('click', openLeaderboard);
     if (dom.btnAstronauts) dom.btnAstronauts.addEventListener('click', () => { window.location.href = 'astronauts.html'; });
-    if (dom.btnProfile) dom.btnProfile.addEventListener('click', () => { window.location.href = 'login.html'; });
+    if (dom.btnProfile) dom.btnProfile.addEventListener('click', () => {
+        window.location.href = `login.html?score=${state.playerScore}`;
+    });
 
     // --- Mobile Menu Logic ---
     const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');

@@ -15,7 +15,7 @@
 <body class="standalone-page">
     <a href="index.html" class="back-link">
         <i class="fa-solid fa-arrow-left"></i>
-        Back to game
+        Back to the Game
     </a>
 
     <div class="page-wrapper">
@@ -23,19 +23,19 @@
 
         <div class="login-container">
             <!-- Login with Email -->
-            <button class="login-btn btn-email">
+            <button class="login-btn btn-email" onclick="redirectToNickname()">
                 <i class="fa-solid fa-envelope"></i>
                 <span>Login with email</span>
             </button>
 
             <!-- Login with Google -->
-            <button class="login-btn btn-google">
+            <button class="login-btn btn-google" onclick="redirectToNickname()">
                 <i class="fa-brands fa-google"></i>
                 <span>Login with Google</span>
             </button>
 
             <!-- Login with Apple -->
-            <button class="login-btn btn-apple">
+            <button class="login-btn btn-apple" onclick="redirectToNickname()">
                 <i class="fa-brands fa-apple"></i>
                 <span>Login with Apple</span>
             </button>
@@ -43,6 +43,11 @@
     </div>
 
     <script>
+        function redirectToNickname() {
+            const params = new URLSearchParams(window.location.search);
+            const score = params.get('score') || '0';
+            window.location.href = `nickname.html?score=${score}`;
+        }
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>

@@ -2247,3 +2247,272 @@ a.menu-item:hover {
 
 
 }
+
+/* --- Travel Confirmation Popup --- */
+#travel-confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    /* Remove background behind popup */
+    z-index: 300;
+    /* Above regular guides */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+#travel-confirm-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.travel-confirm-content {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    background: rgba(0, 0, 0, 0.9);
+    /* 90% black */
+    border: none;
+    /* No borders */
+    border-radius: 20px;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.travel-icon {
+    font-size: 5rem;
+    color: white;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+}
+
+.travel-title {
+    font-family: 'Bungee', cursive;
+    font-size: 1.4rem;
+    color: #ffd700;
+    /* Yellow */
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.travel-message {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 0.95rem;
+    /* Smaller font as requested */
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 35px;
+    letter-spacing: 0.3px;
+}
+
+#btn-travel-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+#btn-travel-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+#btn-pay-travel {
+    width: 100%;
+    max-width: 250px;
+}
+
+/* --- Nickname Page --- */
+.nickname-container {
+    width: 90%;
+    max-width: 450px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    margin-top: 20px;
+}
+
+.nickname-instruction {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.nickname-instruction span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#nickname-input {
+    width: 100%;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: #ffd700;
+    font-size: 2rem;
+    /* Larger font size */
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s;
+}
+
+#nickname-input:focus {
+    border-color: #ffd700;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.error-text {
+    color: #ff4d4d;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.error-text.hidden {
+    display: none;
+}
+
+/* --- Profile Page --- */
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.welcome-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.profile-nickname {
+    font-family: 'Roboto', sans-serif;
+    /* Changed for case sensitivity */
+    font-size: 3.5rem;
+    font-weight: 900;
+    /* Boldest */
+    color: #ffd700;
+    /* Yellow */
+    margin-top: 5px;
+    text-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.profile-value-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: -10px;
+    margin-bottom: 30px;
+}
+
+.profile-value {
+    font-family: 'Bungee', cursive;
+    font-size: 4rem;
+    /* Matching index total value size */
+    color: #ffffff;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+.profile-value-symbol {
+    font-family: 'Bungee', cursive;
+    font-size: 4rem;
+    color: #fff;
+    opacity: 0.5;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+.section-title {
+    font-family: 'Bungee', cursive;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 25px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.profile-section {
+    width: 100%;
+    max-width: 800px;
+}
+
+.tools-grid-profile {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* 5 columns desktop */
+    gap: 15px;
+    width: 100%;
+}
+
+.tool-item-profile {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.tool-item-profile:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tool-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tool-icon-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.tool-count {
+    font-family: 'Bungee', cursive;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .tools-grid-profile {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns mobile */
+    }
+
+    .profile-nickname {
+        font-size: 2rem;
+    }
+}

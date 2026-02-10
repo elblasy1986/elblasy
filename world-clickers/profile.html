@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page">
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <div class="profile-header">
+            <span class="welcome-label">Welcome</span>
+            <h1 id="display-nickname" class="profile-nickname">Player</h1>
+            <div class="profile-value-display">
+                <span id="display-value" class="profile-value">0</span>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2 class="section-title">Purchased Tools</h2>
+            <div id="purchased-tools-grid" class="tools-grid-profile"></div>
+        </div>
+    </div>
+
+    <script>
+        const LEADERBOARD_TOOLS = [
+            { id: 't_wood', img: 'tools/timber_axe.png' },
+            { id: 't_fish', img: 'tools/hydro_netter.png' },
+            { id: 't_coal', img: 'tools/coal_cracker.png' },
+            { id: 't_stone', img: 'tools/stone_splitter.png' },
+            { id: 't_oil', img: 'tools/oil_extractor.png' },
+            { id: 't_iron', img: 'tools/iron_digger.png' },
+            { id: 't_copper', img: 'tools/copper_cutter.png' },
+            { id: 't_silver', img: 'tools/silver_shaver.png' },
+            { id: 't_gold', img: 'tools/gold_miner_rig.png' },
+            { id: 't_diamond', img: 'tools/crystal_pierce_drill.png' },
+            { id: 'm_dust', img: 'tools/dust_vacuumer.png' },
+            { id: 'm_glass', img: 'tools/glass_glow_cutter.png' },
+            { id: 'm_ice', img: 'tools/frost_core_drill.png' },
+            { id: 'm_sapphire', img: 'tools/sapphire_saw.png' },
+            { id: 'm_meteor', img: 'tools/meteor_forge_extractor.png' },
+            { id: 'm_fiber', img: 'tools/quantum_thread_puller.png' },
+            { id: 'm_stardust', img: 'tools/star_shard_collector.png' },
+            { id: 'm_core', img: 'tools/core_pulse_harvester.png' },
+            { id: 'm_matter', img: 'tools/void_splitter.png' },
+            { id: 'm_pulse', img: 'tools/pulse_conductor.png' }
+        ];
+
+        function initProfile() {
+            // Priority 1: URL Parameter (Fixes local caching issues)
+            const params = new URLSearchParams(window.location.search);
+            const urlNickname = params.get('name');
+
+            // Priority 2: LocalStorage
+            const storedNickname = localStorage.getItem('worldClickerNickname');
+
+            const nickname = urlNickname || storedNickname || 'Guest';
+
+            console.log('Final nickname resolved:', nickname);
+
+            // Sync back to storage if it came from URL
+            if (urlNickname) {
+                localStorage.setItem('worldClickerNickname', urlNickname);
+            }
+
+            document.getElementById('display-nickname').textContent = nickname;
+
+            // Load & Sync Player Score
+            // Priority 1: URL Parameter
+            const urlScore = params.get('score');
+            // Priority 2: LocalStorage
+            const storedScore = localStorage.getItem('worldClickerPlayerScore') || '0';
+
+            const score = urlScore || storedScore;
+
+            // Sync to storage if it came from URL
+            if (urlScore) {
+                localStorage.setItem('worldClickerPlayerScore', urlScore);
+            }
+
+            document.getElementById('display-value').textContent = parseInt(score, 10).toLocaleString();
+
+            renderTools();
+        }
+
+        function renderTools() {
+            const grid = document.getElementById('purchased-tools-grid');
+            grid.innerHTML = '';
+
+            // We iterate through THE MASTER LIST to keep the order FIXED
+            // But we randomize which ones are "owned" and their counts
+            LEADERBOARD_TOOLS.forEach(tool => {
+                // Randomly Decide if the player "owns" this tool (e.g. 50% chance)
+                if (Math.random() > 0.5) {
+                    const count = Math.floor(Math.random() * 20) + 1;
+                    const item = document.createElement('div');
+                    item.className = 'tool-item-profile';
+                    item.innerHTML = `
+                        <div class="tool-icon-wrapper">
+                            <img class="tool-icon" src="${tool.img}" alt="Tool">
+                        </div>
+                        <div class="tool-info-profile">
+                            <span class="tool-count">×${count}</span>
+                        </div>
+                    `;
+                    grid.appendChild(item);
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', initProfile);
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+
+</html>

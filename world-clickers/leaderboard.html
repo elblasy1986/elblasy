@@ -15,7 +15,7 @@
 <body class="standalone-page">
     <a href="index.html" class="back-link">
         <i class="fa-solid fa-arrow-left"></i>
-        Back to game
+        Back to the Game
     </a>
 
     <div class="page-wrapper">
@@ -179,7 +179,7 @@
                         <span class="lb-rank">${index + 1}.</span>
                         <img class="lb-flag" src="https://hatscripts.github.io/circle-flags/flags/${country.code.toLowerCase()}.svg" alt="${country.name}">
                         <span class="lb-name">${country.name}</span>
-                        <span class="lb-score">$${country.score.toLocaleString()}</span>
+                        <span class="lb-score">${country.score.toLocaleString()}</span>
                         <i class="fa-solid fa-chevron-right lb-arrow"></i>
                     </div>
                     <div class="leaderboard-details"></div>
@@ -196,7 +196,7 @@
                     <div class="leaderboard-item" onclick="toggleDetails(this)">
                         <span class="lb-rank">${index + 1}.</span>
                         <span class="lb-name">${player.name}</span>
-                        <span class="lb-score">$${player.score.toLocaleString()}</span>
+                        <span class="lb-score">${player.score.toLocaleString()}</span>
                         <i class="fa-solid fa-chevron-right lb-arrow"></i>
                     </div>
                     <div class="leaderboard-details"></div>
