@@ -349,9 +349,12 @@ body {
     overflow: hidden;
     z-index: 1;
 
-    /* FIX: Inner shadow to hide jagged clipping edges */
-    /* This creates a 2px dark fading ring inside the circle */
-    box-shadow: inset 0 0 2px 2px rgba(0, 0, 0, 0.5);
+    /* FIX: clip-path provides precise compositor-level clipping that works
+       correctly with GPU-composited child layers (transform: translateZ(0)).
+       border-radius + overflow: hidden alone causes edge bleed when children
+       are on separate compositing layers. */
+    clip-path: circle(50% at 50% 50%);
+    -webkit-clip-path: circle(50% at 50% 50%);
 
     cursor: url('tools/dug_vacuumer.png'), pointer;
 
