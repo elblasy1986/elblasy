@@ -23,12 +23,20 @@ body {
     color: white;
 }
 
+/* --- Custom Cursor (Desktop Only) --- */
+@media (pointer: fine) {
+    * {
+        cursor: url('cursor.png'), auto !important;
+    }
+}
+
 /* --- Standalone Pages (Login, Nickname, etc.) --- */
 .standalone-page,
 .standalone-page body {
-    overflow: hidden !important;
-    height: 100vh !important;
-    width: 100vw !important;
+    overflow: auto !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    width: 100% !important;
     margin: 0;
     padding: 0;
 }
@@ -424,19 +432,12 @@ body {
 .moon-travel-btn {
     position: absolute;
     bottom: -30px;
-    /* Moved down 20px (was -10px) */
     right: -20px;
-    /* Moved right 20px (outwards) */
-    /* Fixed Width Layout - Reduced to ~60% */
     width: 75px;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    /* Center Align */
-    cursor: pointer;
     z-index: 15;
-
-    /* Default: Hidden (Before Game Start / During Travel) */
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s ease;
@@ -447,51 +448,15 @@ body {
     pointer-events: auto;
 }
 
-.moon-travel-btn i {
-    font-size: 2rem;
-    color: white;
-    transform: rotate(-90deg);
-    /* 90 degrees total */
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
-    margin-bottom: 10px;
-    /* Reduced distance */
-    margin-right: 0;
-    transition: transform 0.2s;
-    transform-origin: center;
+.moon-travel-btn img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+    transition: transform 0.2s ease;
 }
 
-.moon-travel-btn:hover i {
-    transform: rotate(-90deg) scale(1.1);
-    /* Center scale only */
-}
-
-.moon-travel-btn .text-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Center Align */
-    text-align: center;
-    margin-top: 7px;
-    /* Moved text down 7px */
-}
-
-.moon-travel-btn span {
-    font-family: 'Roboto', system-ui, sans-serif;
-    color: white;
-    font-size: 0.8rem;
-    opacity: 0.7;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-    line-height: 1.2;
-}
-
-.moon-travel-btn .title {
-    font-weight: 900;
-    /* Bold */
-    font-size: 1.4rem;
-    /* Larger */
-    opacity: 0.5;
-    /* 50% opacity */
-    letter-spacing: 1px;
+.moon-travel-btn:hover img {
+    transform: scale(1.1);
 }
 
 
@@ -1564,24 +1529,11 @@ a.menu-item:hover {
         font-size: 2.5rem;
     }
 
-    /* --- Travel Button - Moved down more --- */
+    /* Travel button mobile adjustments */
     .moon-travel-btn {
         bottom: -50px;
         right: -10px;
         width: 60px;
-    }
-
-    .moon-travel-btn i {
-        font-size: 1.5rem;
-        margin-bottom: 8px;
-    }
-
-    .moon-travel-btn span {
-        font-size: 0.65rem;
-    }
-
-    .moon-travel-btn .title {
-        font-size: 1rem;
     }
 
     /* --- Overlay Panels --- */
@@ -1728,6 +1680,11 @@ a.menu-item:hover {
 
 /* Extra small screens (phones in portrait) */
 @media (max-width: 400px) {
+    :root {
+        --globe-width: 354px;
+        /* 240px container * 1.475 aspect ratio */
+    }
+
     .globe-wrapper-anchor {
         width: 240px;
         height: 240px;
@@ -1736,24 +1693,6 @@ a.menu-item:hover {
     .globe-mask {
         width: 234px;
         height: 234px;
-    }
-
-    /* Fix stretched globe textures for extra small screens */
-    /* 240px container * 1.4725 = ~354px width */
-    .earth-layer,
-    .moon-layer,
-    .clouds-layer {
-        background-size: 354px auto;
-    }
-
-    @keyframes rotateGlobe {
-        from {
-            background-position-x: 0px;
-        }
-
-        to {
-            background-position-x: 354px;
-        }
     }
 
     .shading-layer {
@@ -2538,5 +2477,11 @@ a.menu-item:hover {
 
     .profile-value {
         font-size: 2rem;
+    }
+
+    /* Increase spacing between nickname and score on mobile */
+    .profile-value-display {
+        margin-top: 10px;
+        margin-bottom: 20px;
     }
 }

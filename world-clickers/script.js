@@ -118,8 +118,7 @@ const dom = {
 
     // Travel
     btnTravel: document.getElementById('btn-travel'),
-    btnTravelText: document.querySelector('#btn-travel .title'),
-    btnTravelHelper: document.querySelector('#btn-travel .text-container span:first-child'),
+
 
     // Travel Confirmation Popup
     travelConfirmOverlay: document.getElementById('travel-confirm-overlay'),
@@ -335,13 +334,7 @@ function spawnPopup(x, y, resource) {
 
 // --- Travel Logic ---
 function updateTravelButton() {
-    if (state.location === 'EARTH') {
-        dom.btnTravelHelper.textContent = "Fly to the";
-        dom.btnTravelText.textContent = "Moon";
-    } else {
-        dom.btnTravelHelper.textContent = "Fly to";
-        dom.btnTravelText.textContent = "Earth";
-    }
+    // No text to update - button is now a rocket image
 }
 
 function handleTravel() {
@@ -477,6 +470,11 @@ function handleMine(e) {
     } else {
         clientX = e.clientX;
         clientY = e.clientY;
+    }
+
+    // On mobile, offset popup above finger so it's not hidden
+    if (e.type === 'touchstart') {
+        clientY -= 80;
     }
 
     spawnPopup(clientX, clientY, resource);
