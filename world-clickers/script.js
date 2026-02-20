@@ -377,11 +377,7 @@ function executeTravel() {
         dom.moonSystem.classList.remove('off-screen-right');
         state.location = 'MOON';
 
-        // Change to astronaut icon immediately
-        if (dom.playerIcon) {
-            dom.playerIcon.classList.remove('fa-user');
-            dom.playerIcon.classList.add('fa-user-astronaut');
-        }
+
     } else {
         // Leaving Moon -> Going to Earth
         dom.moonSystem.classList.add('off-screen-right');
@@ -396,11 +392,7 @@ function executeTravel() {
 
         updateTravelButton(); // Update text while hidden
 
-        // If returned to Earth, revert icon after transition completes
-        if (state.location === 'EARTH' && dom.playerIcon) {
-            dom.playerIcon.classList.remove('fa-user-astronaut');
-            dom.playerIcon.classList.add('fa-user');
-        }
+
 
         // Fade IN button
         dom.btnTravel.classList.add('visible');

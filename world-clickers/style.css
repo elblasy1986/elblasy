@@ -1806,16 +1806,19 @@ a.menu-item:hover {
 .page-wrapper .guide-list {
     overflow: visible;
     max-height: none;
+    padding-right: 0;
 }
 
 .page-wrapper .shop-list {
     overflow: visible;
     max-height: none;
+    padding-right: 0;
 }
 
 .page-wrapper .leaderboard-list {
     overflow: visible;
     max-height: none;
+    padding-right: 0;
 }
 
 /* Astronauts Specific Styles */
@@ -2363,6 +2366,45 @@ a.menu-item:hover {
 .profile-header {
     text-align: center;
     margin-bottom: 40px;
+}
+
+.profile-country {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.profile-country-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-country img {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+.btn-change-country {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.profile-country-disclaimer {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    max-width: 500px;
+    margin: 5px auto 20px;
+    line-height: 1.6;
 }
 
 .welcome-label {
