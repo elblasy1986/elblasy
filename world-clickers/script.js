@@ -67,6 +67,10 @@ const COUNTRY_NAME_OVERRIDES = {
     'IL': 'Palestine'  // Israel also shows as Palestine
 };
 
+// --- Preloaded Image Cache ---
+// Stores fully-decoded Image objects keyed by src path so popup images render instantly
+const imageCache = {};
+
 // --- Game State ---
 let state = {
     score: 0,
@@ -320,11 +324,17 @@ function spawnPopup(x, y, resource) {
     popup.style.left = `${x}px`;
     popup.style.top = `${y}px`;
 
-    popup.innerHTML = `
-        <img src="${resource.img}" alt="${resource.name}">
-        <span>+${resource.value}</span>
-    `;
+    // Use cached (already decoded) image to avoid visible loading
+    const cached = imageCache[resource.img];
+    const img = cached ? cached.cloneNode() : new Image();
+    if (!cached) img.src = resource.img; // fallback: set src if somehow not cached
+    img.alt = resource.name;
 
+    const span = document.createElement('span');
+    span.textContent = `+${resource.value}`;
+
+    popup.appendChild(img);
+    popup.appendChild(span);
     document.body.appendChild(popup);
 
     setTimeout(() => {
@@ -647,8 +657,9 @@ async function preloadAssets() {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingBar = document.getElementById('loading-bar-fill');
 
-    // 1. Gather all Assets
+    // 1. Gather ALL image assets (space, UI, resources, tools, cursors)
     const imagePaths = [
+        // Space / globe textures
         'space/background.jpg',
         'space/earth.jpg',
         'space/clouds.png',
@@ -657,7 +668,13 @@ async function preloadAssets() {
         'space/moon.jpg',
         'space/moon_border.png',
         'space/moon_glow.png',
-        'favicon.png'
+        'space/rocket.png',
+        // UI assets
+        'favicon.png',
+        'world_clickers_logo.png',
+        // Cursors
+        'cursor.png',
+        'tools/dug_vacuumer.png'
     ];
 
     // Add Resources
@@ -685,12 +702,16 @@ async function preloadAssets() {
         if (loadingBar) loadingBar.style.width = `${percent}%`;
     };
 
-    // 2. Load Images
+    // 2. Load Images — keep each in imageCache so popups can reuse the decoded bitmap
     const imagePromises = imagePaths.map(src => {
         return new Promise((resolve) => {
             const img = new Image();
             img.src = src;
-            img.onload = () => { updateProgress(); resolve(); };
+            img.onload = () => {
+                imageCache[src] = img;   // store decoded image
+                updateProgress();
+                resolve();
+            };
             img.onerror = () => {
                 console.warn(`Failed to load image: ${src}`);
                 updateProgress(); // Count errors too to avoid hanging
