@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page no-scroll">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Nickname – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page no-scroll">
+    <div class="page-wrapper">
+        <h1 class="guide-title">Choose Nickname</h1>
+
+        <div class="nickname-container">
+            <p class="nickname-instruction">
+                Please enter your unique nickname. <br>
+                <span>(Alphanumeric, dots, underscores, and hyphens only. No spaces.)</span>
+            </p>
+
+            <div class="input-group">
+                <input type="text" id="nickname-input" placeholder="Enter nickname..." maxlength="20">
+                <p id="error-msg" class="error-text hidden">Invalid characters or empty field.</p>
+            </div>
+
+            <button class="btn-buy" id="btn-go-profile" style="margin-top: 20px;">Go to Profile</button>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('nickname-input');
+        const btn = document.getElementById('btn-go-profile');
+        const error = document.getElementById('error-msg');
+
+        function validateNickname(name) {
+            if (!name) return false;
+            // Regex: only letters, numbers, dots, underscores, hyphens. No spaces.
+            const regex = /^[a-zA-Z0-9._-]+$/;
+            return regex.test(name);
+        }
+
+        function saveAndRedirect() {
+            const val = input.value.trim();
+            console.log('Validating nickname:', val);
+
+            if (validateNickname(val)) {
+                try {
+                    // Force clear and save new value
+                    localStorage.removeItem('worldClickerNickname');
+                    localStorage.setItem('worldClickerNickname', val);
+
+                    // Verify immediately
+                    const saved = localStorage.getItem('worldClickerNickname');
+                    console.log('Verified value in localStorage:', saved);
+
+                    if (saved === val) {
+                        console.log('Save verified. Redirecting with URL parameter...');
+                        // Carry score if present
+                        const params = new URLSearchParams(window.location.search);
+                        const score = params.get('score') || '0';
+                        // Append as URL parameter for local file:// fallback
+                        window.location.href = `profile.html?name=${encodeURIComponent(val)}&score=${score}`;
+                    } else {
+                        console.error('Value mismatch in localStorage! Saved:', saved, 'Target:', val);
+                        error.textContent = "Critical Error: Could not save nickname. Please try again.";
+                        error.classList.remove('hidden');
+                    }
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    error.textContent = "Error: Storage unavailable. Please check your browser settings.";
+                    error.classList.remove('hidden');
+                }
+            } else {
+                console.warn('Validation failed:', val);
+                error.textContent = "Invalid characters or empty field.";
+                error.classList.remove('hidden');
+            }
+        }
+
+        btn.addEventListener('click', saveAndRedirect);
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                saveAndRedirect();
+            }
+        });
+
+        input.addEventListener('input', () => {
+            error.classList.add('hidden');
+            // Real-time restriction: Allow only a-z, A-Z, 0-9, ., _, -
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const originalValue = input.value;
+            const cleanValue = originalValue.replace(/[^a-zA-Z0-9._-]/g, '');
+
+            if (originalValue !== cleanValue) {
+                input.value = cleanValue;
+                // Try to maintain cursor position
+                input.setSelectionRange(start, end);
+            }
+        });
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+
+</html>

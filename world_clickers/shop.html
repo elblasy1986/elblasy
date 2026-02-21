@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Shop – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page">
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <div class="guide-text">
+            <h1 class="guide-title">Tools Shop</h1>
+
+            <div class="guide-tabs">
+                <div class="menu-item tab-btn active" id="tab-shop-earth">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <span>Earth</span>
+                </div>
+                <div class="menu-item tab-btn" id="tab-shop-moon">
+                    <i class="fa-solid fa-moon"></i>
+                    <span>Moon</span>
+                </div>
+            </div>
+
+            <div id="shop-list-earth" class="shop-list"></div>
+            <div id="shop-list-moon" class="shop-list hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG_EARTH_TOOLS = [
+            { id: 't_wood', name: 'Timber Axe', price: 0.49, img: 'tools/timber_axe.png', resource: 'Wood' },
+            { id: 't_fish', name: 'Hydro Netter', price: 0.79, img: 'tools/hydro_netter.png', resource: 'Fish' },
+            { id: 't_coal', name: 'Coal Cracker', price: 1.29, img: 'tools/coal_cracker.png', resource: 'Coal' },
+            { id: 't_stone', name: 'Stone Splitter', price: 1.59, img: 'tools/stone_splitter.png', resource: 'Stone' },
+            { id: 't_oil', name: 'Oil Extractor', price: 2.49, img: 'tools/oil_extractor.png', resource: 'Oil' },
+            { id: 't_iron', name: 'Iron Digger', price: 3.49, img: 'tools/iron_digger.png', resource: 'Iron' },
+            { id: 't_copper', name: 'Copper Cutter', price: 4.49, img: 'tools/copper_cutter.png', resource: 'Copper' },
+            { id: 't_silver', name: 'Silver Shaver', price: 6.49, img: 'tools/silver_shaver.png', resource: 'Silver' },
+            { id: 't_gold', name: 'Gold Miner Rig', price: 8.99, img: 'tools/gold_miner_rig.png', resource: 'Gold' },
+            { id: 't_diamond', name: 'Crystal Pierce Drill', price: 12.99, img: 'tools/crystal_pierce_drill.png', resource: 'Diamond' }
+        ];
+
+        const CONFIG_MOON_TOOLS = [
+            { id: 'm_dust', name: 'Dust Vacuumer', price: 13.99, img: 'tools/dust_vacuumer.png', resource: 'Regolith Dust' },
+            { id: 'm_glass', name: 'Glass Glow Cutter', price: 14.99, img: 'tools/glass_glow_cutter.png', resource: 'Lunar Glass' },
+            { id: 'm_ice', name: 'Frost Core Drill', price: 15.99, img: 'tools/frost_core_drill.png', resource: 'Lunar Ice' },
+            { id: 'm_sapphire', name: 'Sapphire Saw', price: 16.99, img: 'tools/sapphire_saw.png', resource: 'Lunar Sapphire' },
+            { id: 'm_meteor', name: 'Meteor Forge Extractor', price: 17.99, img: 'tools/meteor_forge_extractor.png', resource: 'Ancient Meteor Alloy' },
+            { id: 'm_fiber', name: 'Quantum Thread Puller', price: 18.49, img: 'tools/quantum_thread_puller.png', resource: 'Quantum Fiber' },
+            { id: 'm_shard', name: 'Star Shard Collector', price: 18.99, img: 'tools/star_shard_collector.png', resource: 'Stardust Crystals' },
+            { id: 'm_core', name: 'Core Pulse Harvester', price: 19.49, img: 'tools/core_pulse_harvester.png', resource: 'Moonstone Core' },
+            { id: 'm_void', name: 'Void Splitter', price: 19.79, img: 'tools/void_splitter.png', resource: 'Dark Matter Fragments' },
+            { id: 'm_pulse', name: 'Pulse Conductor', price: 19.99, img: 'tools/pulse_conductor.png', resource: 'Ethereum Pulse' }
+        ];
+
+        function renderList(tools, containerId) {
+            const list = document.getElementById(containerId);
+            list.innerHTML = '';
+            tools.forEach(tool => {
+                const item = document.createElement('div');
+                item.className = 'shop-item';
+                item.innerHTML = `
+                    <img src="${tool.img}" alt="${tool.name}">
+                    <div class="shop-info">
+                        <div class="shop-name">${tool.name}</div>
+                        <div class="shop-price">$${tool.price}</div>
+                        <div class="shop-desc">Automatically mines 1 ${tool.resource} per second, forever.</div>
+                    </div>
+                    <button class="btn-buy" id="btn-buy-${tool.id}">BUY</button>
+                `;
+                list.appendChild(item);
+
+                // Add click listener for sound
+                const btn = item.querySelector('.btn-buy');
+                btn.addEventListener('click', () => {
+                    const audio = document.getElementById('audio-purchase');
+                    if (audio) {
+                        audio.currentTime = 0;
+                        audio.play().catch(e => console.log('Audio play failed:', e));
+                    }
+                });
+            });
+        }
+
+        // Tab switching
+        const tabEarth = document.getElementById('tab-shop-earth');
+        const tabMoon = document.getElementById('tab-shop-moon');
+        const listEarth = document.getElementById('shop-list-earth');
+        const listMoon = document.getElementById('shop-list-moon');
+
+        tabEarth.addEventListener('click', () => {
+            tabEarth.classList.add('active');
+            tabMoon.classList.remove('active');
+            listEarth.classList.remove('hidden');
+            listMoon.classList.add('hidden');
+        });
+
+        tabMoon.addEventListener('click', () => {
+            tabMoon.classList.add('active');
+            tabEarth.classList.remove('active');
+            listMoon.classList.remove('hidden');
+            listEarth.classList.add('hidden');
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderList(CONFIG_EARTH_TOOLS, 'shop-list-earth');
+            renderList(CONFIG_MOON_TOOLS, 'shop-list-moon');
+        });
+    </script>
+    <audio id="audio-purchase" src="sounds/purchase_sound.wav"></audio>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+
+</html>
