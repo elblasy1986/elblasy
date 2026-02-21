@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page no-scroll">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page no-scroll">
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <h1 class="guide-title">Login</h1>
+
+        <div class="login-container">
+            <!-- Login with Email -->
+            <button class="login-btn btn-email" onclick="redirectToNickname()">
+                <i class="fa-solid fa-envelope"></i>
+                <span>Login with email</span>
+            </button>
+
+            <!-- Login with Google -->
+            <button class="login-btn btn-google" onclick="redirectToNickname()">
+                <i class="fa-brands fa-google"></i>
+                <span>Login with Google</span>
+            </button>
+
+            <!-- Login with Apple -->
+            <button class="login-btn btn-apple" onclick="redirectToNickname()">
+                <i class="fa-brands fa-apple"></i>
+                <span>Login with Apple</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function redirectToNickname() {
+            const params = new URLSearchParams(window.location.search);
+            const score = params.get('score') || '0';
+            window.location.href = `nickname.html?score=${score}`;
+        }
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+
+</html>
