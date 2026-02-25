@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Shop – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page">
+    <script src="api.js"></script>
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <div class="guide-text">
+            <h1 class="guide-title">Tools Shop</h1>
+
+            <div class="guide-tabs">
+                <div class="menu-item tab-btn active" id="tab-shop-earth">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <span>Earth</span>
+                </div>
+                <div class="menu-item tab-btn" id="tab-shop-moon">
+                    <i class="fa-solid fa-moon"></i>
+                    <span>Moon</span>
+                </div>
+            </div>
+
+            <div id="shop-list-earth" class="shop-list"></div>
+            <div id="shop-list-moon" class="shop-list hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG_EARTH_TOOLS = [
+            { id: 't_wood', name: 'Timber Axe', price: 0.49, img: 'tools/timber_axe.png', resource: 'Wood' },
+            { id: 't_fish', name: 'Hydro Netter', price: 0.79, img: 'tools/hydro_netter.png', resource: 'Fish' },
+            { id: 't_coal', name: 'Coal Cracker', price: 1.29, img: 'tools/coal_cracker.png', resource: 'Coal' },
+            { id: 't_stone', name: 'Stone Splitter', price: 1.59, img: 'tools/stone_splitter.png', resource: 'Stone' },
+            { id: 't_oil', name: 'Oil Extractor', price: 2.49, img: 'tools/oil_extractor.png', resource: 'Oil' },
+            { id: 't_iron', name: 'Iron Digger', price: 3.49, img: 'tools/iron_digger.png', resource: 'Iron' },
+            { id: 't_copper', name: 'Copper Cutter', price: 4.49, img: 'tools/copper_cutter.png', resource: 'Copper' },
+            { id: 't_silver', name: 'Silver Shaver', price: 6.49, img: 'tools/silver_shaver.png', resource: 'Silver' },
+            { id: 't_gold', name: 'Gold Miner Rig', price: 8.99, img: 'tools/gold_miner_rig.png', resource: 'Gold' },
+            { id: 't_diamond', name: 'Crystal Pierce Drill', price: 12.99, img: 'tools/crystal_pierce_drill.png', resource: 'Diamond' }
+        ];
+
+        const CONFIG_MOON_TOOLS = [
+            { id: 'm_dust', name: 'Dust Vacuumer', price: 13.99, img: 'tools/dust_vacuumer.png', resource: 'Regolith Dust' },
+            { id: 'm_glass', name: 'Glass Glow Cutter', price: 14.99, img: 'tools/glass_glow_cutter.png', resource: 'Lunar Glass' },
+            { id: 'm_ice', name: 'Frost Core Drill', price: 15.99, img: 'tools/frost_core_drill.png', resource: 'Lunar Ice' },
+            { id: 'm_sapphire', name: 'Sapphire Saw', price: 16.99, img: 'tools/sapphire_saw.png', resource: 'Lunar Sapphire' },
+            { id: 'm_meteor', name: 'Meteor Forge Extractor', price: 17.99, img: 'tools/meteor_forge_extractor.png', resource: 'Ancient Meteor Alloy' },
+            { id: 'm_fiber', name: 'Quantum Thread Puller', price: 18.49, img: 'tools/quantum_thread_puller.png', resource: 'Quantum Fiber' },
+            { id: 'm_shard', name: 'Star Shard Collector', price: 18.99, img: 'tools/star_shard_collector.png', resource: 'Stardust Crystals' },
+            { id: 'm_core', name: 'Core Pulse Harvester', price: 19.49, img: 'tools/core_pulse_harvester.png', resource: 'Moonstone Core' },
+            { id: 'm_void', name: 'Void Splitter', price: 19.79, img: 'tools/void_splitter.png', resource: 'Dark Matter Fragments' },
+            { id: 'm_pulse', name: 'Pulse Conductor', price: 19.99, img: 'tools/pulse_conductor.png', resource: 'Ethereum Pulse' }
+        ];
+
+        function spawnBuyPopup(e, toolName) {
+            const popup = document.createElement('div');
+            popup.className = 'resource-popup';
+
+            const span = document.createElement('span');
+            span.textContent = '+1';
+
+            popup.appendChild(span);
+            document.body.appendChild(popup);
+
+            let x = e.clientX;
+            let y = e.clientY;
+
+            // Apply same Y-offset as globe click for mobile
+            if (window.matchMedia('(pointer: coarse)').matches) {
+                y -= 40;
+            }
+
+            popup.style.left = x + 'px';
+            popup.style.top = y + 'px';
+
+            setTimeout(() => {
+                if (popup && popup.parentElement) {
+                    popup.remove();
+                }
+            }, 1000);
+        }
+
+        function renderList(tools, containerId) {
+            const list = document.getElementById(containerId);
+            list.innerHTML = '';
+            const playerId = getPlayerId();
+
+            tools.forEach(tool => {
+                const item = document.createElement('div');
+                item.className = 'shop-item';
+                item.innerHTML = `
+                    <img src="${tool.img}" alt="${tool.name}">
+                    <div class="shop-info">
+                        <div class="shop-name">${tool.name}</div>
+                        <div class="shop-price">$${tool.price}</div>
+                        <div class="shop-desc">Automatically mines 1 ${tool.resource} per second, forever.</div>
+                    </div>
+                    <button class="btn-buy" id="btn-buy-${tool.id}">BUY</button>
+                `;
+                list.appendChild(item);
+
+                // Add click listener for BUY
+                const btn = item.querySelector('.btn-buy');
+                btn.addEventListener('click', async (e) => {
+                    if (!playerId) {
+                        const loginOverlay = document.getElementById('login-confirm-overlay');
+                        if (loginOverlay) loginOverlay.style.display = 'flex';
+                        return;
+                    }
+
+                    // Play sound
+                    const audio = document.getElementById('audio-purchase');
+                    if (audio) {
+                        audio.currentTime = 0;
+                        audio.play().catch(err => console.log('Audio play failed:', err));
+                    }
+
+                    // Send purchase to server
+                    btn.textContent = '...';
+                    btn.disabled = true;
+                    const result = await apiPost('/tools/buy', {
+                        player_id: parseInt(playerId, 10),
+                        tool_id: tool.id
+                    });
+
+                    if (result && result.success) {
+                        btn.textContent = 'BUY';
+                        btn.disabled = false;
+                        spawnBuyPopup(e, tool.name);
+                    } else {
+                        btn.textContent = 'BUY';
+                        btn.disabled = false;
+                    }
+                });
+            });
+        }
+
+        // Tab switching
+        const tabEarth = document.getElementById('tab-shop-earth');
+        const tabMoon = document.getElementById('tab-shop-moon');
+        const listEarth = document.getElementById('shop-list-earth');
+        const listMoon = document.getElementById('shop-list-moon');
+
+        tabEarth.addEventListener('click', () => {
+            tabEarth.classList.add('active');
+            tabMoon.classList.remove('active');
+            listEarth.classList.remove('hidden');
+            listMoon.classList.add('hidden');
+        });
+
+        tabMoon.addEventListener('click', () => {
+            tabMoon.classList.add('active');
+            tabEarth.classList.remove('active');
+            listMoon.classList.remove('hidden');
+            listEarth.classList.add('hidden');
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderList(CONFIG_EARTH_TOOLS, 'shop-list-earth');
+            renderList(CONFIG_MOON_TOOLS, 'shop-list-moon');
+
+            // Setup generic login overlay
+            const loginOverlay = document.getElementById('login-confirm-overlay');
+            if (loginOverlay) {
+                document.getElementById('btn-login-close').addEventListener('click', () => {
+                    loginOverlay.style.display = 'none';
+                });
+                document.getElementById('btn-go-login').addEventListener('click', () => {
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+    </script>
+
+    <!-- Login Confirmation Popup -->
+    <div id="login-confirm-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; justify-content: center; align-items: center; background-color: transparent; backdrop-filter: blur(8px);">
+        <div class="travel-confirm-content"
+            style="position: relative; width: 90%; max-width: 400px; background: rgba(0, 0, 0, 0.9); border-radius: 20px; padding: 40px 30px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);">
+            <i class="fa-solid fa-xmark" id="btn-login-close"></i>
+            <h2 class="travel-title" style="margin-top: 20px; margin-bottom: 40px;">Please login first<br>to buy tools!
+            </h2>
+            <button class="btn-buy" id="btn-go-login"
+                style="background-color: #2ecc71; width: 100%; max-width: 200px;">Login</button>
+        </div>
+    </div>
+
+    <audio id="audio-purchase" src="sounds/purchase_sound.wav"></audio>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+    <div id="custom-cursor"></div>
+    <script>
+        (function () {
+            if (window.matchMedia("(pointer: coarse)").matches) return;
+            const cursor = document.getElementById('custom-cursor');
+            if (!cursor) return;
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                const isClickable = e.target.closest('i, button, a, .menu-item, .tab-btn, .mobile-menu-item, .back-link') ||
+                    window.getComputedStyle(e.target).cursor === 'pointer';
+                cursor.style.transform = isClickable ? "scale(1.1) translateZ(9999px)" : "none translateZ(9999px)";
+            });
+            document.addEventListener('mouseleave', () => cursor.style.display = 'none');
+            document.addEventListener('mouseenter', () => cursor.style.display = 'block');
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page no-scroll">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .auth-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .auth-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-family: 'Bungee', cursive;
+            font-size: 0.8em;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            z-index: 5;
+        }
+
+        .password-toggle:hover {
+            color: white;
+        }
+
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #captcha-canvas {
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .captcha-reload {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .auth-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-family: 'Bungee', cursive;
+            font-size: 1em;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+            transition: transform 0.2s, background-color 0.2s;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-btn:hover {
+            transform: scale(1.05);
+            background-color: #27ae60;
+        }
+
+        .auth-btn:active,
+        .login-btn:active {
+            transform: scale(0.95);
+        }
+
+        .auth-switch {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .auth-switch a {
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        #switch-link {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .oauth-divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #888;
+        }
+
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid white;
+        }
+
+        .oauth-divider span {
+            padding: 0 10px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        #auth-error {
+            color: #ff4a4a;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+    </style>
+</head>
+
+<body class="standalone-page no-scroll">
+    <script src="api.js"></script>
+
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <h1 class="guide-title" id="form-title">Login</h1>
+
+        <!-- Main Login / Sign Up Container -->
+        <div class="auth-card" id="main-container">
+
+            <div id="auth-error"></div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <div class="auth-input-group">
+                    <label>Email</label>
+                    <input type="email" id="email" class="auth-input" required placeholder="player@earth.com">
+                </div>
+
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" class="auth-input" required placeholder="••••••••"
+                            style="padding-right: 40px;">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility()"
+                            aria-label="Toggle password visibility">
+                            <i class="fa-regular fa-eye" id="password-eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Visual Captcha -->
+                <div class="auth-input-group" id="captcha-group">
+                    <label>Verify you are human</label>
+                    <div class="captcha-box">
+                        <canvas id="captcha-canvas" width="120" height="40" onclick="generateCaptcha()"></canvas>
+                        <button type="button" class="captcha-reload" onclick="generateCaptcha()" title="Reload Captcha">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                    <input type="text" id="captcha-input" class="auth-input" required
+                        placeholder="Enter characters above">
+                </div>
+
+                <button type="submit" class="auth-btn" id="submit-btn" style="transform: none;">Login</button>
+            </form>
+
+            <div class="auth-switch">
+                <span id="switch-text">Don't have an account? </span>
+                <a onclick="toggleMode()" id="switch-link">Sign Up</a>
+                <br><br>
+                <a onclick="toggleForgotPasswordMode()" id="forgot-link"
+                    style="font-size: 0.9em; color: #ff4a4a; cursor: pointer;">Forgot
+                    Password?</a>
+            </div>
+
+            <div class="oauth-divider">
+                <span>Or connect with</span>
+            </div>
+
+            <div class="login-container"
+                style="flex-direction: row; gap: 10px; justify-content: center; margin-top: 0;">
+                <button class="login-btn btn-google" style="margin: 0; padding: 10px 20px; font-size: 1.2em;"
+                    onclick="simulateOAuth('google')" title="Login with Google">
+                    <i class="fa-brands fa-google"></i>
+                </button>
+
+                <button class="login-btn btn-apple" style="margin: 0; padding: 10px 20px; font-size: 1.2em;"
+                    onclick="simulateOAuth('apple')" title="Login with Apple">
+                    <i class="fa-brands fa-apple"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Forgot Password Container -->
+        <div class="auth-card" id="forgot-container" style="display: none;">
+            <div id="forgot-error"
+                style="color: #ff4a4a; font-size: 0.9em; margin-bottom: 15px; font-weight: bold; min-height: 20px;">
+            </div>
+
+            <form id="forgot-form" onsubmit="handleForgotPassword(event)">
+                <div class="auth-input-group">
+                    <label>Email</label>
+                    <input type="email" id="forgot-email" class="auth-input" required placeholder="player@earth.com">
+                </div>
+
+                <div class="auth-input-group" id="forgot-captcha-group">
+                    <label>Verify you are human</label>
+                    <div class="captcha-box">
+                        <canvas id="forgot-captcha-canvas" width="120" height="40" onclick="generateCaptcha()"></canvas>
+                        <button type="button" class="captcha-reload" onclick="generateCaptcha()" title="Reload Captcha">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                    <input type="text" id="forgot-captcha-input" class="auth-input" required
+                        placeholder="Enter characters above">
+                </div>
+
+                <button type="submit" class="auth-btn" id="forgot-btn" style="transform: none;">Reset Password</button>
+            </form>
+
+            <div class="auth-switch" style="margin-top: 20px;">
+                <a onclick="backToLogin()" style="cursor: pointer; color: #aaa;">
+                    <i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i> Back to Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isSignupMode = false;
+        let isForgotMode = false;
+        let currentCaptchaText = "";
+
+        // --- Layout Toggles ---
+        function toggleMode() {
+            if (isForgotMode) return; // Prevent toggle if forgot password is open
+            isSignupMode = !isSignupMode;
+
+            document.getElementById('form-title').innerText = isSignupMode ? 'Create Account' : 'Login';
+            document.getElementById('submit-btn').innerText = isSignupMode ? 'Sign Up' : 'Login';
+            document.getElementById('switch-text').innerText = isSignupMode ? 'Already have an account? ' : "Don't have an account? ";
+            document.getElementById('switch-link').innerText = isSignupMode ? 'Login' : 'Sign Up';
+
+            // Hide forgot password link in signup mode
+            document.getElementById('forgot-link').style.display = isSignupMode ? 'none' : 'inline';
+
+            document.getElementById('auth-error').innerText = '';
+            document.getElementById('password').value = '';
+            document.getElementById('captcha-input').value = '';
+            generateCaptcha();
+        }
+
+        function toggleForgotPasswordMode() {
+            isForgotMode = true;
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('forgot-container').style.display = 'block';
+            document.getElementById('form-title').innerText = 'Forgot Password?';
+            document.getElementById('forgot-error').innerText = '';
+            document.getElementById('forgot-email').value = '';
+            document.getElementById('forgot-captcha-input').value = '';
+            generateCaptcha();
+        }
+
+        function backToLogin() {
+            isForgotMode = false;
+            document.getElementById('forgot-container').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('form-title').innerText = isSignupMode ? 'Create Account' : 'Login';
+            document.getElementById('auth-error').innerText = '';
+            document.getElementById('captcha-input').value = '';
+            generateCaptcha();
+        }
+
+        // --- Password Visibility ---
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('password-eye-icon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // --- Custom Canvas Captcha ---
+        function generateCaptcha() {
+            const canvasMain = document.getElementById('captcha-canvas');
+            const canvasForgot = document.getElementById('forgot-captcha-canvas');
+
+            // Only draw on the active canvas
+            const canvas = isForgotMode ? canvasForgot : canvasMain;
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+
+            // Generate random 5-character string (Uppercase Only)
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            currentCaptchaText = "";
+            for (let i = 0; i < 5; i++) {
+                currentCaptchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            // Draw Background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Add noise lines (thicker and more complicated)
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 14; i++) {
+                ctx.strokeStyle = `rgba(211, 211, 211, ${Math.random() * 0.4 + 0.2})`;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw Text with slight rotation and stretching
+            ctx.font = "bold 28px 'Roboto', sans-serif";
+            ctx.fillStyle = "#d3d3d3";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            for (let i = 0; i < currentCaptchaText.length; i++) {
+                ctx.save();
+                // Move to position
+                ctx.translate(15 + (i * 22), 20);
+                // Stretch horizontally (dialed back)
+                ctx.scale(1.1, 1.0);
+                // Rotate randomly (dialed back)
+                const rot = (Math.random() - 0.5) * 0.35;
+                ctx.rotate(rot);
+                ctx.fillText(currentCaptchaText[i], 0, 0);
+                ctx.restore();
+            }
+        }
+
+        // --- Authentication Handlers ---
+        async function handleAuth(e) {
+            e.preventDefault();
+            const errorDiv = document.getElementById('auth-error');
+            errorDiv.innerText = '';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const captchaInput = document.getElementById('captcha-input').value.trim();
+
+            if (captchaInput.toLowerCase() !== currentCaptchaText.toLowerCase()) {
+                errorDiv.innerText = 'Incorrect captcha. Please try again.';
+                generateCaptcha();
+                document.getElementById('captcha-input').value = '';
+                return;
+            }
+
+            // Submit to API
+            const endpoint = isSignupMode ? '/auth/register' : '/auth/login';
+            document.getElementById('submit-btn').innerText = 'Processing...';
+
+            const result = await apiPost(endpoint, { email, password });
+
+            document.getElementById('submit-btn').innerText = isSignupMode ? 'Sign Up' : 'Login';
+
+            if (result && result.error) {
+                errorDiv.innerText = result.error;
+                generateCaptcha();
+                document.getElementById('captcha-input').value = '';
+            } else if (result && result.token) {
+                // Success!
+                setToken(result.token);
+                setPlayerId(result.player.id);
+
+                // Route conditionally based on nickname existence
+                if (result.player.nickname) {
+                    setPlayerNickname(result.player.nickname);
+
+                    if (result.player.country_code) {
+                        localStorage.setItem('worldClickerCountryCode', result.player.country_code);
+                        localStorage.setItem('worldClickerCountryName', result.player.country_name);
+                    }
+
+                    // Retain URL score param if present
+                    const params = new URLSearchParams(window.location.search);
+                    const score = params.get('score') || '0';
+                    window.location.href = `profile.html?name=${encodeURIComponent(result.player.nickname)}&score=${score}`;
+                } else {
+                    // Force them to pick a nickname
+                    const params = new URLSearchParams(window.location.search);
+                    const score = params.get('score') || '0';
+                    window.location.href = `nickname.html?score=${score}`;
+                }
+            } else {
+                errorDiv.innerText = 'Network error starting session.';
+            }
+        }
+
+        async function handleForgotPassword(e) {
+            e.preventDefault();
+            const errorDiv = document.getElementById('forgot-error');
+            errorDiv.innerText = '';
+            errorDiv.style.color = '#ff4a4a'; // Reset to red in case it was green
+
+            const email = document.getElementById('forgot-email').value.trim();
+            const captchaInput = document.getElementById('forgot-captcha-input').value.trim();
+
+            if (captchaInput.toLowerCase() !== currentCaptchaText.toLowerCase()) {
+                errorDiv.innerText = 'Incorrect captcha. Please try again.';
+                generateCaptcha();
+                document.getElementById('forgot-captcha-input').value = '';
+                return;
+            }
+
+            if (!email) {
+                errorDiv.innerText = 'Please enter your email first to reset password.';
+                return;
+            }
+
+            errorDiv.innerText = 'Sending request...';
+            errorDiv.style.color = 'white'; // Neutral color for loading status
+
+            const result = await apiPost('/auth/forgot-password', { email });
+
+            if (result && result.message) {
+                errorDiv.style.color = '#00ffaa'; // Success green
+                errorDiv.innerText = result.message;
+            } else {
+                errorDiv.style.color = '#ff4a4a';
+                errorDiv.innerText = 'Failed to request reset.';
+            }
+
+            // Reset captcha on completion to block spam
+            generateCaptcha();
+            document.getElementById('forgot-captcha-input').value = '';
+        }
+
+        async function simulateOAuth(provider) {
+            // Because we don't have real Google/Apple keys right now, 
+            // this securely simulates the OAuth redirect flow by asking for an email to bind to.
+            const simEmail = prompt(`[SIMULATED ${provider.toUpperCase()} LOGIN]\n\nSince no developer API keys are configured, enter an email to bind to this mock ${provider} account:`, `test_${provider}@example.com`);
+
+            if (!simEmail) return;
+
+            // Generate a fake stable ID based on the email
+            const fakeProviderId = `${provider}_id_` + btoa(simEmail);
+
+            const result = await apiPost('/auth/oauth', {
+                provider: provider,
+                provider_id: fakeProviderId,
+                email: simEmail
+            });
+
+            if (result && result.error) {
+                alert("Login Error: " + result.error);
+            } else if (result && result.token) {
+                setToken(result.token);
+                setPlayerId(result.player.id);
+
+                if (result.player.nickname) {
+                    setPlayerNickname(result.player.nickname);
+
+                    if (result.player.country_code) {
+                        localStorage.setItem('worldClickerCountryCode', result.player.country_code);
+                        localStorage.setItem('worldClickerCountryName', result.player.country_name);
+                    }
+
+                    const params = new URLSearchParams(window.location.search);
+                    const score = params.get('score') || '0';
+                    window.location.href = `profile.html?name=${encodeURIComponent(result.player.nickname)}&score=${score}`;
+                } else {
+                    const params = new URLSearchParams(window.location.search);
+                    const score = params.get('score') || '0';
+                    window.location.href = `nickname.html?score=${score}`;
+                }
+            }
+        }
+
+        // Initialize page
+        generateCaptcha();
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+    <div id="custom-cursor"></div>
+    <script>
+        (function () {
+            if (window.matchMedia("(pointer: coarse)").matches) return;
+            const cursor = document.getElementById('custom-cursor');
+            if (!cursor) return;
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                const isClickable = e.target.closest('i, button, a, .menu-item, .tab-btn, .mobile-menu-item, .back-link, canvas') ||
+                    window.getComputedStyle(e.target).cursor === 'pointer';
+                cursor.style.transform = isClickable ? "scale(1.1) translateZ(9999px)" : "none translateZ(9999px)";
+            });
+            document.addEventListener('mouseleave', () => cursor.style.display = 'none');
+            document.addEventListener('mouseenter', () => cursor.style.display = 'block');
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources Guide – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page">
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <div class="guide-text">
+            <h1 class="guide-title">Resources Guide</h1>
+
+            <div class="guide-tabs">
+                <div class="menu-item tab-btn active" id="tab-res-earth">
+                    <i class="fa-solid fa-earth-africa"></i>
+                    <span>Earth</span>
+                </div>
+                <div class="menu-item tab-btn" id="tab-res-moon">
+                    <i class="fa-solid fa-moon"></i>
+                    <span>Moon</span>
+                </div>
+            </div>
+
+            <div id="list-res-earth" class="guide-list">
+                <div class="guide-item">
+                    <img src="resources/wood.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Wood</h3>
+                        <p>Common Earth resource (<b>28%</b> rarity, value <b>1</b>). The foundation of early
+                            progression and basic income.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/fish.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Fish</h3>
+                        <p>Common resource (<b>22%</b> rarity, value <b>2</b>). Represents oceans and food supply
+                            with slightly higher returns than wood.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/coal.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Coal</h3>
+                        <p>Common but strategic (<b>15%</b> rarity, value <b>4</b>). Powers early industrial
+                            progress and steady growth.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/stone.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Stone</h3>
+                        <p>Appears at <b>10%</b> rarity (value <b>5</b>). Supports durability, construction, and
+                            expansion.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/oil.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Oil</h3>
+                        <p>Uncommon resource (<b>8%</b> rarity, value <b>10</b>). Introduces modern energy and
+                            higher income.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/iron.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Iron</h3>
+                        <p>Uncommon industrial resource (<b>7%</b> rarity, value <b>15</b>). Key to mid-game
+                            manufacturing and strength.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/copper.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Copper</h3>
+                        <p>Rare resource (<b>5%</b> rarity, value <b>20</b>). Vital for advanced industry and
+                            electrical systems.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/silver.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Silver</h3>
+                        <p>Rare precious metal (<b>3%</b> rarity, value <b>40</b>). Enables high-value wealth and
+                            leaderboard growth.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/gold.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Gold</h3>
+                        <p>Very Rare (<b>1.5%</b> rarity, value <b>80</b>). A symbol of power, prestige, and global
+                            wealth.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/diamond.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Diamond</h3>
+                        <p>Ultra Rare Earth resource (<b>0.5%</b> rarity, value <b>150</b>). The peak of Earth
+                            mining rewards.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="list-res-moon" class="guide-list hidden">
+                <div class="guide-item">
+                    <img src="resources/regolith_dust.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Regolith Dust</h3>
+                        <p>Most common lunar resource (<b>35%</b> rarity, value <b>200</b>). Abundant yet highly
+                            valuable.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/lunar_glass.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Lunar Glass</h3>
+                        <p>Appears at <b>25%</b> rarity (value <b>300</b>). Formed under extreme lunar conditions.
+                        </p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/lunar_ice.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Lunar Ice</h3>
+                        <p>Uncommon (<b>15%</b> rarity, value <b>450</b>). Essential for survival and future
+                            colonization.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/lunar_sapphire.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Lunar Sapphire</h3>
+                        <p>Rare (<b>8%</b> rarity, value <b>700</b>). Highly desired cosmic crystal.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/ancient_meteor_alloy.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Ancient Meteor Alloy</h3>
+                        <p>Rare resource (<b>6%</b> rarity, value <b>1000</b>). Forged from ancient meteor impacts.
+                        </p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/quantum_fiber.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Quantum Fiber</h3>
+                        <p>Epic material (<b>4%</b> rarity, value <b>1500</b>). Introduces advanced futuristic
+                            technology.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/stardust_crystals.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Stardust Crystals</h3>
+                        <p>Epic resource (<b>3%</b> rarity, value <b>2000</b>). Pure cosmic energy.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/moonstone_core.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Moonstone Core</h3>
+                        <p>Legendary (<b>2.5%</b> rarity, value <b>3000</b>). The heart of lunar power.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/dark_matter_fragments.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Dark Matter Fragments</h3>
+                        <p>Mythic resource (<b>1.3%</b> rarity, value <b>4000</b>). Extremely rare and powerful.</p>
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <img src="resources/ethereum_pulse.png" class="guide-img">
+                    <div class="guide-info">
+                        <h3>Ethereum Pulse</h3>
+                        <p>Ultra Mythic (<b>0.2%</b> rarity, value <b>5000</b>). The ultimate cosmic resource.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabEarth = document.getElementById('tab-res-earth');
+        const tabMoon = document.getElementById('tab-res-moon');
+        const listEarth = document.getElementById('list-res-earth');
+        const listMoon = document.getElementById('list-res-moon');
+
+        tabEarth.addEventListener('click', () => {
+            tabEarth.classList.add('active');
+            tabMoon.classList.remove('active');
+            listEarth.classList.remove('hidden');
+            listMoon.classList.add('hidden');
+        });
+
+        tabMoon.addEventListener('click', () => {
+            tabMoon.classList.add('active');
+            tabEarth.classList.remove('active');
+            listMoon.classList.remove('hidden');
+            listEarth.classList.add('hidden');
+        });
+    </script>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+    <div id="custom-cursor"></div>
+    <script>
+        (function () {
+            if (window.matchMedia("(pointer: coarse)").matches) return;
+            const cursor = document.getElementById('custom-cursor');
+            if (!cursor) return;
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                const isClickable = e.target.closest('i, button, a, .menu-item, .tab-btn, .mobile-menu-item, .back-link') ||
+                    window.getComputedStyle(e.target).cursor === 'pointer';
+                cursor.style.transform = isClickable ? "scale(1.1) translateZ(9999px)" : "none translateZ(9999px)";
+            });
+            document.addEventListener('mouseleave', () => cursor.style.display = 'none');
+            document.addEventListener('mouseenter', () => cursor.style.display = 'block');
+        })();
+    </script>
+</body>
+
+</html>
