@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" class="standalone-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile – World Clickers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="standalone-page">
+    <script src="api.js"></script>
+    <a href="index.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to the Game
+    </a>
+
+    <div class="page-wrapper">
+        <div class="profile-header">
+            <span class="welcome-label">Welcome</span>
+            <h1 id="display-nickname" class="profile-nickname">Player</h1>
+            <div class="profile-value-display">
+                <span id="display-value" class="profile-value">0</span>
+            </div>
+            <div class="profile-country" id="profile-country">
+                <span>You are playing for:</span>
+                <span class="profile-country-line">
+                    <img id="profile-country-flag" src="" alt="Flag">
+                    <span id="profile-country-name"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2 class="section-title">Purchased Tools</h2>
+            <div id="purchased-tools-grid" class="tools-grid-profile"></div>
+        </div>
+
+        <div class="profile-section" style="text-align:center; margin-top: 30px; padding-bottom: 40px;">
+            <button id="btn-sign-out" class="btn-buy" style="background-color: #C61818;">
+                Reset Progress
+            </button>
+        </div>
+    </div>
+
+    <!-- Purchase Sound -->
+    <audio id="audio-purchase" src="sounds/purchase_sound.wav"></audio>
+
+    <script>
+        const CONFIG = {
+            earthTools: [
+                { id: 't_wood', name: 'Timber Axe', img: 'tools/timber_axe.png' },
+                { id: 't_fish', name: 'Hydro Netter', img: 'tools/hydro_netter.png' },
+                { id: 't_coal', name: 'Coal Cracker', img: 'tools/coal_cracker.png' },
+                { id: 't_stone', name: 'Stone Splitter', img: 'tools/stone_splitter.png' },
+                { id: 't_oil', name: 'Oil Extractor', img: 'tools/oil_extractor.png' },
+                { id: 't_iron', name: 'Iron Digger', img: 'tools/iron_digger.png' },
+                { id: 't_copper', name: 'Copper Cutter', img: 'tools/copper_cutter.png' },
+                { id: 't_silver', name: 'Silver Shaver', img: 'tools/silver_shaver.png' },
+                { id: 't_gold', name: 'Gold Miner Rig', img: 'tools/gold_miner_rig.png' },
+                { id: 't_diamond', name: 'Crystal Drill', img: 'tools/crystal_pierce_drill.png' }
+            ],
+            moonTools: [
+                { id: 'm_dust', name: 'Dust Vacuumer', img: 'tools/dust_vacuumer.png' },
+                { id: 'm_glass', name: 'Glass Glow Cutter', img: 'tools/glass_glow_cutter.png' },
+                { id: 'm_ice', name: 'Frost Core Drill', img: 'tools/frost_core_drill.png' },
+                { id: 'm_sapphire', name: 'Sapphire Saw', img: 'tools/sapphire_saw.png' },
+                { id: 'm_meteor', name: 'Meteor Forge', img: 'tools/meteor_forge_extractor.png' },
+                { id: 'm_fiber', name: 'Quantum Puller', img: 'tools/quantum_thread_puller.png' },
+                { id: 'm_shard', name: 'Star Shard Col.', img: 'tools/star_shard_collector.png' },
+                { id: 'm_core', name: 'Core Pulse Harv.', img: 'tools/core_pulse_harvester.png' },
+                { id: 'm_void', name: 'Void Splitter', img: 'tools/void_splitter.png' },
+                { id: 'm_pulse', name: 'Pulse Conductor', img: 'tools/pulse_conductor.png' }
+            ]
+        };
+
+        function displayCountry(code, name) {
+            const flagEl = document.getElementById('profile-country-flag');
+            const nameEl = document.getElementById('profile-country-name');
+            if (flagEl && code) {
+                flagEl.src = `https://hatscripts.github.io/circle-flags/flags/${code.toLowerCase()}.svg`;
+                flagEl.alt = `${name} Flag`;
+                flagEl.onerror = () => { flagEl.style.display = 'none'; };
+            }
+            if (nameEl && name) {
+                nameEl.textContent = name;
+            }
+        }
+
+        function initProfile() {
+            const storedNickname = localStorage.getItem('worldClickerPlayerNickname') || 'Space Miner';
+            document.getElementById('display-nickname').textContent = storedNickname;
+
+            const scoreEl = document.getElementById('display-value');
+            const storedScore = localStorage.getItem('worldClickerPlayerScore') || '0';
+            scoreEl.innerHTML = window.formatShortNumber(storedScore);
+
+            const countryCode = localStorage.getItem('worldClickerCountryCode');
+            const countryName = localStorage.getItem('worldClickerCountryName');
+            if (countryCode) {
+                displayCountry(countryCode, countryName);
+            } else {
+                document.getElementById('profile-country').style.display = 'none';
+            }
+
+            // Sync score live
+            setInterval(() => {
+                const liveScore = localStorage.getItem('worldClickerPlayerScore') || '0';
+                scoreEl.innerHTML = window.formatShortNumber(liveScore);
+            }, 1000);
+
+            renderTools();
+        }
+
+        function renderTools() {
+            const grid = document.getElementById('purchased-tools-grid');
+            grid.innerHTML = '';
+
+            const storedToolsStr = localStorage.getItem('worldClickerOwnedTools');
+            if (!storedToolsStr) {
+                grid.innerHTML = '<p style="color:rgba(255,255,255,0.5); text-align:center;">No tools purchased yet</p>';
+                return;
+            }
+
+            try {
+                const ownedTools = JSON.parse(storedToolsStr);
+                const allTools = [...CONFIG.earthTools, ...CONFIG.moonTools];
+                let hasTools = false;
+
+                for (const toolId in ownedTools) {
+                    const count = ownedTools[toolId];
+                    if (count > 0) {
+                        const toolConfig = allTools.find(t => t.id === toolId);
+                        if (toolConfig) {
+                            hasTools = true;
+                            const item = document.createElement('div');
+                            item.className = 'tool-item-profile';
+                            item.innerHTML = `
+                                <div class="tool-icon-wrapper">
+                                    <img class="tool-icon" src="${toolConfig.img}" alt="${toolConfig.name}">
+                                </div>
+                                <div class="tool-info-profile">
+                                    <span class="tool-count">×${count}</span>
+                                </div>
+                            `;
+                            grid.appendChild(item);
+                        }
+                    }
+                }
+
+                if (!hasTools) {
+                    grid.innerHTML = '<p style="color:rgba(255,255,255,0.5); text-align:center;">No tools purchased yet</p>';
+                }
+            } catch (e) {
+                grid.innerHTML = '<p style="color:rgba(255,255,255,0.5); text-align:center;">Failed to load tools</p>';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initProfile);
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Sign Out -> Reset Progress (Local Only)
+        document.getElementById('btn-sign-out').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all your progress? This cannot be undone.')) {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+    <div id="custom-cursor"></div>
+    <script>
+        (function () {
+            if (window.matchMedia("(pointer: coarse)").matches) return;
+            const cursor = document.getElementById('custom-cursor');
+            if (!cursor) return;
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                const isClickable = e.target.closest('i, button, a, .menu-item, .tab-btn, .mobile-menu-item, .back-link') ||
+                    window.getComputedStyle(e.target).cursor === 'pointer';
+                cursor.style.transform = isClickable ? "scale(1.1) translateZ(9999px)" : "none translateZ(9999px)";
+            });
+            document.addEventListener('mouseleave', () => cursor.style.display = 'none');
+            document.addEventListener('mouseenter', () => cursor.style.display = 'block');
+        })();
+    </script>
+</body>
+
+</html>
