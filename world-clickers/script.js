@@ -563,7 +563,7 @@ function renderShopList(tools, listId) {
         item.innerHTML = `
             <img src="${tool.img}" alt="${tool.name}">
             <div class="shop-name-display" id="name-${tool.id}">${tool.name}${ownedSuffix}</div>
-            <div class="shop-desc" style="line-height: 1.25; margin-top: 0px; font-size: 1.2rem;">
+            <div class="shop-desc" style="line-height: 1.25; margin-top: 0px; font-size: 1rem;">
                 Mines ${window.formatShortNumber(tool.val)} &times; <img src="${resImg}" alt="${tool.res}" style="height: calc(35px * var(--s)); width: auto; vertical-align: middle; margin: 0 calc(2px * var(--s));"> per second.<br>
                 <div style="color: #ffd700; font-family: 'Lilita One', cursive; margin-top: calc(2px * var(--s)); font-size: 1.2rem;">Adds $${totalValueStr} per second.</div>
             </div>

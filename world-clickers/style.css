@@ -1723,10 +1723,10 @@ a.menu-item:hover {
     color: #fff !important;
     padding: calc(8px * var(--s)) calc(15px * var(--s));
     border-radius: calc(8px * var(--s));
-    font-size: 1.9rem;
+    font-size: 1.5rem;
     text-align: center;
     box-shadow: 0 calc(4px * var(--s)) 0 #1e7e34;
-    min-width: calc(130px * var(--s));
+    min-width: calc(165px * var(--s));
     white-space: nowrap;
     overflow: hidden;
     text-overflow: clip;
