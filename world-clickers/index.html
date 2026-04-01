@@ -32,6 +32,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Roboto:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.png">
+    <script>
+        /* Early Scale Calculation: prevents "large logo" jump on mobile by setting --s before render */
+        (function() {
+            function setInitialScale() {
+                const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+                document.documentElement.style.setProperty('--s', scale);
+            }
+            setInitialScale();
+            // Also run on resize to keep it sync, though script.js does this too.
+            window.addEventListener('resize', setInitialScale);
+        })();
+    </script>
 </head>
 
 <body>
@@ -39,6 +51,8 @@
 
     <!-- Loading Overlay -->
     <div id="loading-overlay">
+        <div class="loading-bg-main"></div>
+        <div class="loading-bg-clouds"></div>
         <div class="loading-content">
             <img src="world_clickers_logo.png" class="loading-logo" alt="World Clickers">
             <div class="loading-bar-container" id="loading-bar-container">
@@ -310,6 +324,8 @@
                 <p>World Clickers is a global idle-clicker and resource-mining game where players generate wealth by clicking, auto-mining, and strategically investing in tools.</p>
                 <div style="height: calc(15px * var(--s));"></div>
                 <p>As players progress, they unlock lunar and planetary exploration, opening an entirely new tier of resources with dramatically higher values. Land on new planets creating historic moments and a true digital legacy.</p>
+                <div style="height: calc(15px * var(--s));"></div>
+                <p>New planets, resources and tools are coming soon!</p>
 
                 <div style="height: calc(20px * var(--s));"></div>
                 <p>Background music by <a href="https://www.patreon.com/Holizna" target="_blank" rel="noopener" style="color: #f5c842; text-decoration: none;">Holizna</a></p>

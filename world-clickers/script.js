@@ -2054,14 +2054,14 @@ window.addEventListener('DOMContentLoaded', preloadAssets);
 
 // --- Responsive App Scaling ---
 function resizeApp() {
-    const gameWrapper = document.querySelector('.game-wrapper');
-    if (!gameWrapper) {
+    const isGamePage = !!document.querySelector('.game-wrapper');
+    if (!isGamePage) {
+        // For standalone pages (login, profile), use fixed scale or 1
         document.documentElement.style.setProperty('--s', 1);
         return;
     }
 
     let scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-    // Removed the manual max 2.5 clamp so the UI scales cleanly at every zoom
     document.documentElement.style.setProperty('--s', scale);
 }
 
