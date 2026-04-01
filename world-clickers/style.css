@@ -1,0 +1,3577 @@
+/* --- Reset & Base --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    /* Disable text selection for game feel */
+    -webkit-user-drag: none;
+    /* Disable blue tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+    /* Custom Scrollbar for all browsers */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Chrome, Edge, Safari Scrollbar */
+::-webkit-scrollbar {
+    width: calc(6px * var(--s));
+    height: calc(6px * var(--s));
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: calc(10px * var(--s));
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Remove Arrows */
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+
+body {
+    background-color: #000;
+    background-image: url('space/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    overflow: hidden;
+    color: white;
+    font-family: 'Roboto', system-ui, sans-serif;
+}
+
+/* Master Responsive Scale Container (index.html only) */
+#app-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* --- Custom Cursor (Desktop Only) --- */
+@media (pointer: fine) {
+
+    /* Hide native cursor globally to use our DOM-based one */
+    * {
+        cursor: none !important;
+    }
+
+    #custom-cursor {
+        position: fixed;
+        width: calc(32px * var(--s));
+        height: calc(32px * var(--s));
+        background-image: url('cursor.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        z-index: 999999;
+        /* Force above all 3D */
+        pointer-events: none;
+        display: block;
+        transform: translateZ(calc(9999px * var(--s)));
+        /* Force above globe */
+        will-change: left, top;
+    }
+}
+
+/* --- Standalone Pages (Login, Nickname, etc.) --- */
+.standalone-page,
+.standalone-page body {
+    overflow: auto !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* Short-content standalone pages (login, nickname) — lock to viewport, no scroll */
+.standalone-page.no-scroll,
+.standalone-page.no-scroll body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    /* dynamic viewport height — accounts for mobile browser chrome */
+    min-height: 0 !important;
+    max-height: 100vh;
+    max-height: 100dvh;
+    background-attachment: fixed;
+}
+
+.game-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh !important;
+    width: 100%;
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.game-stage {
+    flex: 1 1 auto;
+    position: relative;
+    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 0;
+    /* Removed padding to allow logo to hit absolute top */
+    min-width: 0;
+    z-index: 2;
+    /* Low z-index so planets slide behind sidebar/shop overlays */
+}
+
+
+
+/* --- Header --- */
+/* --- Header --- */
+.game-header {
+    position: absolute;
+    /* Absolute so it centers relative to game-stage (planet area) */
+    top: calc(40px * var(--s));
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 500;
+    /* High z-index to stay above other elements */
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.game-revealed .game-header,
+.game-revealed .game-wrapper {
+    opacity: 1 !important;
+}
+
+/* Score Animation Class */
+.score-popup-anim {
+    animation: score-popup 0.2s ease-out;
+}
+
+@keyframes score-popup {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+        color: #fff;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(5px * var(--s));
+}
+
+.score-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(15px * var(--s));
+}
+
+.player-score {
+    font-family: 'Lilita One', cursive;
+    font-size: 5.6rem;
+    /* Correctly upscaled to 140% */
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: calc(8px * var(--s));
+}
+
+#player-score-value {
+    display: inline-block;
+    /* REQUIRED to allow transform animations */
+}
+
+.player-icon,
+.currency-symbol-small {
+    color: rgba(255, 255, 255, 0.5);
+    /* Grey like dollar sign */
+    font-size: 1.5rem;
+    /* Slightly smaller icon */
+}
+
+
+.country-flag {
+    width: 4rem;
+    height: 4rem;
+    /* Match score font size */
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.8));
+}
+
+.currency-symbol {
+    margin-right: calc(10px * var(--s));
+    color: #fff;
+    opacity: 0.5;
+    /* 50% opacity */
+    text-shadow: 0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.8);
+}
+
+/* --- Globe System --- */
+.game-stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.globe-wrapper-anchor {
+    position: relative;
+    width: calc(480px * var(--s));
+    /* Increased from calc(400px * var(--s)) (120%) */
+    height: calc(480px * var(--s));
+    /* Increased from calc(400px * var(--s)) (120%) */
+    margin-top: calc(100px * var(--s));
+    /* Lowered from calc(60px * var(--s)) per user request */
+    /* This anchor stays static/centered */
+    perspective: calc(1000px * var(--s));
+
+    /* Force 3D context for anti-jitter */
+}
+
+/* --- Earth Resources Sidebar --- */
+.earth-resources-sidebar {
+    position: relative;
+    flex: 0 0 calc(100px * var(--s));
+    height: 100%;
+    padding: calc(20px * var(--s)) calc(10px * var(--s));
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: calc(8px * var(--s));
+    /* Space between icons column and heat bar */
+    background-color: transparent;
+    z-index: 10;
+}
+
+/* --- Resource Sidebar (Main Container) --- */
+.earth-resources-sidebar {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    gap: calc(15px * var(--s));
+    padding: calc(20px * var(--s)) calc(20px * var(--s));
+    pointer-events: none;
+    z-index: 50;
+}
+
+.resources-icons-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: calc(60px * var(--s));
+    /* Fixed width for icons */
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.resources-names-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: calc(144px * var(--s));
+    /* Exactly 3x the icon width (calc(48px * var(--s)) * 3) */
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.resource-slot,
+.layout-gap {
+    /* 10 resource slots + 9 full gaps + (2 * 0.5) top/bottom gaps = 20 total units */
+    height: calc(100% / 20);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+
+
+/* First and last gaps are 50% height compared to others */
+.layout-gap:first-child,
+.layout-gap:last-child {
+    height: calc(100% / 40);
+    /* Half of (100% / 20) */
+}
+
+.resources-icons-column .resource-slot img {
+    width: calc(68px * var(--s));
+    height: calc(68px * var(--s));
+    object-fit: contain;
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, 0.6));
+    opacity: 0.35;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.resources-icons-column .resource-slot img.resource-icon-active {
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, 0.6));
+    opacity: 1;
+}
+
+/* --- Resource Names Column --- */
+.resources-names-column .resource-slot {
+    justify-content: flex-start;
+}
+
+.resources-names-column .resource-slot span {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-left: calc(5px * var(--s));
+    /* Slight offset from the progress bar */
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: calc(0.5px * var(--s));
+    line-height: 1.1;
+    transition: color 0.2s ease;
+    /* Each word on its own line */
+    word-spacing: 100vw;
+    text-align: left;
+}
+
+.resources-names-column .resource-slot span.resource-name-active {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* --- Heat / Progress Bar --- */
+.heat-bar-container {
+    width: calc(12px * var(--s));
+    height: 100%;
+    border: calc(2px * var(--s)) solid rgba(255, 255, 255, 0.5);
+    border-radius: calc(8px * var(--s));
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 calc(10px * var(--s)) rgba(0, 0, 0, 0.8) inset;
+    flex-shrink: 0;
+}
+
+.heat-bar-fill {
+    width: 100%;
+    height: 100%;
+    /* Keep full height for the background */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /* Green bottom (wood), Red top (diamond) */
+    background: linear-gradient(to top, #4caf50 0%, #ffeb3b 40%, #ff9800 70%, #ff3b3b 100%);
+    box-shadow: 0 0 calc(15px * var(--s)) rgba(255, 255, 255, 0.3) inset;
+
+    /* We will use clip-path to reveal the fixed gradient rather than squishing it */
+    clip-path: inset(100% 0 0 0);
+    /* Start hidden at the bottom */
+    transition: clip-path 0.1s linear;
+    /* Smooth visual movement */
+}
+
+/* NEW: Rotator Container handles the -15deg tilt for everything */
+/* NEW: Rotator Container handles the -15deg tilt for everything */
+.systems-rotator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Removed rotation from here to ensure Travel Translation is Axis-Aligned */
+    /* transform: rotate(-15deg); */
+    transform-style: preserve-3d;
+    /* Keep children in 3D space */
+    pointer-events: none;
+    /* Let clicks pass to children */
+}
+
+/* CSS Variable for Animation Loop */
+:root {
+    --globe-width: calc(696px * var(--s));
+    /* Increased from calc(580px * var(--s)) (120%) */
+}
+
+.globe-system {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+    /* Re-enable clicks on the system itself */
+
+    /* Rotation Moved to Parent! Just Translate now. */
+    transform: translate3d(0, 0, calc(0.1px * var(--s)));
+    /* Force 3D + Micro-offset to prevent snap */
+
+    /* Transition transform for 1.5s. */
+    transition: transform 1.5s cubic-bezier(0.45, 0, 0.55, 1), visibility 0s 0s;
+    visibility: visible;
+    will-change: transform;
+    opacity: 1;
+    backface-visibility: hidden;
+    /* Stabilize rendering */
+}
+
+.pulse-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Apply Rotation Here - Separates Tilt from Travel Movement */
+    transform: rotate(-15deg);
+    will-change: transform;
+}
+
+/* Scale the WRAPPER (mask + glow) when clicking */
+.pulse-wrapper.trigger-pulse {
+    animation: clickPulse 0.15s ease-out forwards;
+}
+
+@keyframes clickPulse {
+    0% {
+        transform: rotate(-15deg) scale(1);
+        /* Maintain Rotation */
+    }
+
+    50% {
+        transform: rotate(-15deg) scale(0.95);
+    }
+
+    100% {
+        transform: rotate(-15deg) scale(1);
+    }
+}
+
+/* ... (skip inner styles) ... */
+
+/* --- Space Travel Transitions --- */
+/* State: Default Earth Centered is handled by default class output (translateX(0)) */
+
+/* State: Off Screen Left (Earth leaving) */
+.off-screen-left {
+    transform: translate3d(-150vw, 0, 0) !important;
+    /* Pure Translation 3D */
+    visibility: hidden;
+    transition: transform 1.5s cubic-bezier(0.45, 0, 0.55, 1), visibility 0s 1.5s;
+    pointer-events: none !important;
+}
+
+/* State: Off Screen Right (Moon waiting) */
+.off-screen-right {
+    transform: translate3d(150vw, 0, 0) !important;
+    /* Pure Translation 3D */
+    visibility: hidden;
+    transition: transform 1.5s cubic-bezier(0.45, 0, 0.55, 1), visibility 0s 1.5s;
+    pointer-events: none !important;
+}
+
+/* Mask - The Circle & Click Target */
+.globe-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 1;
+    clip-path: circle(50% at 50% 50%);
+    -webkit-clip-path: circle(50% at 50% 50%);
+    cursor: none;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+
+/* Glow - Larger than mask, ON TOP */
+.globe-glow {
+    position: absolute;
+    top: -12.5%;
+    left: -12.5%;
+    right: -12.5%;
+    bottom: -12.5%;
+    background-image: url('space/earth_glow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
+    pointer-events: none;
+    animation: pulseGlow 4s infinite ease-in-out;
+}
+
+
+/* --- Moon Travel Button --- */
+.moon-travel-btn {
+    /* Positioning moved to consolidated block at end of file */
+    width: calc(90px * var(--s));
+    height: calc(90px * var(--s));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.moon-travel-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Sprite-sheet animation: 4 frames, 800x200 total, each frame 200x200 */
+.rocket-sprite {
+    width: 100%;
+    height: 100%;
+    background-image: url('space/rocket.png');
+    background-size: 400% 100%;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(8px * var(--s)) rgba(0, 0, 0, 0.6));
+    animation: rocketFrames 0.6s step-end infinite;
+    transition: transform 0.2s ease;
+}
+
+.moon-travel-btn:hover .rocket-sprite {
+    transform: scale(1.1);
+}
+
+@keyframes rocketFrames {
+    0% {
+        background-position-x: 0;
+    }
+
+    25% {
+        background-position-x: 33.33%;
+    }
+
+    50% {
+        background-position-x: 66.66%;
+    }
+
+    75% {
+        background-position-x: 100%;
+    }
+}
+
+
+/* Common Layer Styles */
+.layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-repeat: repeat-x;
+
+    /* FIX: Force GPU promotion to prevent freezing during parent movement */
+    transform: translateZ(0);
+    will-change: background-position;
+    backface-visibility: hidden;
+    /* Ensure browser knows this element animates internally */
+    background-size: var(--globe-width) 100%;
+    /* Fix Width via Variable */
+}
+
+/* Earth Layer - Slow movement */
+/* Seamless loop: Fixed size calc(589px * var(--s)) (Derived from 754x512 @ calc(400px * var(--s)) height) */
+.earth-layer {
+    background-image: url('space/earth.jpg');
+    /* background-size handled by .layer generic or override if needed */
+    animation: rotateGlobe 60s linear infinite;
+}
+
+/* Clouds Layer - Faster movement */
+/* Double speed: 15s */
+.clouds-layer {
+    background-image: url('space/clouds.png');
+    /* background-size handled by .layer generic */
+    animation: rotateGlobe 15s linear infinite;
+    opacity: 0.9;
+}
+
+/* Shading Layer */
+.shading-layer {
+    background-image: url('space/circular_shading.png');
+    background-size: 100% 100%;
+    mix-blend-mode: normal;
+    pointer-events: none;
+    /* Use percentage-based oversizing so it scales with the container */
+    width: 104% !important;
+    height: 104% !important;
+    top: -2% !important;
+    left: -2% !important;
+}
+
+/* Animations */
+@keyframes rotateGlobe {
+    from {
+        background-position-x: calc(0px * var(--s));
+    }
+
+    to {
+        background-position-x: var(--globe-width);
+        /* Matches exact width for seamless loop */
+    }
+}
+
+/* --- Popups --- */
+.resource-popup {
+    position: fixed;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 100;
+    transform: translate(-50%, -100%);
+}
+
+.resource-popup img {
+    width: calc(64px * var(--s));
+    height: calc(64px * var(--s));
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.5));
+}
+
+.resource-popup span {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 calc(2px * var(--s)) calc(5px * var(--s)) rgba(0, 0, 0, 0.8);
+    margin-top: calc(5px * var(--s));
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -120%) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -300%) scale(1);
+    }
+}
+
+/* --- Moon Specific Layers --- */
+.moon-layer {
+    background-image: url('space/moon.jpg');
+    /* background-size handled by .layer generic */
+    animation: rotateGlobe 60s linear infinite;
+}
+
+.moon-border-layer {
+    background-image: url('space/moon_mars_border.png');
+    background-size: 100% 100%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    z-index: 2;
+    /* Ensure it is above moon layer */
+}
+
+.moon-glow {
+    background-image: url('space/moon_glow.png') !important;
+}
+
+/* --- Mars Specific Layers --- */
+.mars-layer {
+    background-image: url('space/mars.jpg');
+    animation: rotateGlobe 60s linear infinite;
+}
+
+.mars-glow {
+    background-image: url('space/mars_glow.png') !important;
+}
+
+.mars-border-layer {
+    background-image: url('space/moon_mars_border.png');
+    background-size: 100% 100%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+
+/* --- Help Overlay --- */
+#help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.86);
+    /* 86% Opacity Black */
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(calc(5px * var(--s)));
+}
+
+#help-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.help-content {
+    position: relative;
+    width: 90%;
+    max-width: calc(600px * var(--s));
+    height: 65vh;
+    padding: calc(40px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+    overflow: visible;
+}
+
+.help-icon {
+    width: calc(80px * var(--s));
+    height: calc(80px * var(--s));
+    margin-bottom: calc(30px * var(--s));
+    filter: drop-shadow(0 0 calc(10px * var(--s)) rgba(255, 255, 255, 0.2));
+}
+
+.close-btn {
+    position: absolute;
+    top: -calc(25px * var(--s));
+    right: 0;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+    opacity: 0.7;
+}
+
+.close-btn:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.help-text {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: calc(15px * var(--s));
+    /* Space for scrollbar */
+}
+
+/* Guide text container - no overflow, flexbox layout */
+.guide-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    /* Prevent parent scrolling */
+    width: 100%;
+}
+
+
+
+
+/* --- Menu Overlay Styles Removed --- */
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: calc(15px * var(--s)) calc(20px * var(--s));
+    background-color: transparent;
+    border: calc(1px * var(--s)) solid transparent;
+    /* Hidden by default */
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Lilita One', cursive;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: calc(1px * var(--s));
+}
+
+.menu-item i {
+    font-size: 1.5rem;
+    width: calc(40px * var(--s));
+    /* Fixed width for alignment */
+    text-align: center;
+    margin-right: calc(15px * var(--s));
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 1);
+    color: black;
+    border-color: white;
+    /* Visible on hover */
+}
+
+/* Anchor links styled as menu items */
+a.menu-item {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.menu-item:hover {
+    color: black;
+}
+
+/* Menu footer links */
+.menu-footer-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* --- Guide Overlays (Resources / Tools) --- */
+#resources-overlay,
+#tools-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.86);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(calc(5px * var(--s)));
+}
+
+#resources-overlay.hidden,
+#tools-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.guide-content {
+    position: relative;
+    width: 90%;
+    max-width: calc(600px * var(--s));
+    height: 65vh;
+    padding: calc(40px * var(--s));
+    padding-top: calc(50px * var(--s));
+    /* Extra space for close button */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+    overflow: visible;
+    /* Allow close button to show */
+}
+
+/* Guide title - fixed at top */
+.guide-title {
+    flex-shrink: 0;
+}
+
+/* Guide tabs - fixed below title */
+.guide-tabs {
+    flex-shrink: 0;
+}
+
+.guide-title {
+    font-family: 'Lilita One', cursive;
+    text-align: center;
+    margin: calc(10px * var(--s)) 0 calc(20px * var(--s));
+    font-size: 2rem;
+    color: white;
+}
+
+.guide-subtitle {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    line-height: 1.5;
+    margin: -calc(10px * var(--s)) 0 calc(20px * var(--s));
+    padding: 0 calc(10px * var(--s));
+}
+
+.guide-tabs {
+    display: flex;
+    justify-content: center;
+    gap: calc(20px * var(--s));
+    margin-bottom: calc(30px * var(--s));
+}
+
+/* Unified Hover for Homepage Icons - Now White */
+/* Top Right Icons & Menu */
+.profile-control i:hover,
+#btn-menu:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Shuttle Icon Hover (Icon ONLY, Text unchanged) */
+#btn-travel:hover i {
+    color: white;
+    transform: rotate(-90deg) scale(1.1);
+    /* Preserve rotation */
+}
+
+/* Explicitly prevent text change on shuttle hover if inherited */
+#btn-travel:hover .text-container span {
+    color: white;
+    /* Keep white */
+}
+
+
+/* Tab Styles */
+.tab-btn {
+    /* Manual override of menu-item styles for tab context */
+    padding: calc(10px * var(--s)) calc(30px * var(--s));
+    font-size: 1.5rem;
+    /* Larger Font */
+}
+
+/* --- Action Buttons (Shop / Leaderboard) --- */
+.top-nav-icons {
+    display: flex;
+    gap: calc(30px * var(--s));
+    margin-bottom: calc(60px * var(--s));
+    /* Increased from calc(40px * var(--s)) to center score */
+    z-index: 50;
+    pointer-events: auto;
+    /* Enable clicks for icons */
+}
+
+.top-nav-icons i {
+    font-size: 2.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s, opacity 0.2s;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.5));
+}
+
+.top-nav-icons i:hover {
+    color: #ffffff;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+
+/* --- Shop / Right Panel (Desktop) --- */
+.shop-panel {
+    position: relative;
+    flex: 0 0 calc(608px * var(--s));
+    height: 100%;
+    background: transparent !important;
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+    padding: calc(10px * var(--s));
+    z-index: 50;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.shop-panel-top {
+    flex: 1;
+    width: 100%;
+    pointer-events: none;
+}
+
+.shop-panel-bottom {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    overflow: hidden;
+}
+
+/* Scroll arrows — same style as .top-nav-icons i */
+.shop-scroll-btn {
+    font-size: calc(36px * var(--s));
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s, opacity 0.2s;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.5));
+    padding: calc(4px * var(--s)) 0;
+    flex-shrink: 0;
+}
+
+.shop-scroll-btn:hover:not(.disabled) {
+    color: #ffffff;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.shop-scroll-btn.disabled {
+    opacity: 0.25;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Viewport — the scrollable window that clips the shop items */
+.shop-list-viewport {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.shop-list-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.shop-panel * {
+    pointer-events: auto;
+}
+
+.shop-title {
+    font-family: 'Lilita One', cursive;
+    font-size: 2.5rem;
+    color: #ffd700;
+    text-align: center;
+    margin-bottom: calc(20px * var(--s));
+    text-shadow: 0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.8);
+    display: none;
+}
+
+/* --- Shop Styles (General) --- */
+#shop-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.86);
+    z-index: 950;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(calc(5px * var(--s)));
+}
+
+#shop-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.shop-content {
+    position: relative;
+    width: 90%;
+    max-width: calc(600px * var(--s));
+    height: 65vh;
+    padding: calc(40px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+    overflow: visible;
+}
+
+.shop-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: calc(5px * var(--s));
+    padding: calc(5px * var(--s)) calc(10px * var(--s));
+    height: 300%;
+}
+
+/* ── Hide ALL native scrollbars on scrollable shop elements ── */
+.shop-panel,
+.shop-list {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE / old Edge */
+}
+
+.shop-panel::-webkit-scrollbar,
+.shop-list::-webkit-scrollbar {
+    display: none;
+    /* Chrome / Safari / new Edge */
+}
+
+/* ── Custom Scrollbar (JS-driven, fixed overlay) ── */
+.custom-scrollbar-track {
+    position: fixed;
+    width: calc(8px * var(--s));
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: calc(20px * var(--s));
+    z-index: 999;
+    pointer-events: auto;
+    transition: opacity 0.2s ease;
+}
+
+.custom-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: calc(40px * var(--s));
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: calc(20px * var(--s));
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background 0.15s ease;
+}
+
+.custom-scrollbar-thumb:hover,
+.custom-scrollbar-thumb.dragging {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.shop-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.45);
+    padding: calc(10px * var(--s)) calc(15px * var(--s));
+    /* Reduced from calc(15px * var(--s)) vertical */
+    border-radius: calc(10px * var(--s));
+    border: none;
+    transition: background 0.2s;
+    flex: 1 1 0;
+    /* Grow/shrink equally */
+    min-height: 0;
+    /* Allow shrinking below content height */
+}
+
+.shop-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.shop-item img {
+    height: 90%;
+    /* Scale with parent height */
+    max-height: calc(90px * var(--s));
+    /* Cap size */
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(5px * var(--s)) rgba(0, 0, 0, 0.5));
+}
+
+.shop-info {
+    flex-grow: 1;
+    text-align: left;
+    margin-left: calc(15px * var(--s));
+    display: flex;
+    flex-direction: column;
+}
+
+.shop-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: none;
+    margin-bottom: calc(5px * var(--s));
+}
+
+.shop-price {
+    font-size: 1.5rem;
+    /* Large Font as requested */
+    font-family: 'Lilita One', cursive;
+    color: #ffd700;
+    /* Yellow for Price */
+    text-shadow: none;
+}
+
+.shop-desc {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: calc(2px * var(--s));
+}
+
+.score-suffix {
+    font-family: 'Lilita One', cursive;
+}
+
+/* Shop descriptions: make sure the suffix matches the line's font and color */
+.shop-desc .score-suffix {
+    font-family: inherit !important;
+    color: inherit !important;
+}
+
+
+
+.btn-buy {
+    background-color: #2ecc71;
+    /* Green */
+    color: white;
+    border: none;
+    padding: calc(10px * var(--s)) calc(25px * var(--s));
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: calc(5px * var(--s));
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Lilita One', cursive;
+    text-shadow: 0 calc(1px * var(--s)) calc(3px * var(--s)) rgba(0, 0, 0, 0.3);
+}
+
+.btn-buy:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+}
+
+.btn-buy:active {
+    transform: scale(0.95);
+}
+
+.tab-btn i {
+    font-size: 2rem;
+    /* Larger Icon */
+}
+
+.tab-btn.active {
+    background-color: white;
+    color: black;
+    border-color: white;
+}
+
+/* Guide list - scrollable content area */
+.guide-list {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: calc(10px * var(--s));
+    text-align: left;
+}
+
+
+
+.guide-list.hidden,
+.shop-list.hidden,
+.astronauts-intro.hidden {
+    display: none;
+}
+
+
+/* --- Leaderboard Overlay --- */
+#leaderboard-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.86);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(calc(5px * var(--s)));
+}
+
+#leaderboard-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Leaderboard List - inherits from .guide-list */
+.leaderboard-list {
+    gap: calc(8px * var(--s));
+}
+
+/* Leaderboard Item */
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: calc(10px * var(--s)) calc(15px * var(--s));
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: calc(8px * var(--s));
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.leaderboard-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Rank Number */
+.lb-rank {
+    font-family: 'Lilita One', cursive;
+    font-size: 1.2rem;
+    color: #fff;
+    min-width: calc(40px * var(--s));
+    text-align: center;
+}
+
+/* Top 3 Rank Colors */
+.leaderboard-item:nth-child(1) .lb-rank {
+    color: #ffd700;
+    /* Gold */
+}
+
+.leaderboard-item:nth-child(2) .lb-rank {
+    color: #c0c0c0;
+    /* Silver */
+}
+
+.leaderboard-item:nth-child(3) .lb-rank {
+    color: #cd7f32;
+    /* Bronze */
+}
+
+/* Country Flag in Leaderboard */
+.lb-flag {
+    width: calc(32px * var(--s));
+    height: calc(32px * var(--s));
+    margin: 0 calc(12px * var(--s));
+}
+
+/* Player/Country Name */
+.lb-name {
+    flex: 1;
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 1rem;
+    margin: 0;
+    margin-right: auto;
+    /* Pushes score to right but allow arrow after */
+}
+
+.lb-name-short {
+    display: none;
+}
+
+.lb-name-full {
+    display: inline;
+}
+
+/* Leaderboard Score */
+.lb-score {
+    font-family: 'Lilita One', cursive;
+    color: #fff;
+    font-size: 1.1rem;
+    margin-right: calc(15px * var(--s));
+}
+
+.lb-arrow {
+    color: rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.leaderboard-entry.active .lb-arrow {
+    transform: rotate(90deg);
+    color: #fff;
+}
+
+.leaderboard-details {
+    display: none;
+    padding: calc(15px * var(--s));
+    padding-top: calc(20px * var(--s));
+    /* Increased top margin/padding as requested */
+    /* "Blank background" means transparent, falling through to main bg */
+}
+
+.leaderboard-entry.active .leaderboard-details {
+    display: block;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* 5 Columns */
+    gap: calc(15px * var(--s));
+    border: none;
+    /* Borderless */
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: calc(8px * var(--s));
+    color: #fff;
+    font-family: 'Lilita One', cursive;
+    font-size: 0.9rem;
+    text-shadow: 0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8);
+    /* Black blurred shadow */
+}
+
+.tool-icon {
+    width: calc(32px * var(--s));
+    height: calc(32px * var(--s));
+    object-fit: contain;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
+    /* Shadow for icon */
+}
+
+.tool-x {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    margin: 0 calc(2px * var(--s));
+    text-shadow: 0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8);
+}
+
+/* Remove Text Shadows in Popups */
+.help-text,
+.guide-text,
+.guide-info h3,
+.guide-info p {
+    text-shadow: none !important;
+}
+
+/* Ensure Close Button is clickable */
+.close-btn {
+    z-index: 10;
+}
+
+/* Removed old h2 styling as we use tabs now */
+
+.guide-item {
+    display: flex;
+    align-items: flex-start;
+    /* Align Top Always */
+    margin-bottom: calc(25px * var(--s));
+    gap: calc(20px * var(--s));
+    background: rgba(0, 0, 0, 0.45);
+    padding: calc(15px * var(--s));
+    border-radius: calc(8px * var(--s));
+    transition: background 0.2s;
+}
+
+.guide-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.guide-img {
+    width: calc(100px * var(--s));
+    /* Bigger */
+    height: calc(100px * var(--s));
+    object-fit: contain;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(5px * var(--s)) rgba(0, 0, 0, 0.5));
+}
+
+.guide-info {
+    flex: 1;
+}
+
+.guide-info h3 {
+    margin: 0 0 calc(5px * var(--s)) 0;
+    font-family: 'Lilita One', cursive;
+    font-size: 1rem;
+    color: #ffd700;
+    /* Goldish for titles */
+}
+
+.guide-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.menu-footer {
+    display: flex;
+    justify-content: center;
+    gap: calc(30px * var(--s));
+    font-family: 'Lilita One', cursive;
+    font-size: 1.1rem;
+    /* Slightly larger */
+    margin-top: calc(20px * var(--s));
+    border-top: none;
+    padding-top: 0;
+    color: #ffffff;
+    width: 100%;
+}
+
+.menu-footer span {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.menu-footer span:hover {
+    color: #ffd700;
+}
+
+
+/* Base shop item styling */
+.shop-item {
+    cursor: default;
+    background: rgba(0, 0, 0, 0.45);
+    padding: calc(5px * var(--s)) calc(15px * var(--s));
+    border-radius: calc(10px * var(--s));
+    border: none;
+    transition: background 0.2s;
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+/* Affordable State: default pointer and no changes needed */
+/* .shop-item {
+    cursor: default;
+} */
+
+/* Unaffordable State: 35% opacity, cannot be clicked currently */
+.unaffordable-tool {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+    /* Prevent clicks when unaffordable */
+}
+
+/* Unrevealed State: Black silhouette, name hidden via JS or CSS */
+.unrevealed-tool {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none !important;
+    background: transparent;
+}
+
+.unrevealed-tool img {
+    filter: brightness(0) !important;
+}
+
+.unrevealed-tool .shop-desc {
+    display: none;
+}
+
+.unrevealed-tool .shop-name-display {
+    margin-bottom: 0;
+}
+
+.shop-title {
+    display: none;
+    /* Title removed per user request */
+}
+
+/* Shop list is handled by main .shop-list class above */
+
+.shop-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
+    border-radius: calc(12px * var(--s));
+    padding: calc(10px * var(--s)) calc(15px * var(--s));
+    /* Slightly reduced vertical padding for tighter fit */
+    gap: calc(3px * var(--s));
+    /* Reduced to 20% of previous calc(15px * var(--s)) */
+    transition: background 0.2s, transform 0.2s;
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+/* Hover effect removed per user request */
+/* .shop-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-calc(2px * var(--s)));
+} */
+
+.shop-item img {
+    width: calc(85px * var(--s));
+    /* Reduced from 80px */
+    height: calc(85px * var(--s));
+    /* Reduced from 80px */
+    flex-shrink: 0;
+    /* Prevents squishing */
+    object-fit: contain;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
+}
+
+.shop-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.shop-name-display {
+    font-family: 'Lilita One', cursive;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: calc(5px * var(--s));
+}
+
+.shop-price-btn {
+    font-family: 'Lilita One', cursive;
+    background: #28a745;
+    color: #fff !important;
+    padding: calc(8px * var(--s)) 0;
+    /* Reduced from calc(16px * var(--s)) */
+    border-radius: calc(8px * var(--s));
+    font-size: 1.9rem;
+    /* Reduced from 1.8rem */
+    text-align: center;
+    box-shadow: 0 calc(4px * var(--s)) 0 #1e7e34;
+    min-width: 25%;
+    max-width: 25%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    flex-shrink: 0;
+    margin-left: calc(15px * var(--s));
+    transition: transform 0.1s, box-shadow 0.1s;
+    cursor: pointer;
+    /* Button is the active area */
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ensure suffixes (M, B, T) are white on the button */
+.shop-price-btn .score-suffix {
+    color: #fff !important;
+}
+
+/* Totally disable interaction feedback for inactive tools */
+.unaffordable-tool .shop-price-btn,
+.unrevealed-tool .shop-price-btn {
+    pointer-events: none !important;
+    cursor: default !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Restrict active state to the button itself only */
+.shop-price-btn:active {
+    transform: translateY(calc(2px * var(--s)));
+    box-shadow: 0 calc(2px * var(--s)) 0 #1e7e34;
+}
+
+.shop-desc {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: calc(5px * var(--s));
+    line-height: 1.3;
+}
+
+
+/* --- Loading Screen --- */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease;
+}
+
+#loading-overlay.loading-fading {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#loading-overlay.hidden {
+    display: none !important;
+}
+
+.loading-content {
+    text-align: center;
+    width: calc(400px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(20px * var(--s));
+}
+
+#loading-overlay .loading-logo {
+    width: calc(300px * var(--s));
+    height: calc(300px * var(--s));
+    object-fit: contain;
+    margin-bottom: calc(20px * var(--s));
+    filter: drop-shadow(0 0 calc(15px * var(--s)) rgba(0, 153, 255, 0.6));
+    animation: rocketFloat 3s ease-in-out infinite;
+}
+
+.loading-text {
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+    font-size: 1.2rem;
+    letter-spacing: calc(2px * var(--s));
+    font-weight: 700;
+}
+
+.loading-bar-container {
+    width: 100%;
+    height: calc(20px * var(--s));
+    background-color: #333;
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 calc(1px * var(--s)) calc(3px * var(--s)) rgba(0, 0, 0, 0.5);
+}
+
+.loading-bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #fff;
+    transition: width 0.1s linear;
+}
+
+#loading-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+    font-size: calc(14px * var(--s));
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.play-button {
+    margin-top: calc(20px * var(--s));
+    font-family: 'Lilita One', cursive;
+    font-size: 6rem;
+    color: #fff;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    text-shadow: 0 0 calc(10px * var(--s)) rgba(0, 0, 0, 0.5);
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.play-button.enabled {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.play-button.enabled:hover {
+    opacity: 0.9;
+    transform: scale(1.1);
+}
+
+@keyframes buttonPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 calc(10px * var(--s)) rgba(255, 215, 0, 0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 calc(25px * var(--s)) rgba(255, 215, 0, 0.6);
+    }
+}
+
+/* ========================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: calc(768px * var(--s))) {
+    :root {
+        --globe-width: calc(403px * var(--s));
+        /* Mobile: calc(274px * var(--s)) * 1.47 (Original Aspect Ratio to fix stretching) */
+    }
+
+    /* --- Fix Background Scrollbars --- */
+    html,
+    body {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        background-attachment: fixed;
+    }
+
+    .game-wrapper {
+        flex-direction: column;
+        justify-content: flex-start;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .game-stage {
+        height: 100vh !important;
+        min-height: 60vh;
+        flex: none;
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* --- Earth Resources Sidebar Mobile --- */
+    .earth-resources-sidebar {
+        flex: none;
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        /* Stack icons and bar on mobile */
+        justify-content: center;
+        align-items: center;
+        padding: calc(10px * var(--s));
+        order: 3;
+        /* Push to bottom on mobile */
+        border-right: none;
+        border-top: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
+    }
+
+    .resources-icons-column {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        height: auto;
+        justify-content: center;
+    }
+
+    .resources-icons-column img {
+        width: calc(40px * var(--s));
+        height: calc(40px * var(--s));
+        margin: calc(5px * var(--s));
+    }
+
+    /* Heat bar becomes horizontal on mobile */
+    .heat-bar-container {
+        width: 90%;
+        height: calc(25px * var(--s));
+        /* Tall to short */
+        margin-top: calc(15px * var(--s));
+        /* Spacing */
+    }
+
+    .heat-bar-fill {
+        height: 100%;
+        width: 0%;
+        /* Fill horizontally instead height */
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(to top, #4caf50 0%, #ffeb3b 40%, #ff9800 70%, #ff3b3b 100%);
+        transition: height 0.1s linear;
+    }
+
+    .shop-panel {
+        width: 100%;
+        height: auto;
+        min-height: 50vh;
+        border-left: none;
+        border-top: calc(2px * var(--s)) solid rgba(255, 255, 255, 0.1);
+        padding-bottom: calc(20px * var(--s));
+        order: 2;
+        /* Below game stage */
+    }
+
+    /* Un-lock both html and body for standalone pages to allow scrolling */
+    html.standalone-page,
+    body.standalone-page {
+        overflow: auto !important;
+        position: relative !important;
+        height: auto !important;
+        width: 100% !important;
+    }
+
+    /* Support case where only body has the class (modern browsers) */
+    html:has(body.standalone-page) {
+        overflow: auto !important;
+        position: relative !important;
+        height: auto !important;
+    }
+
+    /* --- Globe System --- */
+    .globe-wrapper-anchor {
+        width: calc(280px * var(--s));
+        height: calc(280px * var(--s));
+    }
+
+    .globe-mask {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        border-radius: 50%;
+    }
+
+
+
+    .globe-glow {
+        top: -calc(35px * var(--s));
+        left: -calc(35px * var(--s));
+        right: -calc(35px * var(--s));
+        bottom: -calc(35px * var(--s));
+    }
+
+    /* Shading Layer - Scale proportionally */
+    .shading-layer {
+        width: calc(290px * var(--s)) !important;
+        height: calc(290px * var(--s)) !important;
+        top: calc(-8px * var(--s)) !important;
+        left: calc(-8px * var(--s)) !important;
+    }
+
+    /* --- Logo & Header --- */
+    .logo {
+        width: calc(150px * var(--s));
+        top: calc(15px * var(--s));
+        left: calc(15px * var(--s));
+    }
+
+    /* Move score down on mobile */
+    .game-header {
+        top: calc(25% - calc(40px * var(--s)));
+    }
+
+    .score-board {
+        font-size: 2.5rem;
+    }
+
+    .score-container {
+        height: 4.2rem;
+        /* Fixed height for flag (4rem) to prevent jump */
+    }
+
+    /* --- Control Icons --- */
+
+    /* --- Start Overlay PLAY Text --- */
+    #start-overlay span {
+        font-size: 2.5rem;
+    }
+
+    /* Travel button mobile adjustments */
+    .moon-travel-btn {
+        top: auto !important;
+        left: -calc(10px * var(--s)) !important;
+        bottom: -calc(50px * var(--s)) !important;
+        right: auto !important;
+        width: calc(60px * var(--s));
+        height: calc(60px * var(--s));
+    }
+
+    /* --- Overlay Panels --- */
+    .help-content,
+    .guide-content,
+    .menu-content,
+    .shop-content {
+        width: 95%;
+        max-width: none;
+        padding: calc(25px * var(--s)) calc(15px * var(--s));
+        height: 65vh;
+    }
+
+    .close-btn {
+        font-size: 1.5rem;
+        top: -calc(20px * var(--s));
+        right: calc(5px * var(--s));
+    }
+
+    /* --- Help Panel --- */
+    .help-icon {
+        width: calc(60px * var(--s));
+        height: calc(60px * var(--s));
+        margin-bottom: calc(20px * var(--s));
+    }
+
+    .help-text {
+        font-size: 0.95rem;
+        padding-right: calc(5px * var(--s));
+    }
+
+    /* --- Guide Panels --- */
+    .guide-title {
+        font-size: 1.5rem;
+        margin: calc(5px * var(--s)) 0 calc(15px * var(--s));
+        text-align: center;
+        /* Center Title */
+        width: 100%;
+    }
+
+    .guide-tabs {
+        gap: calc(10px * var(--s));
+        margin-bottom: calc(20px * var(--s));
+    }
+
+    .tab-btn {
+        padding: calc(8px * var(--s)) calc(20px * var(--s));
+        font-size: 1rem;
+    }
+
+    .tab-btn i {
+        font-size: 1.3rem;
+    }
+
+    .guide-item {
+        padding: calc(12px * var(--s));
+        gap: calc(12px * var(--s));
+        margin-bottom: calc(15px * var(--s));
+    }
+
+    .guide-img {
+        width: calc(70px * var(--s));
+        height: calc(70px * var(--s));
+    }
+
+    .guide-info h3 {
+        font-size: 0.9rem;
+    }
+
+    .guide-info p {
+        font-size: 0.8rem;
+    }
+
+    /* --- Menu Panel --- */
+    .menu-item {
+        padding: calc(12px * var(--s)) calc(15px * var(--s));
+        font-size: 1rem;
+    }
+
+    .menu-item i {
+        font-size: 1.2rem;
+        width: calc(30px * var(--s));
+        margin-right: calc(10px * var(--s));
+    }
+
+    .menu-footer {
+        gap: calc(20px * var(--s));
+        font-size: 0.7rem;
+    }
+
+    /* --- Shop Panel --- */
+    .shop-content {
+        padding: calc(20px * var(--s)) calc(10px * var(--s));
+    }
+
+    .shop-list {
+        padding-right: calc(5px * var(--s));
+    }
+
+    .shop-item {
+        padding: calc(12px * var(--s)) calc(10px * var(--s));
+        flex-wrap: wrap;
+        gap: calc(10px * var(--s));
+    }
+
+    .shop-item img {
+        width: calc(40px * var(--s));
+        height: calc(40px * var(--s));
+    }
+
+    .shop-info {
+        margin-left: calc(10px * var(--s));
+        flex: 1;
+        min-width: calc(100px * var(--s));
+    }
+
+    .shop-name {
+        font-size: 0.95rem;
+    }
+
+    .shop-price {
+        font-size: 1.1rem;
+    }
+
+    .btn-buy {
+        padding: calc(8px * var(--s)) calc(15px * var(--s));
+        font-size: 0.9rem;
+    }
+
+    /* --- Loading Screen --- */
+    .loading-content {
+        width: calc(250px * var(--s));
+    }
+
+    #loading-overlay .loading-logo {
+        width: calc(80px * var(--s));
+        height: calc(80px * var(--s));
+    }
+
+    .loading-bar-container {
+        height: calc(15px * var(--s));
+    }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: calc(400px * var(--s))) {
+    :root {
+        --globe-width: calc(354px * var(--s));
+        /* calc(240px * var(--s)) container * 1.475 aspect ratio */
+    }
+
+    .globe-wrapper-anchor {
+        width: calc(240px * var(--s));
+        height: calc(240px * var(--s));
+    }
+
+    .globe-mask {
+        width: calc(234px * var(--s));
+        height: calc(234px * var(--s));
+    }
+
+    .shading-layer {
+        width: calc(250px * var(--s)) !important;
+        height: calc(250px * var(--s)) !important;
+    }
+
+    .globe-glow {
+        top: -calc(30px * var(--s));
+        left: -calc(30px * var(--s));
+        right: -calc(30px * var(--s));
+        bottom: -calc(30px * var(--s));
+    }
+
+    .logo {
+        width: calc(120px * var(--s));
+    }
+
+    .score-board {
+        font-size: 2rem;
+    }
+
+    #start-overlay span {
+        font-size: 2rem;
+    }
+
+    .guide-img {
+        width: calc(55px * var(--s));
+        height: calc(55px * var(--s));
+    }
+
+    .shop-item img {
+        width: calc(45px * var(--s));
+        height: calc(45px * var(--s));
+    }
+}
+
+/* --- Standalone Pages --- */
+.standalone-page {
+    min-height: 100vh;
+    background-color: #000;
+    background-image: url('space/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    font-family: system-ui, sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.back-link {
+    position: fixed;
+    top: calc(20px * var(--s));
+    left: calc(20px * var(--s));
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: calc(8px * var(--s));
+    text-decoration: none;
+    color: white;
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
+}
+
+.back-link:hover {
+    opacity: 1;
+    transform: translateX(-calc(3px * var(--s)));
+}
+
+.back-link i {
+    font-size: 1.2rem;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(80px * var(--s)) calc(20px * var(--s)) calc(40px * var(--s));
+    min-height: 100vh;
+    width: 100%;
+    max-width: calc(700px * var(--s));
+    margin: 0 auto;
+}
+
+.page-wrapper .help-icon {
+    width: calc(80px * var(--s));
+    height: calc(80px * var(--s));
+    margin-bottom: calc(30px * var(--s));
+    filter: drop-shadow(0 0 calc(10px * var(--s)) rgba(255, 255, 255, 0.2));
+}
+
+.page-wrapper .help-text {
+    max-height: none;
+    overflow: visible;
+}
+
+.page-wrapper .guide-text {
+    overflow: visible;
+    width: 100%;
+}
+
+.page-wrapper .guide-list {
+    overflow: visible;
+    max-height: none;
+    padding-right: 0;
+}
+
+.page-wrapper .shop-list {
+    overflow: visible;
+    max-height: none;
+    padding-right: 0;
+}
+
+.page-wrapper .leaderboard-list {
+    overflow: visible;
+    max-height: none;
+    padding-right: 0;
+}
+
+/* Astronauts Specific Styles */
+.astronauts-intro {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-bottom: calc(20px * var(--s));
+    text-align: center;
+    max-width: calc(600px * var(--s));
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+    padding: 0 calc(10px * var(--s));
+}
+
+#list-astronauts .lb-name {
+    text-align: right;
+    margin-right: 0;
+    margin-left: auto;
+    /* Push to right */
+    padding-right: calc(10px * var(--s));
+}
+
+/* --- Login Page Styles --- */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    gap: calc(15px * var(--s));
+    width: 100%;
+    max-width: calc(350px * var(--s));
+    margin-top: calc(20px * var(--s));
+}
+
+.login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(12px * var(--s));
+    padding: calc(14px * var(--s)) calc(24px * var(--s));
+    border-radius: calc(8px * var(--s));
+    border: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+    text-decoration: none;
+    color: white;
+    width: 100%;
+    box-shadow: 0 calc(4px * var(--s)) calc(15px * var(--s)) rgba(0, 0, 0, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-calc(2px * var(--s)));
+    filter: brightness(1.1);
+}
+
+.btn-email {
+    background: #555;
+}
+
+.btn-google {
+    background: #ea4335;
+}
+
+.btn-apple {
+    background: #000;
+}
+
+.login-btn i {
+    font-size: 1.2rem;
+    width: calc(24px * var(--s));
+    text-align: center;
+}
+
+.legal-content {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: left;
+    width: 100%;
+}
+
+.legal-content h1 {
+    font-family: 'Lilita One', cursive;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: calc(30px * var(--s));
+    color: white;
+}
+
+.legal-content h2 {
+    font-family: 'Lilita One', cursive;
+    font-size: 1.2rem;
+    margin: calc(25px * var(--s)) 0 calc(10px * var(--s));
+    color: #ffd700;
+}
+
+.legal-content p {
+    margin-bottom: calc(15px * var(--s));
+}
+
+.legal-content ul {
+    margin-bottom: calc(15px * var(--s));
+    padding-left: calc(20px * var(--s));
+}
+
+.legal-content li {
+    margin-bottom: calc(8px * var(--s));
+}
+
+.legal-content a {
+    color: #ffd700;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.legal-content a:hover {
+    opacity: 0.7;
+}
+
+/* --- Mobile Menu Styles (Global) --- */
+#btn-menu {
+    display: none;
+    /* Hidden by default on desktop */
+}
+
+#mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(calc(5px * var(--s)));
+}
+
+#mobile-menu-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#btn-mobile-close {
+    position: absolute;
+    top: calc(30px * var(--s));
+    right: calc(30px * var(--s));
+    font-size: 2.5rem;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#btn-mobile-close:hover {
+    transform: scale(1.1);
+}
+
+.mobile-menu-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(15px * var(--s));
+    width: 100%;
+}
+
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: calc(20px * var(--s));
+    color: white;
+    font-family: 'Lilita One', cursive;
+    font-size: 1.4rem;
+    padding: calc(15px * var(--s)) calc(40px * var(--s));
+    width: 100%;
+    /* Full width */
+    justify-content: flex-start;
+    /* Left align */
+    box-sizing: border-box;
+    border-radius: calc(8px * var(--s));
+    /* Default radius */
+    transition: background 0.2s, color 0.2s, border-radius 0.2s;
+    cursor: pointer;
+    text-shadow: 0 calc(2px * var(--s)) calc(5px * var(--s)) rgba(0, 0, 0, 0.8);
+}
+
+.mobile-menu-item i {
+    font-size: 1.4rem;
+    width: calc(30px * var(--s));
+    text-align: center;
+    transition: color 0.2s;
+}
+
+.mobile-menu-item:hover {
+    background: white;
+    color: black;
+    text-shadow: none;
+    border-radius: 0;
+    /* Remove radius on hover */
+}
+
+.mobile-menu-item:hover i {
+    color: black;
+}
+
+.mobile-menu-footer {
+    display: flex;
+    gap: calc(40px * var(--s));
+    margin-top: calc(50px * var(--s));
+}
+
+.mobile-menu-footer i {
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
+    transition: transform 0.2s;
+}
+
+.mobile-menu-footer i:hover {
+    transform: scale(1.1);
+}
+
+
+/* --- Mobile Updates (Step 962) --- */
+@media (max-width: calc(768px * var(--s))) {
+
+    /* 1. Mobile Menu Logic & Icon Hiding (Removed) */
+    /* 2. Restore Icon Text (Smaller) */
+    /* Redesigned Mobile Buttons (Grid Layout) */
+    /* Redesigned Mobile Buttons (Flex Layout - Fit Content) */
+    .guide-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(10px * var(--s));
+        /* Reduced gap between buttons */
+        width: 100%;
+        max-width: 100%;
+        /* Allow full width */
+        margin: 0 auto calc(25px * var(--s));
+        /* Center container + bottom spacing */
+        justify-content: center;
+    }
+
+    .tab-btn,
+    .action-btn {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: auto !important;
+        /* Fit content */
+        flex: 0 1 auto;
+        height: auto;
+        padding: calc(8px * var(--s)) calc(10px * var(--s)) !important;
+        /* Reduced padding to prevent stacking */
+        gap: calc(6px * var(--s)) !important;
+        /* Reduced internal gap */
+        box-sizing: border-box;
+        margin: 0;
+        /* Reset margins */
+        min-width: 0;
+
+        /* Ensure Font/Icon Sizes for Mobile */
+        font-size: 0.9rem !important;
+    }
+
+    .tab-btn span,
+    .action-btn span {
+        display: block !important;
+        font-size: 0.9rem !important;
+        /* Restore readable size */
+        margin: 0;
+        /* Reset margin */
+        line-height: 1;
+    }
+
+    .tab-btn i,
+    .action-btn i {
+        font-size: 1rem !important;
+        margin: 0;
+    }
+
+
+
+    /* 3. Compact Leaderboard / Astronauts */
+    .leaderboard-item {
+        padding: calc(8px * var(--s)) calc(10px * var(--s));
+    }
+
+    .lb-rank {
+        font-size: 0.9rem;
+        min-width: calc(25px * var(--s));
+    }
+
+    .lb-flag {
+        width: calc(24px * var(--s));
+        height: calc(24px * var(--s));
+        margin: 0 calc(8px * var(--s));
+    }
+
+    .lb-name {
+        font-size: 0.85rem;
+    }
+
+    .lb-name-short {
+        display: inline;
+    }
+
+    .lb-name-full {
+        display: none;
+    }
+
+    .lb-score {
+        font-size: 0.9rem;
+    }
+
+    /* 4. 3-Column Tool Grid on Mobile */
+    .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* 5. Layout Reset & Center Scores */
+    /* Fix Flex Direction to Column so Header and Globe stack vertically */
+    .game-stage {
+        flex-direction: column;
+        justify-content: flex-start;
+        /* Top align content in stage */
+        padding-top: calc(10px * var(--s));
+    }
+
+    /* Make Header Relative to flow between Logo and Planet */
+    .game-header {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        margin-top: calc(10px * var(--s));
+        margin-bottom: calc(20px * var(--s));
+    }
+
+    /* 6. Back Button Styling */
+    .back-link {
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: calc(15px * var(--s)) calc(20px * var(--s));
+        background-color: rgba(0, 0, 0, 0.9) !important;
+        /* 90% opacity forced */
+        border-radius: 0;
+        z-index: 9999;
+        backdrop-filter: blur(calc(2px * var(--s)));
+    }
+
+    /* Reduce flag size on mobile globally */
+    .country-flag {
+        width: 2rem;
+        height: 2rem;
+    }
+
+
+    .page-wrapper {
+        padding-bottom: calc(20px * var(--s)) !important;
+        /* Reduced from calc(80px * var(--s)) */
+    }
+
+    /* Shrink nickname placeholder on mobile */
+    #nickname-input::placeholder {
+        font-size: 1rem;
+    }
+}
+
+/* --- Settings Popup --- */
+#settings-overlay, #info-overlay, #stats-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    backdrop-filter: none;
+}
+
+#settings-overlay.hidden, #info-overlay.hidden, #stats-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#btn-settings-close, #btn-info-close, #btn-stats-close {
+    position: absolute;
+    top: calc(15px * var(--s));
+    right: calc(15px * var(--s));
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    z-index: 10;
+}
+
+#btn-settings-close:hover, #btn-info-close:hover, #btn-stats-close:hover {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: calc(15px * var(--s));
+    width: 100%;
+    height: calc(40px * var(--s));
+    margin-bottom: calc(15px * var(--s));
+    box-sizing: border-box;
+    transition: none !important;
+}
+
+.settings-icon {
+    font-size: calc(20px * var(--s));
+    color: #ffffff;
+    width: calc(30px * var(--s));
+    text-align: center;
+    flex-shrink: 0;
+    transition: opacity 0.3s ease;
+    cursor: none !important;
+}
+
+.settings-icon.muted {
+    opacity: 0.3;
+}
+
+.settings-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    outline: none;
+    cursor: none !important;
+    transition: none !important;
+}
+
+.settings-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: calc(6px * var(--s));
+    border-radius: calc(3px * var(--s));
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.settings-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: calc(20px * var(--s));
+    height: calc(20px * var(--s));
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: none !important;
+    box-shadow: 0 0 calc(6px * var(--s)) rgba(255, 255, 255, 0.4);
+    transition: transform 0.15s ease;
+    margin-top: calc(-7px * var(--s));
+}
+
+.settings-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.settings-slider::-moz-range-thumb {
+    width: calc(20px * var(--s));
+    height: calc(20px * var(--s));
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: none !important;
+    border: none;
+    box-shadow: 0 0 calc(6px * var(--s)) rgba(255, 255, 255, 0.4);
+}
+
+.settings-slider::-moz-range-track {
+    width: 100%;
+    height: calc(6px * var(--s));
+    border-radius: calc(3px * var(--s));
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.settings-erase-btn {
+    font-family: 'Lilita One', cursive;
+    background: rgba(220, 53, 69, 0.2);
+    color: #ff6b6b;
+    border: calc(1px * var(--s)) solid rgba(220, 53, 69, 0.4);
+    box-sizing: border-box;
+    height: calc(45px * var(--s));
+    border-radius: calc(10px * var(--s));
+    font-size: calc(22px * var(--s));
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    margin-top: calc(5px * var(--s));
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(8px * var(--s));
+}
+
+.settings-erase-btn:hover {
+    background: rgba(220, 53, 69, 0.4);
+    border-color: rgba(220, 53, 69, 0.7);
+    color: #ff8a8a;
+}
+
+.settings-erase-btn.confirm {
+    background: rgba(220, 53, 69, 0.6);
+    color: #fff;
+    border-color: #dc3545;
+}
+
+/* --- Planet Selection Popup --- */
+#planet-select-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    backdrop-filter: none;
+}
+
+#planet-select-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.planet-select-content {
+    position: relative;
+    width: 90%;
+    max-width: calc(420px * var(--s));
+    background: rgba(0, 0, 0, 0.85);
+    border: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
+    border-radius: calc(20px * var(--s));
+    padding: calc(50px * var(--s)) calc(40px * var(--s)) calc(40px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: none;
+}
+
+.wider-popup {
+    max-width: calc(630px * var(--s)) !important;
+}
+
+.info-logo-float {
+    width: calc(180px * var(--s));
+    height: auto;
+    margin-bottom: calc(15px * var(--s));
+    animation: rocketFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.5));
+}
+
+#btn-planet-select-close {
+    position: absolute;
+    top: calc(15px * var(--s));
+    right: calc(15px * var(--s));
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    z-index: 10;
+}
+
+#btn-planet-select-close:hover {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.planet-buttons {
+    display: flex;
+    gap: calc(15px * var(--s));
+    margin-top: calc(10px * var(--s));
+    width: 100%;
+    justify-content: center;
+}
+
+.planet-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(8px * var(--s));
+    padding: calc(15px * var(--s));
+    border-radius: calc(12px * var(--s));
+    border: calc(2px * var(--s)) solid transparent; /* Invisible border */
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+    min-width: calc(100px * var(--s));
+    position: relative;
+    font-family: 'Lilita One', cursive;
+    color: #fff;
+}
+
+.planet-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5); /* 50% opacity white border on hover */
+}
+
+.planet-btn.locked {
+    opacity: 1; /* Full opacity even when locked */
+}
+
+.planet-btn.locked:hover {
+    opacity: 1;
+}
+
+.planet-btn.disabled {
+    opacity: 1; /* Full opacity even when disabled/unaffordable */
+    pointer-events: none;
+}
+
+.planet-btn-preview {
+    width: calc(60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: 50%;
+    overflow: hidden;
+    background-size: auto 100%;
+    background-position: center;
+    background-repeat: repeat-x;
+    box-shadow: 0 0 calc(8px * var(--s)) rgba(255, 255, 255, 0.2);
+    transition: background-position 0.4s ease;
+    position: relative; /* Anchor for overlay */
+}
+
+/* New: Black Overlay for Locked Planets */
+.planet-preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent; /* Removed black overlay */
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* White Lock centered over Planet */
+.planet-preview-overlay i {
+    color: #ffffff;
+    font-size: calc(24px * var(--s));
+}
+
+.planet-btn:hover .planet-btn-preview {
+    background-position: calc(100% + calc(60px * var(--s))) center;
+}
+
+.planet-btn-preview.earth-preview {
+    background-image: url('space/earth.jpg');
+}
+
+.planet-btn-preview.moon-preview {
+    background-image: url('space/moon.jpg');
+}
+
+.planet-btn-preview.mars-preview {
+    background-image: url('space/mars.jpg');
+}
+
+.planet-btn-name {
+    font-size: calc(16px * var(--s));
+    color: #fff;
+    text-shadow: 0 calc(1px * var(--s)) calc(3px * var(--s)) rgba(0, 0, 0, 0.5);
+}
+
+.planet-btn-cost {
+    font-size: calc(24px * var(--s)); /* Doubled from 12px */
+    color: #ffd700; /* Yellow */
+    display: flex;
+    align-items: center;
+    gap: 0; /* Remove space between number and suffix */
+}
+
+/* Both value and suffix should be yellow */
+.planet-btn-cost .score-suffix {
+    color: #ffd700 !important;
+}
+
+.planet-btn-cost i {
+    display: none; /* Moved to preview overlay */
+}
+
+.travel-popup-icon {
+    width: calc(80px * var(--s));
+    height: calc(80px * var(--s));
+    margin-bottom: calc(15px * var(--s));
+}
+
+.travel-popup-rocket {
+    width: 100%;
+    height: 100%;
+    background-image: url('space/rocket.png');
+    background-size: 400% 100%;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 calc(4px * var(--s)) calc(15px * var(--s)) rgba(255, 165, 0, 0.5));
+    animation: rocketFrames 0.6s step-end infinite;
+}
+
+.travel-title {
+    font-family: 'Lilita One', cursive;
+    font-size: 1.4rem;
+    color: #ffffff;
+    margin-bottom: calc(15px * var(--s));
+    line-height: 1.3;
+}
+
+.travel-desc {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: calc(10px * var(--s));
+}
+
+#btn-travel-close,
+#btn-login-close {
+    position: absolute;
+    top: calc(20px * var(--s));
+    right: calc(20px * var(--s));
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 10;
+}
+
+#btn-travel-close:hover,
+#btn-login-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+#btn-pay-travel {
+    width: 100%;
+    max-width: calc(250px * var(--s));
+}
+
+/* --- Nickname Page --- */
+.nickname-container {
+    width: 90%;
+    max-width: calc(450px * var(--s));
+    background: rgba(0, 0, 0, 0.7);
+    padding: calc(40px * var(--s));
+    border-radius: calc(20px * var(--s));
+    text-align: center;
+    backdrop-filter: blur(calc(10px * var(--s)));
+    margin-top: calc(20px * var(--s));
+}
+
+.nickname-instruction {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: calc(25px * var(--s));
+    line-height: 1.5;
+}
+
+.nickname-instruction span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: calc(10px * var(--s));
+}
+
+#nickname-input {
+    width: 100%;
+    padding: calc(15px * var(--s)) calc(20px * var(--s));
+    background: rgba(255, 255, 255, 0.1);
+    border: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.2);
+    border-radius: calc(10px * var(--s));
+    color: #ffd700;
+    font-size: 2rem;
+    /* Larger font size */
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s;
+}
+
+#nickname-input:focus {
+    border-color: #ffd700;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.error-text {
+    color: #ff4d4d;
+    font-size: 0.85rem;
+    margin-top: calc(8px * var(--s));
+    font-family: 'Roboto', sans-serif;
+}
+
+.error-text.hidden {
+    display: none;
+}
+
+/* --- Profile Page --- */
+.profile-header {
+    text-align: center;
+    margin-bottom: calc(40px * var(--s));
+}
+
+.profile-country {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: calc(2px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(8px * var(--s));
+    margin-top: calc(5px * var(--s));
+    margin-bottom: calc(15px * var(--s));
+}
+
+.profile-country-line {
+    display: flex;
+    align-items: center;
+    gap: calc(8px * var(--s));
+}
+
+.profile-country img {
+    width: calc(24px * var(--s));
+    height: calc(24px * var(--s));
+    vertical-align: middle;
+}
+
+.btn-change-country {
+    margin-top: calc(5px * var(--s));
+    margin-bottom: calc(10px * var(--s));
+}
+
+.profile-country-disclaimer {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: calc(2px * var(--s));
+    max-width: calc(500px * var(--s));
+    margin: calc(5px * var(--s)) auto calc(20px * var(--s));
+    line-height: 1.6;
+}
+
+.welcome-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: calc(2px * var(--s));
+}
+
+.profile-nickname {
+    font-family: 'Roboto', sans-serif;
+    /* Changed for case sensitivity */
+    font-size: 3.5rem;
+    font-weight: 900;
+    /* Boldest */
+    color: #ffd700;
+    /* Yellow */
+    margin-top: calc(5px * var(--s));
+    text-shadow: 0 calc(4px * var(--s)) calc(15px * var(--s)) rgba(255, 215, 0, 0.3);
+}
+
+.profile-value-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(15px * var(--s));
+    margin-top: -calc(10px * var(--s));
+    margin-bottom: calc(30px * var(--s));
+}
+
+.profile-value {
+    font-family: 'Lilita One', cursive;
+    font-size: 4rem;
+    /* Matching index total value size */
+    color: #ffffff;
+    text-shadow: 0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.8);
+}
+
+.profile-value-symbol {
+    font-family: 'Lilita One', cursive;
+    font-size: 4rem;
+    color: #fff;
+    opacity: 0.5;
+    text-shadow: 0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, 0.8);
+}
+
+.section-title {
+    font-family: 'Lilita One', cursive;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: calc(25px * var(--s));
+    text-align: left;
+    border-bottom: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
+    padding-bottom: calc(10px * var(--s));
+}
+
+.profile-section {
+    width: 100%;
+    max-width: calc(800px * var(--s));
+}
+
+.tools-grid-profile {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* 5 columns desktop */
+    gap: calc(15px * var(--s));
+    width: 100%;
+}
+
+.tool-item-profile {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: calc(12px * var(--s));
+    padding: calc(15px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.tool-item-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tool-icon-wrapper {
+    width: calc(50px * var(--s));
+    height: calc(50px * var(--s));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: calc(8px * var(--s));
+}
+
+.tool-icon-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.tool-count {
+    font-family: 'Lilita One', cursive;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Mobile Adjustments */
+@media (max-width: calc(768px * var(--s))) {
+    .tools-grid-profile {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns mobile */
+    }
+
+    .profile-nickname {
+        font-size: 2rem;
+    }
+
+    .profile-value {
+        font-size: 2rem;
+    }
+
+    /* Increase spacing between nickname and score on mobile */
+    .profile-value-display {
+        margin-top: calc(10px * var(--s));
+        margin-bottom: calc(20px * var(--s));
+    }
+}
+
+/* --- Dynamic Clouds Background --- */
+.clouds-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    /* Above stars (-1), below game UI */
+    pointer-events: none;
+    background-image: url('space/space-clouds.png');
+    background-size: auto 100%;
+    /* Fit height, auto width to prevent squishing */
+    background-repeat: repeat-x;
+    animation: moveClouds 120s linear infinite;
+    opacity: 0.8;
+    /* Slight transparency to let the stars shine through */
+}
+
+@keyframes moveClouds {
+    0% {
+        background-position-x: 0;
+    }
+
+    100% {
+        /* Image is 960x540 (16:9). At 100vh height, its width is 177.77vh. */
+        background-position-x: calc(-100vh * 16 / 9);
+    }
+}
+
+/* --- Number Styling --- */
+.score-suffix {
+    color: #ffffff;
+}
+
+/* --- Beta Footer --- */
+.beta-footer {
+    position: absolute;
+    bottom: calc(20px * var(--s));
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: calc(12px * var(--s));
+    z-index: 50;
+    pointer-events: none;
+}
+
+.beta-footer i {
+    color: #ffd700;
+    font-size: 1.6rem;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
+}
+
+.beta-footer .beta-text {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #ffffff;
+    text-align: left;
+    line-height: 1.25;
+    text-shadow: 0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8);
+}
+
+@media (max-width: calc(768px * var(--s))) {
+    .beta-footer {
+        bottom: calc(15px * var(--s));
+        width: 90%;
+        justify-content: center;
+    }
+}
+
+/* --- Restored Fixes --- */
+.shop-price-btn .score-suffix {
+    color: #ffffff !important;
+}
+
+
+
+.player-score .score-suffix {
+    color: #ffffff !important;
+}
+
+:root {
+    --s: 1;
+}
+
+html {
+    font-size: calc(16px * var(--s)) !important;
+}
+
+/* --- FINAL ROCKET OVERRIDES (Aggressive Fix) --- */
+@keyframes rocketFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(calc(-15px * var(--s)));
+    }
+}
+
+#btn-travel {
+    position: absolute !important;
+    bottom: calc(-45px * var(--s)) !important;
+    right: calc(-45px * var(--s)) !important;
+    left: auto !important;
+    top: auto !important;
+    display: flex !important;
+    animation: rocketFloat 3s ease-in-out infinite !important;
+    z-index: 999 !important;
+}
+
+.travel-popup-icon {
+    animation: rocketFloat 3s ease-in-out infinite !important;
+}
+
+@media (max-width: calc(768px * var(--s))) {
+    #btn-travel {
+        bottom: calc(-50px * var(--s)) !important;
+        right: 0 !important;
+        left: auto !important;
+        width: calc(70px * var(--s)) !important;
+        height: calc(70px * var(--s)) !important;
+    }
+}
+
+/* --- Challenge System --- */
+.challenge-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(15px * var(--s));
+}
+
+.challenge-card {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: calc(14px * var(--s));
+    padding: calc(18px * var(--s)) calc(22px * var(--s));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(10px * var(--s));
+    animation: challengeAppear 0.4s ease-out;
+}
+
+@keyframes challengeAppear {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.challenge-label {
+    font-family: 'Lilita One', cursive;
+    font-size: calc(23px * var(--s));
+    color: #ffd700;
+    letter-spacing: calc(6px * var(--s));
+    text-transform: uppercase;
+    margin-bottom: calc(50px * var(--s));
+}
+
+.challenge-label i {
+    margin-right: calc(4px * var(--s));
+    font-size: calc(23px * var(--s));
+}
+
+.challenge-instruction {
+    font-family: 'Lilita One', cursive;
+    font-size: calc(20px * var(--s));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: calc(6px * var(--s));
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    margin-bottom: calc(-10px * var(--s));
+}
+
+.challenge-resource-img {
+    width: calc(44px * var(--s));
+    height: calc(44px * var(--s));
+    object-fit: contain;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, 0.6));
+    vertical-align: middle;
+}
+
+.challenge-count {
+    color: #ffd700;
+    font-size: calc(24px * var(--s));
+}
+
+.challenge-prize {
+    font-family: 'Roboto', sans-serif;
+    font-size: calc(18px * var(--s));
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: calc(0px * var(--s));
+    margin-bottom: calc(15px * var(--s));
+}
+
+.challenge-prize-amount {
+    font-family: 'Lilita One', cursive;
+    color: #ffd700;
+    font-size: calc(40px * var(--s));
+    margin-bottom: calc(10px * var(--s));
+}
+
+.challenge-prize-amount .score-suffix {
+    color: inherit !important;
+}
+
+.challenge-progress {
+    font-family: 'Lilita One', cursive;
+    font-size: calc(22px * var(--s));
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.challenge-timer-track {
+    width: 100%;
+    height: calc(5px * var(--s));
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: calc(3px * var(--s));
+    overflow: hidden;
+    margin-top: calc(2px * var(--s));
+}
+
+.challenge-timer-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff8c00, #ffd700);
+    border-radius: calc(3px * var(--s));
+    transition: width 0.15s linear;
+}
+
+.challenge-waiting,
+.challenge-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(5px * var(--s));
+    text-align: center;
+    padding: 0 calc(20px * var(--s));
+}
+
+.challenge-waiting-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: calc(26px * var(--s));
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.challenge-countdown {
+    font-family: 'Lilita One', cursive;
+    font-size: calc(36px * var(--s));
+    color: rgba(255, 255, 255, 1);
+}
+
+/* Green flash on score when challenge completed */
+@keyframes challengeWonFlash {
+    0%, 30% {
+        color: #4CAF50;
+        text-shadow: 0 0 calc(30px * var(--s)) rgba(76, 175, 80, 0.8);
+    }
+    100% {
+        color: #ffffff;
+        text-shadow: none;
+    }
+}
+
+.challenge-won-flash {
+    animation: challengeWonFlash 2.5s ease-out forwards !important;
+}
+
+.challenge-won-flash .score-suffix {
+    color: inherit !important;
+}
+
+/* --- Info Popup Buttons --- */
+.info-popup-btn {
+    color: #fff;
+    text-decoration: none;
+    padding: calc(16px * var(--s)) calc(32px * var(--s));
+    border-radius: calc(10px * var(--s));
+    background: rgba(255, 255, 255, 0.1);
+    font-family: 'Lilita One', cursive;
+    font-size: calc(22px * var(--s));
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.info-popup-btn:hover {
+    background: #ffcc00;
+    color: #000;
+}
+
+/* --- Mobile Only: 2x Loading Screen Content --- */
+/* Target only touch-screen devices (phones/tablets) using (pointer: coarse) 
+   to ensure desktop browsers at any zoom/size are NOT affected. */
+@media (pointer: coarse) {
+    .loading-content {
+        transform: scale(4); /* Doubling again: 2x -> 4x for extreme mobile visibility */
+        transform-origin: center;
+        width: calc(250px * var(--s)) !important; /* Ensure width stays responsive while scaled */
+    }
+}
