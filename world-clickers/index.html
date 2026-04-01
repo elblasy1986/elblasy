@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clickers</title>
+    <meta name="description"
+        content="World Clickers is a global idle clicker game where players mine resources, explore the universe, and become legendary.">
+    <meta name="keywords"
+        content="world clickers, idle game, clicker game, mining game, space mining game, browser game">
+    <meta name="author" content="World Clickers">
+    <!-- Search Engine -->
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph (Social Sharing) -->
+    <meta property="og:title" content="World Clickers – Global Idle Mining Game">
+    <meta property="og:description"
+        content="Mine resources, explore the universe, and become a legendary player in World Clickers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://worldclickers.com">
+    <meta property="og:image" content="https://worldclickers.com/open_graph_image.jpg">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="World Clickers – Global Idle Mining Game">
+    <meta name="twitter:description"
+        content="A global idle clicker game where players explore and make history.">
+    <meta name="twitter:image" content="https://worldclickers.com/open_graph_image.jpg">
+    <link rel="stylesheet" href="style.css?v=18">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+    <div class="clouds-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <img src="world_clickers_logo.png" class="loading-logo" alt="World Clickers">
+            <div class="loading-bar-container" id="loading-bar-container">
+                <div class="loading-bar-fill" id="loading-bar-fill"></div>
+            </div>
+            <button id="btn-play-game" class="play-button">PLAY</button>
+        </div>
+    </div>
+
+    <!-- Audio Assets -->
+    <audio id="audio-bg-music" loop src="sounds/background_music.ogg"></audio>
+    <audio id="audio-click" src="sounds/pop_sound.wav"></audio>
+    <audio id="audio-purchase" src="sounds/purchase_sound.wav"></audio>
+
+
+    <!-- Main Game Wrapper -->
+    <div class="game-wrapper">
+
+        <!-- Earth Resources Sidebar (Left) -->
+        <aside class="earth-resources-sidebar">
+            <div class="resources-icons-column">
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/diamond.png" alt="Diamond"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/gold.png" alt="Gold"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/silver.png" alt="Silver"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/copper.png" alt="Copper"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/iron.png" alt="Iron"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/oil.png" alt="Oil"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/stone.png" alt="Stone"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/coal.png" alt="Coal"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/fish.png" alt="Fish"></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><img src="resources/wood.png" alt="Wood"></div>
+                <div class="layout-gap"></div>
+            </div>
+
+            <!-- Heat / Progress Bar -->
+            <div class="heat-bar-container">
+                <div class="heat-bar-fill" id="heat-bar-fill"></div>
+            </div>
+
+            <!-- Resource Names -->
+            <div class="resources-names-column">
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Diamond</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Gold</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Silver</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Copper</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Iron</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Oil</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Stone</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Coal</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Fish</span></div>
+                <div class="layout-gap"></div>
+                <div class="resource-slot"><span>Wood</span></div>
+                <div class="layout-gap"></div>
+            </div>
+        </aside>
+
+        <!-- Main Game Area -->
+        <main class="game-stage">
+
+            <!-- Score Header -->
+            <header class="game-header">
+                <div class="header-content">
+                    <div class="top-nav-icons">
+                        <i class="fa-solid fa-gear" id="btn-settings"></i>
+                        <i class="fa-solid fa-chart-simple" id="btn-stats"></i>
+                        <i class="fa-solid fa-circle-info" id="btn-info"></i>
+                    </div>
+                    <div class="player-score">
+                        <span id="player-score-value">0</span>
+                    </div>
+                </div>
+            </header>
+
+
+
+            <!-- Anchor Wrapper -->
+            <div class="globe-wrapper-anchor">
+                <!-- Systems Rotator -->
+                <div class="systems-rotator">
+                    <!-- EARTH SYSTEM -->
+                    <div class="globe-system" id="earth-system">
+                        <div class="pulse-wrapper">
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="earth-interact-zone">
+                                <div class="layer earth-layer"></div>
+                                <div class="layer clouds-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Earth Glow -->
+                            <div class="globe-glow"></div>
+                        </div>
+                    </div>
+
+                    <!-- MOON SYSTEM (Initially Hidden/Off-screen) -->
+                    <div class="globe-system off-screen-right" id="moon-system">
+                        <div class="pulse-wrapper">
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="moon-interact-zone">
+                                <div class="layer moon-layer"></div>
+                                <div class="layer moon-border-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Moon Glow -->
+                            <div class="globe-glow moon-glow"></div>
+                        </div>
+                    </div>
+
+                    <!-- MARS SYSTEM (Initially Hidden/Off-screen) -->
+                    <div class="globe-system off-screen-right" id="mars-system">
+                        <div class="pulse-wrapper">
+                            <!-- Masked Globe -->
+                            <div class="globe-mask" id="mars-interact-zone">
+                                <div class="layer mars-layer"></div>
+                                <div class="layer mars-border-layer"></div>
+                                <div class="layer shading-layer"></div>
+                            </div>
+
+                            <!-- Mars Glow -->
+                            <div class="globe-glow mars-glow"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moon Travel Button (Static) -->
+                <div class="moon-travel-btn" id="btn-travel">
+                    <div class="rocket-sprite"></div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Right Side Shop Panel -->
+        <aside class="shop-panel">
+            <div class="shop-panel-top">
+                <!-- Manual Multiplier Section (15% height) -->
+                <div class="multiplier-container" id="multiplier-container">
+                    <div class="multiplier-label">Manual Mining Multiplier</div>
+                    <div class="multiplier-display">
+                        <img src="cursor.png" alt="Cursor" class="multiplier-cursor">
+                        <span class="multiplier-sym">×</span>
+                        <span class="multiplier-value" id="multiplier-value">1</span>
+                    </div>
+                    <div class="multiplier-status-line" id="multiplier-status-line">Doubles every 15 seconds at maximum heat</div>
+                </div>
+
+                <hr class="shop-divider">
+
+                <!-- Challenge Section (35% height) -->
+                <div class="challenge-container" id="challenge-container">
+                    <div class="challenge-card" id="challenge-card" style="display:none;">
+                        <div class="challenge-label"><i class="fa-solid fa-bolt"></i> CHALLENGE</div>
+                        <div class="challenge-instruction">
+                            Mine <span class="challenge-count" id="challenge-count">50</span> ×
+                            <img class="challenge-resource-img" id="challenge-img" src="" alt="" />
+                            in a row!
+                        </div>
+                        <div class="challenge-prize">
+                            Prize: <span class="challenge-prize-amount" id="challenge-prize-value">$0</span>
+                        </div>
+                        <div class="challenge-progress" id="challenge-progress-text">0 / 50</div>
+                        <div class="challenge-timer-track">
+                            <div class="challenge-timer-fill" id="challenge-timer-fill"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-waiting" id="challenge-waiting">
+                        <div class="challenge-waiting-text">Next challenge in</div>
+                        <div class="challenge-countdown" id="challenge-countdown">2:00</div>
+                    </div>
+                    <div class="challenge-locked" id="challenge-locked" style="display:none;">
+                        <div class="challenge-waiting-text" style="font-size: calc(18px * var(--s));">Challenges unlock after your first mining tool.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="shop-panel-bottom">
+                <i class="fa-solid fa-caret-up shop-scroll-btn disabled" id="btn-shop-up"></i>
+                <div class="shop-list-viewport" id="shop-list-viewport">
+                    <div id="shop-list-earth" class="shop-list"></div>
+                    <div id="shop-list-moon" class="shop-list hidden"></div>
+                    <div id="shop-list-mars" class="shop-list hidden"></div>
+                </div>
+                <i class="fa-solid fa-caret-down shop-scroll-btn" id="btn-shop-down"></i>
+            </div>
+        </aside>
+    </div>
+
+
+    <!-- Settings Popup -->
+    <div id="settings-overlay" class="hidden">
+        <div class="planet-select-content">
+            <i class="fa-solid fa-xmark" id="btn-settings-close"></i>
+            <h2 class="travel-title">Settings</h2>
+
+            <!-- Music Volume -->
+            <div class="settings-row">
+                <i class="fa-solid fa-music settings-icon" id="settings-music-icon"></i>
+                <input type="range" min="0" max="100" value="100" class="settings-slider" id="slider-music">
+            </div>
+
+            <!-- Sound Volume -->
+            <div class="settings-row">
+                <i class="fa-solid fa-volume-high settings-icon" id="settings-sound-icon"></i>
+                <input type="range" min="0" max="100" value="100" class="settings-slider" id="slider-sound">
+            </div>
+
+            <!-- Erase Cache -->
+            <button class="settings-erase-btn" id="btn-erase-cache">
+                <i class="fa-solid fa-trash"></i> Erase All Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Popup -->
+    <div id="stats-overlay" class="hidden">
+        <div class="planet-select-content wider-popup">
+            <i class="fa-solid fa-xmark" id="btn-stats-close"></i>
+            <h2 class="travel-title" style="margin-bottom: calc(20px * var(--s));">Statistics</h2>
+            
+            <div style="text-align: left; color: rgba(255, 255, 255, 0.9); font-size: calc(20px * var(--s)); line-height: 1.8; font-family: 'Roboto', sans-serif; width: 100%;">
+                <div style="display: flex; justify-content: space-between; border-bottom: calc(1px * var(--s)) solid rgba(255,255,255,0.1); padding-bottom: calc(5px * var(--s)); margin-bottom: calc(10px * var(--s));">
+                    <span>Time Played:</span>
+                    <span id="stat-time-played" style="font-family: 'Lilita One', cursive; color: #fff;">0s</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: calc(1px * var(--s)) solid rgba(255,255,255,0.1); padding-bottom: calc(5px * var(--s)); margin-bottom: calc(10px * var(--s));">
+                    <span>Total Earned:</span>
+                    <span id="stat-total-earned" style="font-family: 'Lilita One', cursive; color: #4CAF50;">$0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: calc(1px * var(--s)) solid rgba(255,255,255,0.1); padding-bottom: calc(5px * var(--s)); margin-bottom: calc(10px * var(--s));">
+                    <span>Total Spent:</span>
+                    <span id="stat-total-spent" style="font-family: 'Lilita One', cursive; color: #ff4d4d;">$0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: calc(1px * var(--s)) solid rgba(255,255,255,0.1); padding-bottom: calc(5px * var(--s)); margin-bottom: calc(10px * var(--s));">
+                    <span>Total Clicks:</span>
+                    <span id="stat-total-clicks" style="font-family: 'Lilita One', cursive; color: #fff;">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Popup -->
+    <div id="info-overlay" class="hidden">
+        <div class="planet-select-content wider-popup">
+            <i class="fa-solid fa-xmark" id="btn-info-close"></i>
+            <img src="world_clickers_logo.png" class="info-logo-float" alt="World Clickers" />
+            <h2 class="travel-title" style="margin-bottom: calc(20px * var(--s));">About</h2>
+            
+            <div style="text-align: center; color: rgba(255, 255, 255, 0.9); font-size: calc(18px * var(--s)); line-height: 1.5; font-family: 'Roboto', sans-serif;">
+                <p>World Clickers is a global idle-clicker and resource-mining game where players generate wealth by clicking, auto-mining, and strategically investing in tools.</p>
+                <div style="height: calc(15px * var(--s));"></div>
+                <p>As players progress, they unlock lunar and planetary exploration, opening an entirely new tier of resources with dramatically higher values. Land on new planets creating historic moments and a true digital legacy.</p>
+
+                <div style="height: calc(20px * var(--s));"></div>
+                <p>Background music by <a href="https://www.patreon.com/Holizna" target="_blank" rel="noopener" style="color: #f5c842; text-decoration: none;">Holizna</a></p>
+                
+                <div style="display: flex; gap: calc(15px * var(--s)); justify-content: center; margin-top: calc(25px * var(--s)); flex-wrap: wrap;">
+                    <a href="privacy.html" target="_blank" class="info-popup-btn">Privacy</a>
+                    <a href="terms.html" target="_blank" class="info-popup-btn">Terms</a>
+                    <a href="contact.html" target="_blank" class="info-popup-btn">Contact</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Planet Selection Popup -->
+    <div id="planet-select-overlay" class="hidden">
+        <div class="planet-select-content">
+            <i class="fa-solid fa-xmark" id="btn-planet-select-close"></i>
+            <div class="travel-popup-icon">
+                <div class="travel-popup-rocket"></div>
+            </div>
+            <h2 class="travel-title">Select Destination</h2>
+            <div class="planet-buttons" id="planet-buttons"></div>
+        </div>
+    </div>
+
+    <div id="custom-cursor"></div>
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
