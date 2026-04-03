@@ -208,54 +208,66 @@
 
         <!-- Right Side Shop Panel -->
         <aside class="shop-panel">
-            <div class="shop-panel-top">
-                <!-- Manual Multiplier Section (15% height) -->
-                <div class="multiplier-container" id="multiplier-container">
-                    <div class="multiplier-label">Manual Mining Multiplier</div>
-                    <div class="multiplier-display">
-                        <img src="cursor.png" alt="Cursor" class="multiplier-cursor">
-                        <span class="multiplier-sym">×</span>
-                        <span class="multiplier-value" id="multiplier-value">1</span>
-                    </div>
-                    <div class="multiplier-status-line" id="multiplier-status-line">Doubles every 15 seconds at maximum heat</div>
+            <!-- 1. Multiplier Title -->
+            <div class="shop-section-title"><i class="fa-solid fa-fire"></i> Multiplier</div>
+            
+            <!-- 2. Multiplier Section -->
+            <div class="multiplier-section-content side-section-content" id="multiplier-container">
+                <div class="multiplier-display">
+                    <img src="cursor.png" alt="Cursor" class="multiplier-cursor">
+                    <span class="multiplier-sym">×</span>
+                    <span class="multiplier-value" id="multiplier-value">1</span>
                 </div>
-
-                <hr class="shop-divider">
-
-                <!-- Challenge Section (35% height) -->
-                <div class="challenge-container" id="challenge-container">
-                    <div class="challenge-card" id="challenge-card" style="display:none;">
-                        <div class="challenge-label"><i class="fa-solid fa-bolt"></i> CHALLENGE</div>
-                        <div class="challenge-instruction">
-                            Mine <span class="challenge-count" id="challenge-count">50</span> ×
-                            <img class="challenge-resource-img" id="challenge-img" src="" alt="" />
-                            in a row!
+                <div class="multiplier-status-line" id="multiplier-status-line">
+                    <span id="multiplier-status-text">Doubles every 15 seconds at maximum heat</span>
+                    <div id="multiplier-bar-container" style="display: none; width: 100%; flex-direction: row !important; align-items: center; justify-content: center; flex-wrap: nowrap !important; gap: calc(12px * var(--s));">
+                        <span id="multiplier-bar-left" class="multiplier-label-glow">1</span>
+                        <div class="challenge-timer-track" style="flex: 1; min-width: 0;">
+                            <div class="challenge-timer-fill" id="multiplier-bar-fill"></div>
                         </div>
-                        <div class="challenge-prize">
-                            Prize: <span class="challenge-prize-amount" id="challenge-prize-value">$0</span>
-                        </div>
-                        <div class="challenge-progress" id="challenge-progress-text">0 / 50</div>
-                        <div class="challenge-timer-track">
-                            <div class="challenge-timer-fill" id="challenge-timer-fill"></div>
-                        </div>
-                    </div>
-                    <div class="challenge-waiting" id="challenge-waiting">
-                        <div class="challenge-waiting-text">Next challenge in</div>
-                        <div class="challenge-countdown" id="challenge-countdown">2:00</div>
-                    </div>
-                    <div class="challenge-locked" id="challenge-locked" style="display:none;">
-                        <div class="challenge-waiting-text" style="font-size: calc(18px * var(--s));">Challenges unlock after your first mining tool.</div>
+                        <span id="multiplier-bar-right" class="multiplier-label-glow">2</span>
                     </div>
                 </div>
             </div>
-            <div class="shop-panel-bottom">
-                <i class="fa-solid fa-caret-up shop-scroll-btn disabled" id="btn-shop-up"></i>
+
+            <!-- 4. Challenges Title -->
+            <div class="shop-section-title"><i class="fa-solid fa-bolt"></i> CHALLENGE</div>
+
+            <!-- 5. Challenges Section -->
+            <div class="challenges-section-content side-section-content" id="challenge-container">
+                <div class="challenge-card" id="challenge-card" style="display:none;">
+                    <div class="challenge-instruction">
+                        Mine <span class="challenge-count" id="challenge-count">50</span> ×
+                        <img class="challenge-resource-img" id="challenge-img" src="" alt="" />
+                        in a row!
+                    </div>
+                    <div class="challenge-prize">
+                        Prize: <span class="challenge-prize-amount" id="challenge-prize-value">$0</span>
+                    </div>
+                    <div class="challenge-progress" id="challenge-progress-text">0 / 50</div>
+                    <div class="challenge-timer-track">
+                        <div class="challenge-timer-fill" id="challenge-timer-fill"></div>
+                    </div>
+                </div>
+                <div class="challenge-waiting" id="challenge-waiting">
+                    <div class="challenge-waiting-text">Next challenge in</div>
+                    <div class="challenge-countdown" id="challenge-countdown">2:00</div>
+                </div>
+                <div class="challenge-locked" id="challenge-locked" style="display:none;">
+                    <div class="challenge-waiting-text" style="font-size: calc(18px * var(--s));">Challenges unlock after your first mining tool.</div>
+                </div>
+            </div>
+
+            <!-- 7. Tools Shop Title -->
+            <div class="shop-section-title"><i class="fa-solid fa-trowel"></i> Tools Shop</div>
+
+            <!-- 8. Tools Shop Section -->
+            <div class="shop-section-content">
                 <div class="shop-list-viewport" id="shop-list-viewport">
                     <div id="shop-list-earth" class="shop-list"></div>
                     <div id="shop-list-moon" class="shop-list hidden"></div>
                     <div id="shop-list-mars" class="shop-list hidden"></div>
                 </div>
-                <i class="fa-solid fa-caret-down shop-scroll-btn" id="btn-shop-down"></i>
             </div>
         </aside>
     </div>
@@ -305,7 +317,7 @@
                     <span>Total Spent:</span>
                     <span id="stat-total-spent" style="font-family: 'Lilita One', cursive; color: #ff4d4d;">$0</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: calc(1px * var(--s)) solid rgba(255,255,255,0.1); padding-bottom: calc(5px * var(--s)); margin-bottom: calc(10px * var(--s));">
+                <div style="display: flex; justify-content: space-between; padding-bottom: calc(5px * var(--s)); margin-bottom: calc(10px * var(--s));">
                     <span>Total Clicks:</span>
                     <span id="stat-total-clicks" style="font-family: 'Lilita One', cursive; color: #fff;">0</span>
                 </div>

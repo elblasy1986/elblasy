@@ -137,7 +137,12 @@ const dom = {
     loadingBarContainer: document.getElementById('loading-bar-container'),
     loadingOverlay: document.getElementById('loading-overlay'),
     multiplierValue: document.getElementById('multiplier-value'),
-    multiplierStatus: document.getElementById('multiplier-status-line')
+    multiplierStatus: document.getElementById('multiplier-status-line'),
+    multiplierStatusText: document.getElementById('multiplier-status-text'),
+    multiplierBarContainer: document.getElementById('multiplier-bar-container'),
+    multiplierBarFill: document.getElementById('multiplier-bar-fill'),
+    multiplierBarLeft: document.getElementById('multiplier-bar-left'),
+    multiplierBarRight: document.getElementById('multiplier-bar-right')
 };
 
 /**
@@ -1309,14 +1314,24 @@ async function init() {
 
     document.addEventListener('contextmenu', e => e.preventDefault());
 
-    // Start background loops
+    // gameLoop handles passive logic
     gameLoop();
-    
-    // Init shop arrow scrolling
-    initShopScrolling();
     
     // Init challenge system
     initChallengeSystem();
+
+    // Reset shop scroll to top on load
+    const shopViewport = document.getElementById('shop-list-viewport');
+    if (shopViewport) shopViewport.scrollTop = 0;
+
+    // Reset shop scroll on planet switch (class change on shop-list)
+    if (shopViewport) {
+        const observer = new MutationObserver(() => {
+            shopViewport.scrollTop = 0;
+        });
+        const lists = shopViewport.querySelectorAll('.shop-list');
+        lists.forEach(l => observer.observe(l, { attributes: true, attributeFilter: ['class'] }));
+    }
 
     // Enforce fullscreen on mobile
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -1555,12 +1570,41 @@ function gameLoop() {
         
         if (dom.multiplierStatus) {
             const maxMult = CONFIG.manualMultiplierMax || 32;
-            if (state.manualMultiplier >= maxMult) {
-                dom.multiplierStatus.textContent = "MAX";
-                dom.multiplierStatus.classList.add('max-reached');
+            const interval = CONFIG.manualMultiplierIntervalSeconds || 15;
+            
+            if (state.clickHeat >= 90) {
+                // Increment time at top heat using dt
+                state.timeAtTopHeat += dt;
+                
+                // Calculate current manual multiplier (2 to the power of loops completed)
+                const loops = Math.floor(state.timeAtTopHeat / interval);
+                state.manualMultiplier = Math.pow(2, loops);
+                if (state.manualMultiplier < 1) state.manualMultiplier = 1;
+
+                if (state.manualMultiplier >= maxMult) {
+                    state.manualMultiplier = maxMult;
+                    if (dom.multiplierStatusText) dom.multiplierStatusText.textContent = "MAX";
+                    if (dom.multiplierStatusText) dom.multiplierStatusText.style.display = 'block';
+                    if (dom.multiplierBarContainer) dom.multiplierBarContainer.style.display = 'none';
+                    dom.multiplierStatus.classList.add('max-reached');
+                } else {
+                    if (dom.multiplierStatusText) dom.multiplierStatusText.style.display = 'none';
+                    if (dom.multiplierBarContainer) dom.multiplierBarContainer.style.display = 'flex'; // Use Flex for horizontal labels!
+                    
+                    const progress = (state.timeAtTopHeat % interval) / interval;
+                    if (dom.multiplierBarFill) {
+                        dom.multiplierBarFill.style.clipPath = `inset(0 ${(1 - progress) * 100}% 0 0)`;
+                    }
+                    if (dom.multiplierBarLeft) dom.multiplierBarLeft.textContent = state.manualMultiplier;
+                    if (dom.multiplierBarRight) dom.multiplierBarRight.textContent = state.manualMultiplier * 2;
+                    dom.multiplierStatus.classList.remove('max-reached');
+                }
             } else {
-                const interval = CONFIG.manualMultiplierIntervalSeconds || 15;
-                dom.multiplierStatus.textContent = `Doubles every ${interval} seconds at maximum heat`;
+                if (dom.multiplierStatusText) {
+                    dom.multiplierStatusText.textContent = `Doubles every ${interval} seconds at maximum heat`;
+                    dom.multiplierStatusText.style.display = 'block';
+                }
+                if (dom.multiplierBarContainer) dom.multiplierBarContainer.style.display = 'none';
                 dom.multiplierStatus.classList.remove('max-reached');
             }
         }
@@ -1836,7 +1880,9 @@ function updateChallengeSystem() {
         const total = challengeState.endTime - challengeState.startTime;
         const remaining = Math.max(0, 1 - (elapsed / total));
         const timerFill = document.getElementById('challenge-timer-fill');
-        if (timerFill) timerFill.style.width = (remaining * 100) + '%';
+        if (timerFill) {
+            timerFill.style.clipPath = `inset(0 ${(1 - remaining) * 100}% 0 0)`;
+        }
         
         // Check expired
         if (now >= challengeState.endTime) {
@@ -1962,60 +2008,6 @@ function updateChallengeUI() {
         if (cardEl) cardEl.style.display = 'none';
         if (waitingEl) waitingEl.style.display = '';
     }
-}
-
-// --- Shop Arrow Scrolling ---
-function initShopScrolling() {
-    const btnUp = document.getElementById('btn-shop-up');
-    const btnDown = document.getElementById('btn-shop-down');
-    const viewport = document.getElementById('shop-list-viewport');
-
-    if (!btnUp || !btnDown || !viewport) return;
-
-    function getScrollStep() {
-        const activeList = viewport.querySelector('.shop-list:not(.hidden)');
-        if (!activeList) return 150;
-        const firstItem = activeList.querySelector('.shop-item');
-        if (!firstItem) return 150;
-        const scaleS = parseFloat(document.documentElement.style.getPropertyValue('--s')) || 1;
-        const gap = 10 * scaleS;
-        return (firstItem.offsetHeight + gap) * 2;
-    }
-
-    btnUp.addEventListener('click', () => {
-        viewport.scrollBy({ top: -getScrollStep(), behavior: 'smooth' });
-    });
-
-    btnDown.addEventListener('click', () => {
-        viewport.scrollBy({ top: getScrollStep(), behavior: 'smooth' });
-    });
-
-    function updateButtons() {
-        if (viewport.scrollTop <= 2) {
-            btnUp.classList.add('disabled');
-        } else {
-            btnUp.classList.remove('disabled');
-        }
-        if (Math.ceil(viewport.scrollTop + viewport.clientHeight) >= viewport.scrollHeight - 2) {
-            btnDown.classList.add('disabled');
-        } else {
-            btnDown.classList.remove('disabled');
-        }
-    }
-
-    viewport.addEventListener('scroll', updateButtons);
-    window.addEventListener('resize', () => setTimeout(updateButtons, 100));
-
-    // Reset scroll on planet switch (shop-list hidden class change)
-    const observer = new MutationObserver(() => {
-        viewport.scrollTop = 0;
-        setTimeout(updateButtons, 50);
-    });
-    Array.from(viewport.querySelectorAll('.shop-list')).forEach(list => {
-        observer.observe(list, { attributes: true, attributeFilter: ['class'] });
-    });
-
-    setTimeout(updateButtons, 300);
 }
 
 // --- Custom Cursor Logic (Edge Fix) ---

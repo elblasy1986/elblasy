@@ -1008,25 +1008,52 @@ a.menu-item:hover {
     padding: calc(10px * var(--s));
     z-index: 50;
     overflow: hidden;
-    pointer-events: none;
+    pointer-events: auto; /* Essential for shop interactions */
 }
 
-.shop-panel-top {
-    flex: 0 0 50%;
+/* 8-Section Specifics */
+.shop-section-title {
+    font-family: 'Lilita One', cursive;
+    font-size: calc(23px * var(--s));
+    color: #ffd700;
+    letter-spacing: calc(6px * var(--s));
+    text-transform: uppercase;
+    text-align: center;
     width: 100%;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
+    flex-shrink: 0;
+    margin-bottom: calc(15px * var(--s));
+    margin-top: calc(10px * var(--s));
+    background-color: rgba(0, 0, 0, 0.86);
+    border-radius: calc(12px * var(--s));
+    padding: calc(12px * var(--s)) 0;
 }
 
-.shop-panel-bottom {
-    flex: 0 0 50%;
-    width: 100%;
+.side-section-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    pointer-events: auto;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 0 calc(28px * var(--s)); /* Unified padding to align bars exactly */
+}
+
+.multiplier-section-content {
+    flex: 0 0 9%;
+    pointer-events: none;
+}
+
+.challenges-section-content {
+    flex: 0 0 17.5%;
+    pointer-events: none;
+    justify-content: center; /* Center "Next challenge" vertically */
+}
+
+.shop-section-content {
+    flex: 1;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Scroll arrows — same style as .top-nav-icons i */
@@ -1054,10 +1081,11 @@ a.menu-item:hover {
 
 /* Viewport — the scrollable window that clips the shop items */
 .shop-list-viewport {
-    flex: 1;
     width: 100%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    position: relative;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
@@ -1120,9 +1148,9 @@ a.menu-item:hover {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: calc(5px * var(--s));
+    gap: calc(2px * var(--s));
     padding: calc(5px * var(--s)) calc(10px * var(--s));
-    height: 300%;
+    height: auto;
 }
 
 /* ── Hide ALL native scrollbars on scrollable shop elements ── */
@@ -1169,21 +1197,7 @@ a.menu-item:hover {
     background: rgba(255, 255, 255, 0.55);
 }
 
-.shop-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(0, 0, 0, 0.45);
-    padding: calc(10px * var(--s)) calc(15px * var(--s));
-    /* Reduced from calc(15px * var(--s)) vertical */
-    border-radius: calc(10px * var(--s));
-    border: none;
-    transition: background 0.2s;
-    flex: 1 1 0;
-    /* Grow/shrink equally */
-    min-height: 0;
-    /* Allow shrinking below content height */
-}
+/* --- Consolidated Shop Item Styling moved to line 1659 --- */
 
 .shop-item:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -1192,8 +1206,8 @@ a.menu-item:hover {
 .shop-item img {
     height: 90%;
     /* Scale with parent height */
-    max-height: calc(90px * var(--s));
-    /* Cap size */
+    max-height: calc(75px * var(--s));
+    /* Cap size reduced from 90 */
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 calc(2px * var(--s)) calc(5px * var(--s)) rgba(0, 0, 0, 0.5));
@@ -1471,18 +1485,20 @@ a.menu-item:hover {
     flex: 0 0 30%; /* 15% of total (30% of 50%) */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: calc(10px * var(--s));
     text-align: center;
 }
 
-.multiplier-label {
-    font-family: 'Lilita One', cursive; /* Using Lilita for consistency with challenge-instruction */
-    font-size: calc(20px * var(--s));
-    color: #fff;
-    letter-spacing: calc(1px * var(--s));
-    margin-bottom: calc(5px * var(--s));
+/* --- Section Titles (Multiplier, Challenges, Shop) --- */
+.multiplier-container, 
+.challenge-container, 
+.shop-panel-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .multiplier-display {
@@ -1520,6 +1536,37 @@ a.menu-item:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
+    width: 100%;
+}
+
+#multiplier-bar-container {
+    display: none;
+    width: 100%;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between; /* Spread across the section */
+    flex-wrap: nowrap !important;
+    gap: calc(12px * var(--s));
+    min-height: calc(30px * var(--s));
+}
+
+.multiplier-label-glow {
+    font-family: 'Lilita One', cursive;
+    color: #fff !important;
+    font-size: calc(22px * var(--s));
+    text-shadow: 0 0 calc(10px * var(--s)) #fff, 0 0 calc(15px * var(--s)) #fff;
+    min-width: calc(30px * var(--s));
+    text-align: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+#multiplier-bar-fill {
+    background: linear-gradient(90deg, #00ff00 0%, #ffff00 33%, #ff8800 66%, #ff0000 100%) !important;
+    width: 100%;
+    height: 100%;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.15s linear;
 }
 
 .multiplier-status-line.max-reached {
@@ -1544,7 +1591,7 @@ a.menu-item:hover {
     width: 100%;
     border: none;
     border-top: calc(2px * var(--s)) solid rgba(255, 255, 255, 0.15);
-    margin: 0 auto;
+    margin: calc(10px * var(--s)) auto;
 }
 
 /* Removed old h2 styling as we use tabs now */
@@ -1615,16 +1662,34 @@ a.menu-item:hover {
 }
 
 
-/* Base shop item styling */
+/* --- Core Shop Item Styling (GRID) --- */
 .shop-item {
-    cursor: default;
-    background: rgba(0, 0, 0, 0.45);
-    padding: calc(5px * var(--s)) calc(15px * var(--s));
-    border-radius: calc(10px * var(--s));
-    border: none;
-    transition: background 0.2s;
-    flex: 1 1 0;
-    min-height: 0;
+    display: grid;
+    grid-template-columns: calc(100px * var(--s)) 1fr auto;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    background: rgba(255, 255, 255, 0.05);
+    border: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
+    border-radius: calc(12px * var(--s));
+    padding: calc(12px * var(--s)) calc(15px * var(--s));
+    gap: calc(5px * var(--s)) calc(15px * var(--s));
+    transition: background 0.2s, transform 0.2s;
+    width: 100%;
+    margin-bottom: calc(12px * var(--s));
+}
+
+.shop-item:last-child {
+    margin-bottom: 0;
+}
+
+.shop-item img {
+    grid-row: 1 / 3;
+    grid-column: 1;
+    width: calc(85px * var(--s));
+    height: calc(85px * var(--s));
+    object-fit: contain;
+    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
+    align-self: center;
 }
 
 /* Affordable State: default pointer and no changes needed */
@@ -1667,30 +1732,7 @@ a.menu-item:hover {
 
 /* Shop list is handled by main .shop-list class above */
 
-.shop-item {
-    display: grid;
-    grid-template-columns: calc(100px * var(--s)) 1fr auto;
-    grid-template-rows: auto 1fr;
-    align-items: start;
-    background: rgba(255, 255, 255, 0.05);
-    border: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
-    border-radius: calc(12px * var(--s));
-    padding: calc(12px * var(--s)) calc(15px * var(--s));
-    gap: calc(5px * var(--s)) calc(15px * var(--s));
-    transition: background 0.2s, transform 0.2s;
-    flex: 1 1 0;
-    min-height: 0;
-}
-
-.shop-item img {
-    grid-row: 1 / 3;
-    grid-column: 1;
-    width: calc(85px * var(--s));
-    height: calc(85px * var(--s));
-    object-fit: contain;
-    filter: drop-shadow(0 calc(2px * var(--s)) calc(4px * var(--s)) rgba(0, 0, 0, 0.8));
-    align-self: center;
-}
+/* --- End of Consolidated Styles --- */
 
 .shop-name-display {
     grid-row: 1;
@@ -1736,6 +1778,12 @@ a.menu-item:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.shop-price-btn:hover {
+    background: #2fb34a;
+    transform: translateY(calc(-2px * var(--s)));
+    box-shadow: 0 calc(6px * var(--s)) 0 #1e7e34;
 }
 
 /* Ensure suffixes (M, B, T) are white on the button */
@@ -3515,7 +3563,7 @@ html {
     background: transparent;
     border: none;
     border-radius: calc(14px * var(--s));
-    padding: calc(18px * var(--s)) calc(22px * var(--s));
+    padding: calc(10px * var(--s)) 0; /* Padding removed horizontally to let parent container control it */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -3534,7 +3582,9 @@ html {
     color: #ffd700;
     letter-spacing: calc(6px * var(--s));
     text-transform: uppercase;
-    margin-bottom: calc(50px * var(--s));
+    margin-bottom: calc(10px * var(--s));
+    text-align: center;
+    width: 100%;
 }
 
 .challenge-label i {
@@ -3606,9 +3656,10 @@ html {
 .challenge-timer-fill {
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, #ff8c00, #ffd700);
+    background: linear-gradient(to right, #ff3b3b, #ffd700);
     border-radius: calc(3px * var(--s));
-    transition: width 0.15s linear;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.15s linear;
 }
 
 .challenge-waiting,
@@ -3625,6 +3676,13 @@ html {
     font-family: 'Roboto', sans-serif;
     font-size: calc(26px * var(--s));
     color: rgba(255, 255, 255, 0.5);
+}
+
+.multiplier-label-glow {
+    font-family: 'Lilita One', cursive;
+    font-size: calc(20px * var(--s));
+    color: #ffffff;
+    text-shadow: 0 0 calc(8px * var(--s)) rgba(255, 255, 255, 0.8);
 }
 
 .challenge-countdown {

@@ -12,7 +12,7 @@ const GAME_CONFIG = {
 
     // --- Challenge System ---
     challengeDurationSeconds: 60,   // How long a challenge stays on screen
-    challengeCooldownSeconds: 150,  // Wait time between challenges
+    challengeCooldownSeconds: 120,  // Wait time between challenges
     challengePrizeMultiplier: 5,   // Prize = autoMine × this × clickCount
     manualMultiplierIntervalSeconds: 15, // Time to double the manual multiplier
     manualMultiplierMax: 32,      // Maximum manual multiplier cap
