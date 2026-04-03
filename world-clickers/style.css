@@ -551,8 +551,9 @@ body {
 
 /* Sprite-sheet animation: 4 frames, 800x200 total, each frame 200x200 */
 .rocket-sprite {
-    width: 100%;
-    height: 100%;
+    width: calc(90px * var(--s));
+    height: calc(90px * var(--s));
+    flex-shrink: 0; /* Prevent squeezing */
     background-image: url('space/rocket.png');
     background-size: 400% 100%;
     background-repeat: no-repeat;
@@ -608,15 +609,6 @@ body {
     background-image: url('space/earth.jpg');
     /* background-size handled by .layer generic or override if needed */
     animation: rotateGlobe 60s linear infinite;
-}
-
-/* Clouds Layer - Faster movement */
-/* Double speed: 15s */
-.clouds-layer {
-    background-image: url('space/clouds.png');
-    /* background-size handled by .layer generic */
-    animation: rotateGlobe 15s linear infinite;
-    opacity: 0.9;
 }
 
 /* Shading Layer */
@@ -1671,11 +1663,11 @@ a.menu-item:hover {
     background: rgba(255, 255, 255, 0.05);
     border: calc(1px * var(--s)) solid rgba(255, 255, 255, 0.1);
     border-radius: calc(12px * var(--s));
-    padding: calc(12px * var(--s)) calc(15px * var(--s));
-    gap: calc(5px * var(--s)) calc(15px * var(--s));
+    padding: calc(10px * var(--s)) calc(15px * var(--s));
+    gap: calc(3px * var(--s)) calc(15px * var(--s));
     transition: background 0.2s, transform 0.2s;
     width: 100%;
-    margin-bottom: calc(12px * var(--s));
+    margin-bottom: calc(6px * var(--s));
 }
 
 .shop-item:last-child {
@@ -1822,7 +1814,7 @@ a.menu-item:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000; /* Solid fallback */
+    background-color: #000; /* Solid Black starting screen */
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -1831,31 +1823,15 @@ a.menu-item:hover {
     overflow: hidden;
 }
 
-/* Isolating backgrounds for the loading/pause state */
+/* Base starting backgrounds - Clearing image per request */
 .loading-bg-main {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('space/background.jpg');
-    background-size: cover;
-    background-position: center;
+    background: #000;
     z-index: -2;
-}
-
-.loading-bg-clouds {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('space/space-clouds.png');
-    background-size: auto 100%;
-    background-repeat: repeat-x;
-    animation: moveClouds 120s linear infinite;
-    opacity: 0.5; /* Slightly dimmer than main game for UI focus */
-    z-index: -1;
 }
 
 #loading-overlay.loading-fading {
@@ -1881,7 +1857,6 @@ a.menu-item:hover {
     height: calc(300px * var(--s));
     object-fit: contain;
     margin-bottom: calc(20px * var(--s));
-    filter: drop-shadow(0 0 calc(15px * var(--s)) rgba(0, 153, 255, 0.6));
     animation: rocketFloat 3s ease-in-out infinite;
 }
 
@@ -2137,6 +2112,9 @@ a.menu-item:hover {
 
     /* Travel button mobile adjustments */
     .moon-travel-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         top: auto !important;
         left: -calc(10px * var(--s)) !important;
         bottom: -calc(50px * var(--s)) !important;
@@ -2273,6 +2251,14 @@ a.menu-item:hover {
     }
 
     /* --- Loading Screen --- */
+    #loading-overlay {
+        background: black;
+    }
+
+    .loading-bg-main {
+        background: none !important;
+    }
+
     .loading-content {
         width: calc(250px * var(--s));
     }
@@ -2284,6 +2270,30 @@ a.menu-item:hover {
 
     .loading-bar-container {
         height: calc(15px * var(--s));
+    }
+}
+
+/* Specific Landscape Mobile Optimization for Starting Screen */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    #loading-overlay .loading-logo {
+        width: calc(112px * var(--s)) !important;
+        height: calc(112px * var(--s)) !important;
+        margin-bottom: calc(5px * var(--s)) !important;
+    }
+
+    .loading-content {
+        gap: calc(10px * var(--s)) !important;
+        width: calc(450px * var(--s)) !important;
+    }
+
+    /* Enlarge button 1.5x for easy tap */
+    .play-button {
+        padding: calc(12px * var(--s)) calc(30px * var(--s)) !important;
+        font-size: calc(30px * var(--s)) !important;
+    }
+
+    .loading-bar-container {
+        height: calc(12px * var(--s)) !important;
     }
 }
 
@@ -3429,13 +3439,6 @@ a.menu-item:hover {
     z-index: 0;
     /* Above stars (-1), below game UI */
     pointer-events: none;
-    background-image: url('space/space-clouds.png');
-    background-size: auto 100%;
-    /* Fit height, auto width to prevent squishing */
-    background-repeat: repeat-x;
-    animation: moveClouds 120s linear infinite;
-    opacity: 0.8;
-    /* Slight transparency to let the stars shine through */
 }
 
 @keyframes moveClouds {
@@ -3525,13 +3528,28 @@ html {
 
 #btn-travel {
     position: absolute !important;
-    bottom: calc(-45px * var(--s)) !important;
+    bottom: calc(-15px * var(--s)) !important; /* Adjust since it's taller now */
     right: calc(-45px * var(--s)) !important;
     left: auto !important;
     top: auto !important;
     display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    height: auto !important; /* Allow growing */
     animation: rocketFloat 3s ease-in-out infinite !important;
     z-index: 999 !important;
+    cursor: pointer;
+}
+
+.travel-label {
+    font-family: 'Roboto', sans-serif;
+    font-size: calc(18px * var(--s));
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-top: calc(10px * var(--s)); /* Space below rocket */
+    text-shadow: 0 0 calc(10px * var(--s)) rgba(255, 255, 255, 0.6);
+    pointer-events: none;
 }
 
 .travel-popup-icon {
