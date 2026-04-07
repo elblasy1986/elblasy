@@ -408,9 +408,10 @@ function initAudio() {
 
     if (dom.audioBg) {
         dom.audioBg.volume = state.musicVolume / 100;
-        if (!dom.audioBg.paused) return;
         if (state.musicEnabled) {
             dom.audioBg.play().catch(e => console.log("Audio autoplay blocked until interaction"));
+        } else {
+            dom.audioBg.pause();
         }
     }
 }
@@ -2173,6 +2174,9 @@ function handleFullscreenChange() {
         if (dom.loadingOverlay) {
             dom.loadingOverlay.classList.remove('hidden');
             dom.loadingOverlay.classList.remove('loading-fading');
+            
+            // Explicitly pause background music when returning to loading screen on away state
+            if (dom.audioBg) dom.audioBg.pause();
 
             // Ensure the Play button is ready
             if (dom.loadingBarContainer) dom.loadingBarContainer.classList.add('hidden');
